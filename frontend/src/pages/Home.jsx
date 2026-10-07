@@ -3,41 +3,66 @@ import { Link } from 'react-router-dom';
 import { 
   ArrowRight, ShieldCheck, TrendingUp, Droplets, Flame, 
   Wind, Cpu, CheckCircle2, Leaf, Target, Layers, Snowflake,
-  Building, Hotel, Hospital, Newspaper, Factory, Send, Check
+  Building, Hotel, Hospital, Newspaper, Factory, Send, Check, AlertCircle
 } from 'lucide-react';
 import { api } from '../api/client';
+import { SocialMediaSection } from '../components/SocialMediaSection';
 
 export const Home = () => {
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    reason_for_connecting: 'Cooling optimization (Chilled water, HVAC, refrigeration)',
+    notes: '',
+  });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [submittedLead, setSubmittedLead] = useState(null);
 
   const handleAssessmentSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim() || submitting) return;
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.email.trim() || submitting) return;
 
     setSubmitting(true);
     setSubmitError('');
     try {
-      await api.submitLeadInquiry({
-        name: 'Website Lead',
-        email: email.trim(),
-        phone: 'Not provided',
-        reason_for_connecting: 'Assessment Request from Homepage',
-        notes: 'Requested exergy assessment from homepage banner',
+      const res = await api.submitLeadInquiry({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        reason_for_connecting: formData.reason_for_connecting,
+        notes: formData.notes.trim() || 'Inquiry submitted from Homepage Assessment Form',
         source: 'Home Assessment CTA'
       });
+      setSubmittedLead(res);
       setSubmitted(true);
-      setEmail('');
+      setFormData({
+        name: '',
+        phone: '',
+        email: '',
+        reason_for_connecting: 'Cooling optimization (Chilled water, HVAC, refrigeration)',
+        notes: '',
+      });
     } catch (err) {
       console.error('Failed to submit assessment request:', err);
-      // Still show polite confirmation to the client
-      setSubmitted(true);
+      setSubmitError(err.message || 'Failed to submit inquiry. Please email us directly.');
     } finally {
       setSubmitting(false);
     }
   };
+
+  const serviceOptions = [
+    'Cooling optimization (Chilled water, HVAC, refrigeration)',
+    'Heating & steam (Boiler, steam traps, condensate)',
+    'Drying processes (Exhaust heat, moisture control)',
+    'Water quality (RO, effluent treatment, ZLD)',
+    'Waste-heat recovery (ORC, economizers, heat cascading)',
+    'Process integration (Pinch analysis, HEN synthesis)',
+    'Comprehensive Energy & Water Audit',
+    'General Inquiry / Discussion'
+  ];
 
   const tickerItems = [
     "Exergy Analysis",
@@ -230,19 +255,19 @@ export const Home = () => {
 
             {/* Action buttons */}
             <div className="mt-9 flex flex-col sm:flex-row gap-3">
-              <a
-                href="#contact"
+              <Link
+                to="/contact"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#30a66a] px-7 py-3.5 text-sm font-semibold text-white hover:brightness-105 transition-all shadow-md active:scale-95"
               >
                 Book an assessment
                 <ArrowRight className="h-4 w-4" />
-              </a>
-              <a
-                href="#approach"
+              </Link>
+              <Link
+                to="/services"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/10 transition-all backdrop-blur"
               >
-                See how it works
-              </a>
+                Explore services
+              </Link>
             </div>
 
             {/* Stats */}
@@ -311,6 +336,15 @@ export const Home = () => {
                   <span className="font-semibold text-[#30a66a]">5–10%</span>, and in general we have experience of reducing resource utilisation by{' '}
                   <span className="font-semibold text-[#30a66a]">25–30%</span>.
                 </p>
+                <div className="pt-2">
+                  <Link
+                    to="/about"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-[#0c758d] hover:text-[#30a66a] transition-colors"
+                  >
+                    <span>Read more about our philosophy & credentials</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             </div>
 
@@ -427,16 +461,25 @@ export const Home = () => {
       {/* 5. Services Section (#services) */}
       <section id="services" className="py-24 sm:py-32 bg-[hsl(150,40%,94%)]/50 border-y border-slate-200/80">
         <div className="mx-auto max-w-[90rem] px-5 sm:px-8">
-          <div className="max-w-2xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#30a66a]">
-              What we optimize
-            </span>
-            <h2 className="mt-4 font-display font-bold text-3xl sm:text-5xl tracking-tight text-slate-900">
-              Consulting solutions across every energy and water flow
-            </h2>
-            <p className="mt-5 text-lg text-slate-600">
-              From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume.
-            </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#30a66a]">
+                What we optimize
+              </span>
+              <h2 className="mt-4 font-display font-bold text-3xl sm:text-5xl tracking-tight text-slate-900">
+                Consulting solutions across every energy and water flow
+              </h2>
+              <p className="mt-5 text-lg text-slate-600">
+                From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume.
+              </p>
+            </div>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-xs font-semibold text-slate-800 hover:border-[#0c758d] hover:text-[#0c758d] transition-colors shrink-0 shadow-xs"
+            >
+              <span>Explore all 6 service lines</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
 
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -459,13 +502,13 @@ export const Home = () => {
                     </p>
                   </div>
                   <div className="mt-6 pt-4 border-t border-slate-100">
-                    <a
-                      href="#contact"
+                    <Link
+                      to={`/contact?service=${encodeURIComponent(srv.title)}`}
                       className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0c758d] hover:text-[#30a66a] transition-colors"
                     >
-                      Inquire about {srv.title}
+                      <span>Inquire about {srv.title}</span>
                       <ArrowRight className="h-3.5 w-3.5" />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               );
@@ -552,13 +595,22 @@ export const Home = () => {
         </div>
 
         <div className="relative mx-auto max-w-[90rem] px-5 sm:px-8 z-10">
-          <div className="max-w-2xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#30a66a]">
-              Industries served
-            </span>
-            <h2 className="mt-4 font-display font-bold text-3xl sm:text-5xl tracking-tight text-white">
-              Deep expertise where energy and water are mission-critical
-            </h2>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#30a66a]">
+                Industries served
+              </span>
+              <h2 className="mt-4 font-display font-bold text-3xl sm:text-5xl tracking-tight text-white">
+                Deep expertise where energy and water are mission-critical
+              </h2>
+            </div>
+            <Link
+              to="/industries"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-xs font-semibold text-white hover:bg-white/20 transition-colors shrink-0 backdrop-blur"
+            >
+              <span>Explore all industry case studies</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
 
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
@@ -635,67 +687,204 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* 9. Contact / Assessment CTA Section (#contact) */}
-      <section id="contact" className="py-24 sm:py-32 bg-[hsl(150,40%,94%)]/50 border-t border-slate-200/80">
-        <div className="mx-auto max-w-[72rem] px-5 sm:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-[#0c758d] text-white p-10 sm:p-16 shadow-2xl">
-            {/* Ambient glow decoration */}
-            <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#30a66a]/20 blur-3xl" />
-            <div className="absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+      {/* 9. Social Media Connection Section */}
+      <SocialMediaSection />
 
-            <div className="relative max-w-2xl">
-              <h2 className="font-display font-bold text-3xl sm:text-5xl tracking-tight leading-[1.05] text-white">
+      {/* 10. Contact / Preliminary Assessment Form Section */}
+      <section id="contact" className="py-24 sm:py-32 bg-[hsl(150,40%,94%)]/50 border-t border-slate-200/80">
+        <div className="mx-auto max-w-[80rem] px-5 sm:px-8">
+          <div className="grid lg:grid-cols-12 gap-12 items-start">
+            
+            {/* Left Column: Heading and Value Prop */}
+            <div className="lg:col-span-5 space-y-6">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#30a66a]">
+                Preliminary Assessment
+              </span>
+              <h2 className="font-display font-bold text-3xl sm:text-5xl tracking-tight leading-[1.05] text-slate-900">
                 Ready to see what your plant is really losing?
               </h2>
-              <p className="mt-5 text-lg text-white/90 leading-relaxed font-normal">
-                Book a no-obligation exergy assessment. We’ll quantify the opportunity and back our implementation with a performance guarantee.
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+                Book a no-obligation exergy assessment. We quantify the opportunity through second-law thermodynamic analysis and back our implementation with a performance guarantee.
               </p>
 
-              {submitted ? (
-                <div className="mt-8 p-6 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 text-white max-w-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-[#30a66a] flex items-center justify-center text-white">
-                      <Check className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-base">Assessment Request Received!</h4>
-                      <p className="text-xs text-white/80 mt-0.5">
-                        Our engineering team will review your inquiry and contact you within one business day.
-                      </p>
-                    </div>
+              <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-4 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#0c758d]/10 text-[#0c758d] flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-5 h-5" />
                   </div>
-                  <button
-                    onClick={() => setSubmitted(false)}
-                    className="mt-4 text-xs underline text-emerald-200 hover:text-white"
-                  >
-                    Submit another inquiry
-                  </button>
+                  <div>
+                    <h4 className="font-bold text-sm text-slate-900">Performance Guarantee</h4>
+                    <p className="text-xs text-slate-500">Contractual savings verified against measured baselines.</p>
+                  </div>
                 </div>
-              ) : (
-                <form onSubmit={handleAssessmentSubmit} className="mt-8 flex flex-col sm:flex-row gap-3 max-w-lg">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Your work email"
-                    className="flex-1 rounded-full bg-white/15 border border-white/30 px-5 py-3.5 text-sm text-white placeholder:text-white/60 outline-none focus:border-[#30a66a] focus:bg-white/20 transition-all"
-                  />
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#30a66a] px-7 py-3.5 text-sm font-semibold text-white hover:brightness-105 transition-all whitespace-nowrap shadow-md active:scale-95 disabled:opacity-50"
-                  >
-                    {submitting ? 'Sending...' : 'Request assessment'}
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </form>
-              )}
 
-              <p className="mt-4 text-xs text-white/70">
-                We reply within one business day. No spam, ever.
-              </p>
+                <div className="pt-3 border-t border-slate-100 flex flex-col gap-2 text-xs text-slate-600">
+                  <p><strong className="text-slate-800">Dubai Office:</strong> 334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE</p>
+                  <p><strong className="text-slate-800">Direct Inquiries:</strong> sarfraz@exergy-solutions.com</p>
+                </div>
+
+                <div className="pt-2">
+                  <Link
+                    to="/contact"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0c758d] hover:underline"
+                  >
+                    <span>View full contact details & office map</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
             </div>
+
+            {/* Right Column: 5-Field Inquiry Form */}
+            <div className="lg:col-span-7">
+              <div className="rounded-3xl bg-white border border-slate-200 p-8 sm:p-10 shadow-lg">
+                <div className="border-b border-slate-100 pb-5">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#30a66a]">
+                    Connect With Engineers
+                  </span>
+                  <h3 className="text-2xl font-bold text-slate-900 font-display mt-1">
+                    Request Plant Inefficiency Audit
+                  </h3>
+                  <p className="mt-1 text-xs sm:text-sm text-slate-500">
+                    Fill in your details below and select the service or operational area you wish to optimize.
+                  </p>
+                </div>
+
+                {submitted ? (
+                  <div className="mt-8 p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-slate-800 space-y-4 animate-in fade-in duration-200">
+                    <div className="flex items-center gap-3 text-[#30a66a]">
+                      <Check className="w-8 h-8 rounded-full bg-[#30a66a] text-white p-1.5" />
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 font-display">
+                          Audit Inquiry Successfully Registered!
+                        </h4>
+                        <p className="text-xs text-slate-600 mt-0.5">
+                          A senior thermodynamic consultant will review your process details and reply within 1 business day.
+                        </p>
+                      </div>
+                    </div>
+                    {submittedLead?.lead_id && (
+                      <div className="text-xs font-mono text-slate-700 bg-white p-3 rounded-xl border border-emerald-200">
+                        Inquiry Reference ID: <span className="font-bold text-slate-900">#{submittedLead.lead_id}</span>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => setSubmitted(false)}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold bg-[#0c758d] text-white hover:bg-[#095f73]"
+                    >
+                      Submit Another Inquiry
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleAssessmentSubmit} className="mt-8 space-y-5">
+                    {submitError && (
+                      <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-3 text-xs text-rose-700">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{submitError}</span>
+                      </div>
+                    )}
+
+                    {/* 1. Name & Phone */}
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                          1. Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          placeholder="Your full name"
+                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#0c758d] outline-none transition-all"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                          2. Phone *
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder="+971 50 000 0000"
+                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#0c758d] outline-none transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 2. Email & Reason/Service */}
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                          3. Email *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="work-email@company.com"
+                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#0c758d] outline-none transition-all"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                          4. Reason or Service Desired *
+                        </label>
+                        <select
+                          value={formData.reason_for_connecting}
+                          onChange={(e) => setFormData({ ...formData, reason_for_connecting: e.target.value })}
+                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:border-[#0c758d] outline-none transition-all"
+                        >
+                          {serviceOptions.map((opt) => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* 3. Facility Details / Notes */}
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        5. Facility Notes / Specific Questions (Optional)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={formData.notes}
+                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                        placeholder="Briefly describe your plant, high utility costs, or project timeframe..."
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#0c758d] outline-none transition-all resize-none"
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full py-3.5 rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white font-semibold text-sm transition-all shadow-md flex items-center justify-center gap-2 active:scale-[0.99] disabled:opacity-50"
+                    >
+                      {submitting ? (
+                        <span>Sending inquiry...</span>
+                      ) : (
+                        <>
+                          <span>Submit Assessment Request</span>
+                          <Send className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+
+                    <p className="text-center text-xs text-slate-400">
+                      We reply within 1 business day. Confidential evaluation under NDA.
+                    </p>
+                  </form>
+                )}
+              </div>
+            </div>
+
           </div>
         </div>
       </section>

@@ -14,6 +14,7 @@ import { Services } from './pages/Services';
 import { About } from './pages/About';
 import { Industries } from './pages/Industries';
 import { Contact } from './pages/Contact';
+import { Logout } from './pages/Logout';
 
 // Admin Pages
 import { AdminLogin } from './admin/AdminLogin';
@@ -49,9 +50,11 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/industries" element={<Industries />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/logout" element={<Logout />} />
           </Route>
 
-          {/* Admin Authentication */}
+          {/* Authentication Routes */}
+          <Route path="/login" element={<AdminLogin />} />
           <Route path="/admin/login" element={<AdminLogin />} />
 
           {/* Protected Admin Portal */}

@@ -4,6 +4,7 @@ import {
   Newspaper, Factory, Flame, Building, Hotel, Hospital, 
   ArrowRight, CheckCircle2, TrendingUp, ShieldCheck 
 } from 'lucide-react';
+import { SocialMediaSection } from '../components/SocialMediaSection';
 
 export const Industries = () => {
   const industries = [
@@ -173,7 +174,7 @@ export const Industries = () => {
       </div>
 
       {/* Assessment Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-20">
         <div className="rounded-3xl bg-[#0c758d] text-white p-8 sm:p-12 text-center shadow-lg">
           <h2 className="text-2xl sm:text-3xl font-bold font-display">
             Operating an energy-intensive industrial plant?
@@ -186,12 +187,15 @@ export const Industries = () => {
               to="/contact"
               className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#30a66a] text-white font-semibold text-sm hover:brightness-105 transition-all shadow-md"
             >
-              Book an Exergy Assessment
+              <span>Book an Exergy Assessment</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </div>
+
+      {/* Social Media Section */}
+      <SocialMediaSection />
 
     </div>
   );

@@ -48,6 +48,10 @@ export const api = {
     return data;
   },
 
+  async submitLeadInquiry(leadData) {
+    return this.createLead(leadData);
+  },
+
   // Admin Leads
   async getAdminLeads({ search = '', status = '', reason = '' } = {}) {
     const params = new URLSearchParams();

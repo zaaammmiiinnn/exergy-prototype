@@ -4,6 +4,7 @@ import {
   Target, Cpu, Leaf, ShieldCheck, ArrowRight, 
   TrendingUp, CheckCircle2, ChevronRight 
 } from 'lucide-react';
+import { SocialMediaSection } from '../components/SocialMediaSection';
 
 export const About = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -299,7 +300,7 @@ export const About = () => {
       </section>
 
       {/* Headquarters and Contact Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 mb-20">
         <div className="rounded-3xl bg-[#0c758d] text-white p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-lg">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold font-display">
@@ -311,12 +312,16 @@ export const About = () => {
           </div>
           <Link
             to="/contact"
-            className="px-7 py-3 rounded-full bg-[#30a66a] text-white font-semibold text-sm hover:brightness-105 transition-all shadow-md shrink-0"
+            className="px-7 py-3 rounded-full bg-[#30a66a] text-white font-semibold text-sm hover:brightness-105 transition-all shadow-md shrink-0 inline-flex items-center gap-2"
           >
-            Request Assessment
+            <span>Request Assessment</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
+
+      {/* Social Media Section */}
+      <SocialMediaSection />
 
     </div>
   );

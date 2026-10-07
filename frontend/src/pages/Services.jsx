@@ -4,6 +4,7 @@ import {
   Snowflake, Flame, Wind, Droplets, TrendingUp, Layers, 
   ArrowRight, ShieldCheck, CheckCircle2, ChevronRight 
 } from 'lucide-react';
+import { SocialMediaSection } from '../components/SocialMediaSection';
 
 export const Services = () => {
   const location = useLocation();
@@ -219,7 +220,7 @@ export const Services = () => {
       </div>
 
       {/* Bottom CTA */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-20">
         <div className="rounded-3xl bg-[#0c758d] text-white p-8 sm:p-12 text-center shadow-lg">
           <h2 className="text-2xl sm:text-4xl font-bold font-display">
             Ready to optimize your facility's energy and water?
@@ -230,13 +231,17 @@ export const Services = () => {
           <div className="mt-6 flex justify-center gap-4">
             <Link
               to="/contact"
-              className="px-7 py-3 rounded-full bg-[#30a66a] text-white font-semibold text-sm hover:brightness-105 transition-all shadow-md"
+              className="px-7 py-3 rounded-full bg-[#30a66a] text-white font-semibold text-sm hover:brightness-105 transition-all shadow-md inline-flex items-center gap-2"
             >
-              Book an Assessment
+              <span>Book an Assessment</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </div>
+
+      {/* Social Media Section */}
+      <SocialMediaSection />
 
     </div>
   );
