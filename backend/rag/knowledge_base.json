@@ -1,0 +1,145 @@
+{
+  "company": {
+    "name": "Exergy Solutions",
+    "tagline": "Industrial & Commercial Energy and Water Efficiency Engineering",
+    "mission": "To maximize exergy efficiency and minimize resource depletion through rigorous thermodynamic modeling, advanced heat integration, and precision water stewardship.",
+    "methodology": {
+      "name": "Diagnose, Model, Design, Implement",
+      "steps": [
+        {
+          "step": "Diagnose",
+          "description": "Comprehensive walk-through audits, ultrasonic flow metering, thermal imaging, and baseline mass/energy balance data collection to identify exergy destruction hotspots."
+        },
+        {
+          "step": "Model",
+          "description": "Creation of high-fidelity thermodynamic digital twins and Pinch Analysis to identify minimum heating/cooling utility targets and cross-process integration opportunities."
+        },
+        {
+          "step": "Design",
+          "description": "Techno-economic engineering design with complete equipment specifications, Capex/Opex budgeting, payback estimations, and lifecycle carbon abatement calculations."
+        },
+        {
+          "step": "Implement",
+          "description": "Turnkey engineering oversight, EPC project management, equipment commissioning, and IPMVP-compliant measurement and verification with performance guarantees."
+        }
+      ]
+    },
+    "contact": {
+      "email": "sarfraz@exergy-solutions.com",
+      "phone": "+971 4 234 5678",
+      "whatsapp": "+971501234567",
+      "address": "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
+      "linkedin": "https://www.linkedin.com/company/135328489/"
+    }
+  },
+  "services": [
+    {
+      "id": "cooling-optimization",
+      "title": "Cooling Optimization",
+      "keywords": ["chiller", "cooling tower", "hvac", "chilled water", "delta t", "condenser", "refrigeration", "cooling"],
+      "summary": "We optimize industrial and commercial chiller plants through variable primary flow conversion, intelligent sequencing, condenser water reset, and cooling tower approach optimization, reducing chilling power consumption by 20% to 35%.",
+      "details": "Cooling optimization addresses Delta-T syndrome, inefficient part-load chiller sequencing, and fouled heat transfer surfaces. We implement continuous adaptive control algorithms that dynamically adjust chilled water supply temperature and cooling tower setpoints according to ambient wet-bulb conditions.",
+      "benefits": ["20-35% reduction in chiller energy use", "Mitigation of Low Delta-T syndrome", "Extended compressor lifecycle", "Peak demand kW reduction"]
+    },
+    {
+      "id": "heating-and-steam",
+      "title": "Heating & Steam",
+      "keywords": ["steam", "boiler", "condensate", "steam trap", "blowdown", "combustion", "heat", "heating"],
+      "summary": "Full thermodynamic optimization of steam generation, distribution, and condensate recovery systems, achieving 15% to 30% fuel savings and recovering high-enthalpy condensate.",
+      "details": "We audit boiler combustion efficiency, size and monitor thermodynamic/ball-float steam traps, recover heat from continuous blowdown streams, and engineer closed-loop pressurized condensate return systems to minimize flash steam loss and reduce boiler feedwater makeup demands.",
+      "benefits": ["15-30% reduction in fuel consumption", "Over 85% condensate return rate", "Reduced water treatment chemical costs", "Zero steam trap failure blindspots"]
+    },
+    {
+      "id": "drying-processes",
+      "title": "Drying Processes",
+      "keywords": ["drying", "dryer", "spray dryer", "rotary dryer", "humidity", "exhaust heat", "evaporation", "moisture"],
+      "summary": "Thermal optimization of industrial convective, rotary, and spray drying systems through psychrometric tuning, air recirculation, and exhaust energy recuperation.",
+      "details": "Drying is one of the most energy-intensive industrial operations. Exergy Solutions models air humidity curves, installs heat pipe and plate heat exchangers on humid exhaust air streams to preheat incoming dry air, and tunes process burner modulation to prevent over-drying while ensuring product consistency.",
+      "benefits": ["Up to 25% energy savings on industrial dryers", "Higher production throughput", "Uniform product moisture control", "Minimized thermal exhaust emissions"]
+    },
+    {
+      "id": "water-quality",
+      "title": "Water Quality",
+      "keywords": ["water", "reverse osmosis", "ro", "effluent", "wastewater", "cycles of concentration", "filtration", "zld", "water treatment"],
+      "summary": "Comprehensive industrial water conservation, high-recovery reverse osmosis (RO) integration, cooling tower cycle optimization, and Zero Liquid Discharge (ZLD) engineering.",
+      "details": "We minimize industrial freshwater intake by enhancing RO recovery rates up to 85-90%, upgrading cooling water chemical management to safely increase cycles of concentration (CoC), and recycling process rinse streams using membrane bioreactors (MBR) and advanced oxidation.",
+      "benefits": ["30-50% reduction in freshwater consumption", "Minimized chemical consumption in cooling towers", "Compliance with environmental discharge regulations", "Protection of heat exchangers from scaling and fouling"]
+    },
+    {
+      "id": "waste-heat-recovery",
+      "title": "Waste-Heat Recovery",
+      "keywords": ["waste heat", "heat recovery", "whr", "flue gas", "economizer", "orc", "organic rankine", "heat exchanger", "thermal storage"],
+      "summary": "Capturing unutilized industrial thermal energy from furnace exhaust, engine jackets, boiler flues, and wastewater to generate steam, hot water, or on-site electricity.",
+      "details": "We implement condensing economizers, heat pipe exchangers, high-temperature heat pumps, and Organic Rankine Cycle (ORC) power generators that transform wasted low-to-medium grade thermal streams (80°C - 450°C) into direct utility offsets with typical paybacks under 2.5 years.",
+      "benefits": ["Substantial reduction in primary energy purchases", "Direct generation of on-site electricity or high-grade heat", "Rapid payback periods (typically 1.5 - 3 years)", "Significant Scope 1 GHG reductions"]
+    },
+    {
+      "id": "process-integration",
+      "title": "Process Integration",
+      "keywords": ["pinch", "process integration", "exergy destruction", "heat exchanger network", "hen", "debottlenecking", "thermodynamic"],
+      "summary": "System-wide Pinch Analysis and Heat Exchanger Network (HEN) synthesis to match hot and cold process streams, eliminating cross-pinch energy destruction.",
+      "details": "Rather than evaluating utility equipment in isolation, Exergy Solutions performs rigorous thermodynamic pinch analysis across the entire facility. We construct Composite Curves and Grand Composite Curves to synthesize optimal heat exchanger networks, determining the thermodynamic limits of recovery before utility heaters or chillers are even applied.",
+      "benefits": ["Maximum thermodynamic energy efficiency", "Lower capital expenditure via optimized heat exchanger networks", "Streamlined plant debottlenecking", "Complete elimination of cross-pinch energy waste"]
+    }
+  ],
+  "industries": [
+    {
+      "id": "paper",
+      "name": "Paper & Pulp",
+      "keywords": ["paper", "pulp", "paper mill", "drying hood", "black liquor", "white water"],
+      "solutions": "Steam balancing, yankee hood exhaust heat recovery, white water loop closure, and condensate recovery optimization."
+    },
+    {
+      "id": "processing",
+      "name": "Processing (Chemical, Food & Beverage)",
+      "keywords": ["processing", "chemical", "food", "beverage", "dairy", "pasteurization", "cip", "brewery"],
+      "solutions": "Clean-in-Place (CIP) heat recovery, evaporator multi-effect optimization, distillation pinch analysis, and boiler blowdown heat capture."
+    },
+    {
+      "id": "petroleum",
+      "name": "Petroleum & Petrochemicals",
+      "keywords": ["petroleum", "oil", "gas", "refinery", "petrochemical", "crude preheat", "distillation column"],
+      "solutions": "Crude preheat train HEN revamps, fired heater combustion efficiency tuning, sour water stripping heat exchange, and turbine exhaust heat recovery."
+    },
+    {
+      "id": "buildings",
+      "name": "Commercial Buildings & Campuses",
+      "keywords": ["buildings", "commercial", "offices", "towers", "data center", "district cooling", "bms", "hvac"],
+      "solutions": "District cooling plant interface optimization, primary-secondary pumping conversion, indoor air quality economizers, and smart building energy management."
+    },
+    {
+      "id": "hospitality",
+      "name": "Hospitality & Resorts",
+      "keywords": ["hospitality", "hotel", "resort", "laundry", "domestic hot water", "swimming pool", "kitchen"],
+      "solutions": "Commercial laundry heat & water recycling, central domestic hot water (DHW) heat pumps, pool heating heat recovery, and guest room HVAC occupancy staging."
+    },
+    {
+      "id": "healthcare",
+      "name": "Healthcare & Hospitals",
+      "keywords": ["healthcare", "hospital", "clinic", "cleanroom", "sterilizer", "medical", "critical care"],
+      "solutions": "Uninterrupted cooling resilience, autoclave clean steam recovery, high-efficiency HEPA HVAC pressurization balance, and sterile RO water system optimization."
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What is Exergy and why does it matter over Energy?",
+      "keywords": ["what is exergy", "exergy definition", "difference", "thermodynamics"],
+      "answer": "Energy is conserved according to the First Law of Thermodynamics, but exergy represents the useful work potential of that energy. Low-temperature heat cannot perform the same work as high-pressure steam. By conducting exergy analysis, Exergy Solutions pinpoints where true thermodynamic irreversibilities and inefficiencies occur, providing far superior economic and energy savings."
+    },
+    {
+      "question": "How do you start an engagement with a new client?",
+      "keywords": ["how to start", "engagement", "audit", "first step", "proposal", "consultation"],
+      "answer": "We follow our proven 4-stage methodology: Diagnose, Model, Design, and Implement. It begins with an initial on-site or virtual walk-through diagnosis and baseline energy assessment to uncover quick wins and major capital recovery projects."
+    },
+    {
+      "question": "What is the typical return on investment (ROI)?",
+      "keywords": ["roi", "payback", "cost", "investment", "price", "savings"],
+      "answer": "Most of our operational and low-capex optimization projects have a payback period under 6 to 12 months. Capital heat recovery and process integration retrofits typically achieve a full ROI within 1.5 to 3 years."
+    },
+    {
+      "question": "Do you provide services in the UAE and Gulf region?",
+      "keywords": ["uae", "dubai", "abu dhabi", "gulf", "saudi", "middle east", "location"],
+      "answer": "Yes! Exergy Solutions is headquartered in Dubai, UAE, and operates extensively across the GCC region, helping industrial operators and commercial facilities align with UAE Net Zero 2050 and regional energy efficiency mandates."
+    }
+  ]
+}
