@@ -12,7 +12,7 @@ export const chatQABankSeed: QABankItem[] = [
     id: "qa-001",
     question: "What does Exergy Solutions do?",
     answer: "We apply thermodynamics and exergy analysis to slash the capex and opex of energy- and water-intensive operations — delivered as guaranteed, turnkey implementation.",
-    keywords: ["what", "do", "company", "about", "exergy", "solutions"],
+    keywords: ["company", "overview", "business", "profile", "solutions"],
     category: "general",
     source_page: "Home"
   },
@@ -20,7 +20,7 @@ export const chatQABankSeed: QABankItem[] = [
     id: "qa-002",
     question: "What is exergy analysis?",
     answer: "Most audits count kilowatt-hours (first law). We measure exergy — the useful work energy can actually do (second law). That distinction lets us find savings conventional methods overlook.",
-    keywords: ["exergy", "analysis", "thermodynamics", "physics", "second law"],
+    keywords: ["exergy", "analysis", "thermodynamics", "physics", "second law", "definition"],
     category: "approach",
     source_page: "Approach"
   },
@@ -28,7 +28,7 @@ export const chatQABankSeed: QABankItem[] = [
     id: "qa-003",
     question: "How is this different from a normal energy audit?",
     answer: "First-law audits assume energy is conserved and overlook temperature/pressure degradation. Exergy analysis reveals where useful work potential is destroyed, enabling 25–30% typical resource cuts.",
-    keywords: ["audit", "different", "normal", "conventional", "first law"],
+    keywords: ["audit", "different", "normal", "conventional", "first law", "difference"],
     category: "approach",
     source_page: "Approach"
   },
@@ -36,7 +36,7 @@ export const chatQABankSeed: QABankItem[] = [
     id: "qa-004",
     question: "What does guaranteed, turnkey mean?",
     answer: "We don't merely supply consulting reports. We engineer, procure, and install the complete solution, backing our results with contractual performance guarantees against baseline instrumentation.",
-    keywords: ["guarantee", "turnkey", "contract", "performance", "promise"],
+    keywords: ["guarantee", "turnkey", "contract", "performance", "promise", "guaranteed"],
     category: "benefits",
     source_page: "Benefits"
   },
@@ -44,7 +44,7 @@ export const chatQABankSeed: QABankItem[] = [
     id: "qa-005",
     question: "What services do you offer?",
     answer: "We provide six core engineering solutions: Cooling optimization, Heating & steam, Drying processes, Water quality, Waste-heat recovery, and Process integration.",
-    keywords: ["services", "offer", "solutions", "scope"],
+    keywords: ["services", "offer", "solutions", "scope", "offerings"],
     category: "services",
     source_page: "Services"
   },
@@ -84,7 +84,7 @@ export const chatQABankSeed: QABankItem[] = [
     id: "qa-010",
     question: "Which industries do you serve?",
     answer: "We specialize in heavy industrial sectors: Paper, Processing (Food & Chemical), Petroleum, Buildings, Hospitality, and Healthcare.",
-    keywords: ["industries", "sectors", "clients", "plants"],
+    keywords: ["industries", "sectors", "clients", "plants", "factory"],
     category: "industries",
     source_page: "Industries"
   },

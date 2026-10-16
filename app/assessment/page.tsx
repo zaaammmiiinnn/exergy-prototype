@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { servicesSeed } from "@/content/seed/services";
 import { industriesSeed } from "@/content/seed/industries";
-import { pingAction } from "@/app/actions/ping";
+import { submitAssessment } from "@/app/actions/submit-assessment";
 import { MotionDiv } from "@/components/site/motion";
 import { CheckCircle2, ChevronRight, ChevronLeft, Send } from "lucide-react";
 
@@ -125,16 +125,33 @@ function AssessmentContent() {
     setSubmitting(true);
 
     try {
-      // Call test Server Action
-      await pingAction(`Assessment submitted by ${formData.email}`);
-      
+      const res = await submitAssessment({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        jobTitle: formData.jobTitle,
+        sector: formData.sector,
+        country: formData.country,
+        facilityType: formData.facilityType,
+        services: formData.services,
+        mainChallenge: formData.mainChallenge,
+        timeline: formData.timeline,
+        consent: formData.consent,
+      });
+
+      if (!res.success) {
+        alert(res.error || "Submission failed. Please check your entries.");
+        setSubmitting(false);
+        return;
+      }
+
       // Clear session draft
       try {
         sessionStorage.removeItem(STORAGE_KEY);
       } catch {}
 
-      const refId = `EX-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-      router.push(`/assessment/thank-you?ref=${refId}&name=${encodeURIComponent(formData.name)}`);
+      router.push(`/assessment/thank-you?ref=${res.shortId}&name=${encodeURIComponent(formData.name)}`);
     } catch (err) {
       console.error(err);
       alert("Submission encountered an issue. Please try again or email contact@exergy-solutions.com.");

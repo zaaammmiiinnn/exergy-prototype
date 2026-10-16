@@ -1,294 +1,133 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { MessageSquare, X, Send, Bot, User, ArrowRight, Phone, RotateCcw } from "lucide-react";
-import { chatQABankSeed } from "@/content/seed/chatbot";
-import { servicesSeed } from "@/content/seed/services";
-import { industriesSeed } from "@/content/seed/industries";
+import { MessageSquare, X, Send, Bot, RotateCcw } from "lucide-react";
+import {
+  handleChatMessage,
+  ChatSessionState,
+  ChatEngineOutput,
+} from "@/lib/chatbot/engine";
 
-interface Message {
+interface DisplayMessage {
   id: string;
   sender: "bot" | "visitor";
   text: string;
   quickReplies?: { label: string; action: string }[];
 }
 
-const STORAGE_KEY = "exergy_chat_token_v1";
+const STORAGE_KEY = "exergy_chat_state_v1";
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [sessionState, setSessionState] = useState<ChatSessionState>({
+    currentNode: "main",
+    mode: "menu",
+    fallbackCount: 0,
+  });
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // Restore chat state safely
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.messages && parsed.messages.length > 0) {
+          setMessages(parsed.messages);
+          if (parsed.state) setSessionState(parsed.state);
+          return;
+        }
+      }
+    } catch {
+      // storage quota or blocked
+    }
+  }, []);
+
+  // Save chat state safely
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ messages: messages.slice(-30), state: sessionState })
+        );
+      } catch {
+        // storage blocked
+      }
+    }
+  }, [messages, sessionState]);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Initialize welcome message with menu
-      initWelcomeMenu();
+      const initial = handleChatMessage(sessionState, "0");
+      setMessages([
+        {
+          id: "m-welcome",
+          sender: "bot",
+          text: initial.reply,
+          quickReplies: initial.quickReplies,
+        },
+      ]);
+      setSessionState(initial.nextState);
     }
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [isOpen, messages]);
 
-  const initWelcomeMenu = () => {
-    const welcomeMsg: Message = {
-      id: "m-init",
-      sender: "bot",
-      text: "Welcome to Exergy Solutions. I am your automated engineering assistant. How can we optimize your plant today?\n\n1. Services Overview\n2. Industries Served\n3. Request an Assessment\n4. Frequently Asked Questions\n5. About Our Physics Approach\n6. Talk to a Human Specialist",
-      quickReplies: [
-        { label: "1. Services", action: "menu_services" },
-        { label: "2. Industries", action: "menu_industries" },
-        { label: "3. Request Assessment", action: "action_assessment" },
-        { label: "4. FAQs", action: "menu_faqs" },
-        { label: "5. Approach", action: "menu_approach" },
-        { label: "6. Talk to a Human", action: "action_human" },
-      ],
-    };
-    setMessages([welcomeMsg]);
-  };
+  const dispatchInput = (text: string) => {
+    if (!text.trim()) return;
 
-  const handleAction = (action: string) => {
-    if (action === "menu_main" || action === "0") {
-      initWelcomeMenu();
-      return;
-    }
-
-    if (action === "menu_services" || action === "1") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "Services" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "We optimize 6 core industrial energy and water streams:\n\n• Cooling optimization (Chilled water & refrigeration)\n• Heating & steam (Boilers & heat recovery)\n• Drying processes (Thermal & mechanical dewatering)\n• Water quality (Desalination & effluent reuse)\n• Waste-heat recovery (ORC & cascading)\n• Process integration (Plant-wide pinch analysis)",
-          quickReplies: [
-            { label: "Cooling Details", action: "srv_cooling" },
-            { label: "Heating Details", action: "srv_heating" },
-            { label: "Water Quality Details", action: "srv_water" },
-            { label: "Main Menu", action: "menu_main" },
-            { label: "Talk to Human", action: "action_human" },
-          ],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "menu_industries" || action === "2") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "Industries" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "We specialize in heavy operations:\n\n1. Paper Mills\n2. Processing (Food & Chemical)\n3. Petroleum & Refining\n4. Commercial Buildings\n5. Hospitality\n6. Healthcare & Cleanrooms\n\nWhere energy and water are mission-critical.",
-          quickReplies: [
-            { label: "Book Assessment", action: "action_assessment" },
-            { label: "Main Menu", action: "menu_main" },
-            { label: "Talk to Human", action: "action_human" },
-          ],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "action_assessment" || action === "3") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "Request Assessment" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "You can book our comprehensive 4-step thermodynamic assessment online. We reply within one business day with preliminary benchmarks.",
-          quickReplies: [
-            { label: "Launch Assessment Form", action: "link_assessment" },
-            { label: "Main Menu", action: "menu_main" },
-          ],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "menu_faqs" || action === "4") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "FAQs" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "Common questions from plant directors:\n\n• What is exergy analysis?\n• How is this different from a normal energy audit?\n• What does guaranteed turnkey mean?\n• How much can we save? (Typical: 25–30% cut)",
-          quickReplies: [
-            { label: "What is Exergy?", action: "faq_exergy" },
-            { label: "How much can I save?", action: "faq_savings" },
-            { label: "What is the guarantee?", action: "faq_guarantee" },
-            { label: "Main Menu", action: "menu_main" },
-          ],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "menu_approach" || action === "5") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "Approach" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "Efficiency engineered from the laws of physics. While first-law audits simply tally kilowatt-hours, we measure useful work potential (second law) and eliminate thermodynamic irreversibility.",
-          quickReplies: [
-            { label: "Main Menu", action: "menu_main" },
-            { label: "Talk to Human", action: "action_human" },
-          ],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "action_human" || action === "6") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "Talk to a human" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "Our engineering operations team has been notified at neuralwaves.official@gmail.com and sarfraz@exergy-solutions.com. You can also reach our Dubai headquarters directly at 334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE.",
-          quickReplies: [
-            { label: "Request Assessment", action: "action_assessment" },
-            { label: "Main Menu", action: "menu_main" },
-          ],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "faq_exergy") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "What is exergy?" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "Exergy is the portion of energy that can be converted into useful mechanical or electrical work under ambient conditions. Normal audits treat all heat equally; exergy measures true thermodynamic quality.",
-          quickReplies: [{ label: "Main Menu", action: "menu_main" }, { label: "Talk to Human", action: "action_human" }],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "faq_savings") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "How much can I save?" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "From well-designed systems we attempt to reduce 5–10%, and in general we have experience of reducing resource utilisation by 25–30%.",
-          quickReplies: [{ label: "Request Assessment", action: "action_assessment" }, { label: "Main Menu", action: "menu_main" }],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "faq_guarantee") {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), sender: "visitor", text: "What is the guarantee?" },
-        {
-          id: crypto.randomUUID(),
-          sender: "bot",
-          text: "We deliver turnkey implementation with performance guarantees, so savings are contractual, measured, and verified against baseline instrumentation.",
-          quickReplies: [{ label: "Request Assessment", action: "action_assessment" }, { label: "Main Menu", action: "menu_main" }],
-        },
-      ]);
-      return;
-    }
-
-    if (action === "link_assessment") {
+    // Check special link action
+    if (text === "start_assessment" || text === "assessment") {
       window.location.href = "/assessment";
       return;
     }
-  };
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    const userInput = input.trim();
-    setInput("");
-
-    // Add user message
-    const userMsg: Message = {
+    const userMessage: DisplayMessage = {
       id: crypto.randomUUID(),
       sender: "visitor",
-      text: userInput,
+      text,
     };
-    setMessages((prev) => [...prev, userMsg]);
 
-    // Deterministic keyword lookup against Q&A bank
-    const normalized = userInput.toLowerCase();
-    
-    // Quick number routing:
-    if (normalized === "1") return handleAction("menu_services");
-    if (normalized === "2") return handleAction("menu_industries");
-    if (normalized === "3") return handleAction("action_assessment");
-    if (normalized === "4") return handleAction("menu_faqs");
-    if (normalized === "5") return handleAction("menu_approach");
-    if (normalized === "6" || normalized.includes("human") || normalized.includes("person") || normalized.includes("agent")) {
-      return handleAction("action_human");
-    }
-    if (normalized === "0" || normalized === "menu" || normalized === "main") {
-      return handleAction("menu_main");
-    }
+    const output: ChatEngineOutput = handleChatMessage(sessionState, text);
 
-    // Match keywords
-    let bestMatch = null;
-    let maxOverlap = 0;
+    const botMessage: DisplayMessage = {
+      id: crypto.randomUUID(),
+      sender: "bot",
+      text: output.reply,
+      quickReplies: output.quickReplies,
+    };
 
-    for (const item of chatQABankSeed) {
-      const matchCount = item.keywords.filter((kw) => normalized.includes(kw)).length;
-      if (matchCount > maxOverlap) {
-        maxOverlap = matchCount;
-        bestMatch = item;
-      }
-    }
+    setMessages((prev) => [...prev, userMessage, botMessage]);
+    setSessionState(output.nextState);
+  };
 
-    setTimeout(() => {
-      if (bestMatch && maxOverlap >= 1) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            sender: "bot",
-            text: bestMatch.answer,
-            quickReplies: [
-              { label: "Request Assessment", action: "action_assessment" },
-              { label: "Main Menu", action: "menu_main" },
-              { label: "Talk to Human", action: "action_human" },
-            ],
-          },
-        ]);
-      } else {
-        // Fallback message with menu
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            sender: "bot",
-            text: "I didn't quite catch that. Here is our menu, or you can speak with a human specialist:",
-            quickReplies: [
-              { label: "1. Services", action: "menu_services" },
-              { label: "2. Industries", action: "menu_industries" },
-              { label: "3. Assessment", action: "action_assessment" },
-              { label: "Talk to a Human", action: "action_human" },
-            ],
-          },
-        ]);
-      }
-    }, 300);
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    const currentInput = input;
+    setInput("");
+    dispatchInput(currentInput);
+  };
+
+  const resetChat = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+    const initial = handleChatMessage(
+      { currentNode: "main", mode: "menu", fallbackCount: 0 },
+      "0"
+    );
+    setMessages([
+      {
+        id: "m-welcome",
+        sender: "bot",
+        text: initial.reply,
+        quickReplies: initial.quickReplies,
+      },
+    ]);
+    setSessionState(initial.nextState);
   };
 
   return (
@@ -322,7 +161,7 @@ export function ChatWidget() {
 
             <div className="flex items-center gap-1">
               <button
-                onClick={() => initWelcomeMenu()}
+                onClick={resetChat}
                 title="Restart Menu"
                 className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               >
@@ -360,7 +199,7 @@ export function ChatWidget() {
                     {m.quickReplies.map((qr, idx) => (
                       <button
                         key={idx}
-                        onClick={() => handleAction(qr.action)}
+                        onClick={() => dispatchInput(qr.action)}
                         className="text-[11px] font-medium bg-slate-900 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 rounded-lg px-2.5 py-1 transition-colors"
                       >
                         {qr.label}
@@ -374,7 +213,7 @@ export function ChatWidget() {
           </div>
 
           {/* Input Bar */}
-          <form onSubmit={handleSend} className="p-3 border-t border-slate-800 bg-navy-950 flex gap-2">
+          <form onSubmit={handleFormSubmit} className="p-3 border-t border-slate-800 bg-navy-950 flex gap-2">
             <input
               type="text"
               value={input}
