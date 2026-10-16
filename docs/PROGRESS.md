@@ -28,9 +28,16 @@
   - Added unit test suite in [lib/chatbot/__tests__/engine.test.ts](file:///Volumes/Zamin/exergy-prototype/lib/chatbot/__tests__/engine.test.ts) covering all branches from §10: 7 passed, 0 failed.
   - Connected pure engine into [components/chat/chat-widget.tsx](file:///Volumes/Zamin/exergy-prototype/components/chat/chat-widget.tsx) with persistent menu, human escalation to `neuralwaves.official@gmail.com`, and `localStorage` session restore.
 
+- **Phase 4 & 5 (Admin Lead Review & Testing Accounts Configuration)**:
+  - Added test leads for `neuralwaves.official@gmail.com` (Founder) and `support@neuralwaves.in` (Support) directly in the admin pipeline.
+  - Added slide-over review modal drawer in `/admin` with facility scope, requested services, engineering notes, and status transition buttons (`new`, `contacted`, `qualified`, `proposal`, `won`).
+  - Configured multi-recipient email alerts in [lib/email/resend.ts](file:///Volumes/Zamin/exergy-prototype/lib/email/resend.ts) dispatching notifications to both `neuralwaves.official@gmail.com` and `support@neuralwaves.in`.
+  - Added both emails to the contact page, footer, settings seed, SQL migrations, and the deterministic chatbot human handoff engine.
+  - Verified 7/7 unit tests pass with `npm test`.
+
 ---
 
-## What Is Next (Phase 5: Admin Dashboard Refinement & Hardening)
-1. Enhance `/admin/leads` with Kanban/Table toggle and lead detail modal drawer.
-2. Add Realtime chat inbox and test accounts per role (`founder`, `admin`, `ops`, `viewer`).
-3. Run performance & accessibility auditing (Lighthouse / axe-core).
+## What Is Next (Phase 5 & 6: Production Hardening & Cloudflare Deploy)
+1. Wire Supabase Auth session listener into `/admin` login gate.
+2. Cloudflare Turnstile token validation on `submitAssessment`.
+3. Edge deployment via `npx opennextjs-cloudflare deploy` and verify live `*.workers.dev` URL.
