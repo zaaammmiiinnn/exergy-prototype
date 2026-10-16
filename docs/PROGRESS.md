@@ -35,6 +35,14 @@
   - Added both emails to the contact page, footer, settings seed, SQL migrations, and the deterministic chatbot human handoff engine.
   - Verified 7/7 unit tests pass with `npm test`.
 
+- **Phase 5 (Service Video Integration & Deep Thermodynamic Blueprints)**:
+  - Formally updated `docs/IMPLEMENTATION_PLAN.md` (§5.3) with client-requested service video specifications, dual WebM/MP4 encoding rules, and Cloudflare Stream / R2 architecture.
+  - Built reusable `ServiceVideoPlayer` component with custom accessible controls, 4K simulation indicator, ambient glow, and timestamped chapter scrub points.
+  - Built interactive `ServicesVideoShowcase` on `/services` featuring quick-tab switching across all 6 core services (Cooling, Heating, Drying, Water, Waste-Heat, Process Integration).
+  - Expanded all 6 service detail routes (`/services/[slug]`) with full video walkthroughs, Second-Law thermodynamic physics analyses (Carnot COP, entropy destruction $T_0 \dot{S}_{gen}$), Specific Energy Consumption (SEC) benchmark reductions, and turnkey equipment scopes.
+  - Updated `public.services` database schema in [supabase/migrations/20261016_initial_schema.sql](file:///Volumes/Zamin/exergy-prototype/supabase/migrations/20261016_initial_schema.sql) with video columns.
+  - Verified 100% clean Next.js production build (`npm run build`) and unit tests passing (`npm test`).
+
 ---
 
 ## What Is Next (Phase 5 & 6: Production Hardening & Cloudflare Deploy)
