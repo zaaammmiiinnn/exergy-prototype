@@ -4,7 +4,8 @@ import { servicesSeed } from "@/content/seed/services";
 import { ServiceCard } from "@/components/site/service-card";
 import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
-import { ArrowRight, Layers } from "lucide-react";
+import { ServicesVideoShowcase } from "@/components/site/services-video-showcase";
+import { ArrowRight, Layers, Film, Sparkles } from "lucide-react";
 
 export const metadata = {
   title: "Services | Exergy Solutions Dubai",
@@ -30,16 +31,48 @@ export default function ServicesPage() {
             </MotionDiv>
             <MotionDiv delay={0.25}>
               <p className="text-lg text-slate-300 leading-relaxed">
-                From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume.
+                From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume through rigorous second-law thermodynamic analysis.
               </p>
             </MotionDiv>
           </div>
         </div>
       </section>
 
+      {/* Interactive Video Showcase Section */}
+      <section className="py-20 bg-slate-950 text-white border-b border-slate-800">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
+          <div className="max-w-3xl space-y-3">
+            <div className="flex items-center gap-2 text-teal-400 font-mono text-xs uppercase font-semibold">
+              <Film className="w-4 h-4" />
+              <span>Interactive Service Video Demonstrations</span>
+            </div>
+            <h2 className="text-3xl font-extrabold text-white">
+              Thermodynamic Engineering in Action
+            </h2>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Select any of our core industrial streams to view simulated exergy recovery, equipment configurations, and verified performance benchmarks.
+            </p>
+          </div>
+
+          <ServicesVideoShowcase />
+        </div>
+      </section>
+
       {/* Services Grid */}
       <section className="py-20 bg-slate-950 text-white">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="mb-12 max-w-2xl space-y-2">
+            <span className="text-xs font-mono uppercase text-teal-400 tracking-wider font-semibold">
+              Complete Service Portfolio
+            </span>
+            <h2 className="text-3xl font-bold text-white">
+              Our 6 Core Engineering Solutions
+            </h2>
+            <p className="text-sm text-slate-400">
+              Each service is engineered with guaranteed performance metrics and turnkey implementation.
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {servicesSeed.map((service, index) => (
               <ServiceCard key={service.id} service={service} index={index} />

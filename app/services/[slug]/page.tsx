@@ -6,7 +6,20 @@ import { servicesSeed } from "@/content/seed/services";
 import { industriesSeed } from "@/content/seed/industries";
 import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
-import { CheckCircle2, ArrowRight, Gauge, ChevronRight, ShieldCheck, Factory } from "lucide-react";
+import { ServiceVideoPlayer } from "@/components/site/service-video-player";
+import {
+  CheckCircle2,
+  ArrowRight,
+  Gauge,
+  ChevronRight,
+  ShieldCheck,
+  Factory,
+  Zap,
+  Cpu,
+  TrendingDown,
+  Layers,
+  Sparkles,
+} from "lucide-react";
 
 export function generateStaticParams() {
   return servicesSeed.map((s) => ({
@@ -41,7 +54,7 @@ export default function ServiceDetailPage({
   return (
     <div className="flex flex-col">
       {/* Breadcrumb & Hero */}
-      <section className="bg-navy-950 text-white pt-12 pb-20 border-b border-slate-800 relative">
+      <section className="bg-navy-950 text-white pt-12 pb-16 border-b border-slate-800 relative">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mb-6">
             <Link href="/" className="hover:text-teal-400 transition-colors">Home</Link>
@@ -97,6 +110,7 @@ export default function ServiceDetailPage({
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 500px"
+                  priority
                 />
               </div>
             </div>
@@ -104,11 +118,39 @@ export default function ServiceDetailPage({
         </div>
       </section>
 
-      {/* Scope Details & Highlights */}
+      {/* Video Walkthrough Section */}
+      <section className="py-16 bg-slate-950 text-white border-b border-slate-800">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="max-w-3xl mb-8 space-y-2">
+            <span className="text-xs font-mono uppercase text-teal-400 tracking-wider font-semibold">
+              Live Engineering Demonstration
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              Thermodynamic Video Walkthrough
+            </h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Examine where useful exergy is destroyed in nominal systems and witness how our turnkey intervention restores optimal thermodynamic performance.
+            </p>
+          </div>
+
+          <ServiceVideoPlayer
+            title={service.video_title}
+            subtitle={service.title}
+            videoUrl={service.video_url}
+            posterUrl={service.video_poster}
+            duration={service.video_duration}
+            chapters={service.video_chapters}
+            serviceTitle={service.title}
+          />
+        </div>
+      </section>
+
+      {/* Scope Details & Deep Thermodynamic Analysis */}
       <section className="py-20 bg-slate-950 text-white">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-8 space-y-8">
+            <div className="lg:col-span-8 space-y-10">
+              {/* Core Scope */}
               <div>
                 <h2 className="text-2xl font-bold text-white mb-4">
                   What We Do & Where Waste Occurs
@@ -118,6 +160,21 @@ export default function ServiceDetailPage({
                 </p>
               </div>
 
+              {/* Second Law Thermodynamic Physics Card */}
+              <div className="p-7 rounded-2xl bg-slate-900/80 border border-teal-500/30 space-y-4 shadow-xl">
+                <div className="flex items-center gap-3 text-teal-400 font-mono text-xs uppercase font-bold tracking-wider">
+                  <Zap className="w-4 h-4" />
+                  <span>Second-Law Thermodynamic Principle</span>
+                </div>
+                <h3 className="text-lg font-bold text-white">
+                  Why Conventional Audits Fail and How Exergy Succeeds
+                </h3>
+                <p className="text-sm text-slate-300 leading-relaxed font-sans">
+                  {service.thermodynamic_principle}
+                </p>
+              </div>
+
+              {/* Key Intervention Vectors */}
               <div>
                 <h3 className="text-xl font-bold text-white mb-4">
                   Key Intervention Vectors
@@ -132,13 +189,58 @@ export default function ServiceDetailPage({
                 </div>
               </div>
 
+              {/* Specific Energy Consumption & Equipment Scope */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+                  <div className="flex items-center gap-2 text-teal-400 font-mono text-xs uppercase font-semibold">
+                    <TrendingDown className="w-4 h-4" />
+                    <span>Specific Energy Consumption (SEC)</span>
+                  </div>
+                  <h4 className="text-base font-bold text-white">Performance KPI Benchmark</h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {service.sec_kpi}
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+                  <div className="flex items-center gap-2 text-teal-400 font-mono text-xs uppercase font-semibold">
+                    <Layers className="w-4 h-4" />
+                    <span>Payback & Financial ROI</span>
+                  </div>
+                  <h4 className="text-base font-bold text-white">Contractual Guarantee</h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {service.roi_payback}
+                  </p>
+                </div>
+              </div>
+
+              {/* Turnkey Equipment Scope */}
+              {service.equipment_scope && service.equipment_scope.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-white">
+                    Turnkey Equipment & Engineering Scope
+                  </h3>
+                  <div className="space-y-2.5">
+                    {service.equipment_scope.map((eq, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/40 border border-slate-800/80 text-xs text-slate-300"
+                      >
+                        <Cpu className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+                        <span>{eq}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Performance Guarantee Note */}
               <div className="p-6 rounded-2xl bg-teal-950/20 border border-teal-500/30 flex items-start gap-4">
                 <ShieldCheck className="w-8 h-8 text-teal-400 shrink-0" />
                 <div>
                   <h4 className="font-bold text-white text-base">Turnkey Delivery with Guaranteed Savings</h4>
                   <p className="text-sm text-slate-400 mt-1">
-                    Every optimization project implemented by Exergy Solutions is backed by contractual performance guarantees measured against baseline utility instrumentation.
+                    Every optimization project implemented by Exergy Solutions is backed by contractual performance guarantees measured against baseline utility instrumentation under IPMVP protocols.
                   </p>
                 </div>
               </div>
@@ -174,9 +276,10 @@ export default function ServiceDetailPage({
                     <Link
                       key={s.slug}
                       href={`/services/${s.slug}`}
-                      className="block text-slate-400 hover:text-white transition-colors py-1"
+                      className="block text-slate-400 hover:text-white transition-colors py-1 flex items-center justify-between"
                     >
-                      {s.title}
+                      <span>{s.title}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
                     </Link>
                   ))}
                 </div>

@@ -331,14 +331,40 @@ Meta descriptions are drafts for approval. `H1: SOURCE: CRAWL` means use the ver
 | `/` | Exergy Solutions \| Turn Wasted Energy and Water into Profit | H1 "Turn wasted energy and water into profit"; subhead from old site; background: navy with animated flow lines | Stat strip → Why exergy (diagram) → 4 service cards → Approach in 4 steps → Industries grid → Benefits → Testimonials/logos (if any) → CTA band | Hero, after services, final band, mobile sticky | Flow lines, count-up, card stagger, step line-draw | Cards → service pages; industries → `/industries#slug`; approach → `/approach` |
 | `/about` | About Exergy Solutions \| Dubai Energy Efficiency Consultancy | H1 `SOURCE: CRAWL` | Story → positioning → expertise → team (if sourced) → location → CTA band | Single "Request an assessment" | Fade-up, light parallax | `/approach`, `/services`, `/contact` |
 | `/approach` | Our Approach \| Exergy Analysis & Turnkey Delivery | H1 `SOURCE: CRAWL` | What exergy is (diagram) → why it finds more than an energy audit → method steps → capex/opex message → CTA | Request an assessment | Scroll-driven step draw, Sankey reveal | Each service; `/benefits` |
-| `/services` | Services \| Cooling, Heating & Steam, Water, Process Integration | H1 `SOURCE: CRAWL` | Intro → 4 alternating split cards → "How we deliver" → industries teaser → CTA | Request an assessment | Card stagger | `/services/[slug]` |
-| `/services/[cooling\|heating\|water\|process]` | `{Service} \| Exergy Solutions` | H1 = service title; subhead = old-site description; image OPEN QUESTION | What it is → where waste occurs → what we do → benefits → applicable industries → related applications → FAQ → CTA | Assessment (prefilled `?service=`), talk to us | Per-service SVG reveal | Sibling services, `/applications`, `/assessment?service=` |
+| `/services` | Services \| Cooling, Heating, Drying, Water, Waste Heat, Process Integration | H1 "Turnkey Consulting Solutions Across Every Energy and Water Flow" | Intro → Interactive Video Showcase Player (6-service tab switcher) → 6 service cards → "How we deliver" → industries teaser → CTA | Request an assessment | Card stagger, video tab transition | `/services/[slug]` |
+| `/services/[slug]` (6 routes: cooling, heating, drying, water, waste-heat, process) | `{Service} \| Exergy Solutions` | H1 = service title; subhead = verified engineering description | Hero → 4K Video Walkthrough Player (with chapter navigation & duration) → Second-Law Thermodynamic Analysis card → Key Intervention Vectors → Specific Energy Consumption (SEC) benchmark → Payback & Contractual Guarantee → Turnkey Equipment Scope → Applicable Industries sidebar → Sibling Services navigation → Mobile Sticky CTA → CTA Band | Assessment (prefilled `?service=`), speak to engineer | Video player overlay, card stagger, SVG reveal | Sibling services, `/industries`, `/assessment?service=` |
 | `/applications` | Applications \| Where Exergy Solutions Delivers Savings | H1 `SOURCE: CRAWL` | Filterable grid (service/industry) → detail drawer → CTA | Request an assessment | Layout animation on filter | Service and industry pages |
-| `/industries` | Industries Served \| Oil & Gas, Power, Manufacturing, Paper, Food & Beverage | H1 `SOURCE: CRAWL` | Tiles → one section per industry (challenge, services, applications) → CTA | Request an assessment | Tile hover, scroll-spy anchors | Relevant services |
+| `/industries` | Industries Served \| Paper, Processing, Petroleum, Buildings, Hospitality, Healthcare | H1 `SOURCE: CRAWL` | Tiles → one section per industry (challenge, services, applications) → CTA | Request an assessment | Tile hover, scroll-spy anchors | Relevant services |
 | `/benefits` | Why Exergy Solutions \| Benefits & Guarantee | H1 `SOURCE: CRAWL` | Benefit blocks → guaranteed turnkey → comparison table (only if sourced) → stats → testimonials → CTA | Request an assessment | Count-up, row reveal | Services, assessment |
 | `/assessment` | Request an Assessment \| Exergy Solutions | Two columns: reassurance copy + multi-step form | Form (§6) with privacy note | Submit | Step slide/fade, progress bar | `/privacy`; prefill from query params |
+| `/assessment/thank-you` | None | New (noindex) | Reference ID, score indicator, timeline, next steps | Back to home | Step slide/fade | `/` |
 | `/contact` | Contact \| Exergy Solutions, Dubai | H1 `SOURCE: CRAWL` | Details + short form → map → assessment link → FAQ | Submit; tap-to-call | Minimal | `/assessment` |
 | `/privacy`, `/terms` | Privacy Policy / Terms of Service | Title only | Client-approved legal text. Structure supplied: data collected (form, chat, hashed IP, cookies), processors (Supabase, Resend, Cloudflare), retention, contact for requests | n/a | None | Footer |
+
+### 5.3 Service Video Integration Specification (Client Requirement)
+
+To provide industrial plant managers and technical directors with undeniable clarity on thermodynamic recovery, every service route incorporates high-definition video walkthroughs and interactive simulations.
+
+1. **Architecture & Hosting:**
+   - **Storage & Delivery:** Cloudflare R2 / Cloudflare Stream or high-performance CDN edge delivery.
+   - **Encoding Formats:** Dual WebM (VP9) and MP4 (H.264 / AAC) at 1080p, pre-optimized with faststart `moov` atom at the beginning of the container.
+   - **Poster Frame:** WebP pre-generated screenshot matching the exact aspect ratio (16:9), loaded eagerly with `priority` when above the fold or lazy-loaded when below.
+
+2. **Component Architecture (`ServiceVideoPlayer`):**
+   - **Controls:** Custom accessible HTML5 controls (Play/Pause, Mute/Unmute, Fullscreen toggle) styled with Exergy design tokens.
+   - **Chapter Scrub Points:** Interactive timestamp navigation allowing visitors to jump directly to key thermodynamic stages (e.g., *0:00 Baseline Irreversibility*, *1:15 Pinch Network Optimization*, *2:20 Verified M&V Results*).
+   - **Ambient Engineering Glow:** Subtle hardware-accelerated radial gradient glow mirroring ambient theme accents.
+   - **Performance Guarantee:** Videos are strictly lazy-loaded below the hero fold to protect the Core Web Vitals LCP threshold (< 2.5s). Autoplay is muted and plays inline on mobile without triggering OS fullscreen hijack.
+
+3. **6 Service Video Matrix:**
+   - **Cooling Optimization:** Chiller lift minimization, variable lift compressors, and delta-T syndrome mitigation.
+   - **Heating & Steam:** Steam trap acoustic telemetry, PRV exergy destruction analysis, and condensing flue economizers.
+   - **Drying Processes:** Thermal vs mechanical dewatering balance, exhaust air psychrometric enthalpy recovery, and MVR heat pumps.
+   - **Water Quality & Desalination:** Isobaric ceramic pressure exchange ERDs in seawater RO and low-energy zero liquid discharge (ZLD) crystallization.
+   - **Waste-Heat Recovery:** Organic Rankine Cycle (ORC) power generation and low-temperature absorption refrigeration driven by industrial waste heat.
+   - **Process Integration:** Whole-plant composite curve plotting, heat exchanger network (HEN) synthesis, and capital expenditure right-sizing.
+
+---
 
 ---
 

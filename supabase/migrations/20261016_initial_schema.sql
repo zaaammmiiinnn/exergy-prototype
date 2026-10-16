@@ -224,7 +224,16 @@ create table if not exists public.services (
   is_published boolean not null default true,
   locale text not null default 'en',
   seo_title text,
-  seo_description text
+  seo_description text,
+  video_url text,
+  video_poster text,
+  video_title text,
+  video_duration text,
+  video_chapters jsonb default '[]'::jsonb,
+  thermodynamic_principle text,
+  sec_kpi text,
+  equipment_scope text[] default '{}',
+  roi_payback text
 );
 
 create table if not exists public.industries (
