@@ -15,17 +15,17 @@ export function BenefitsSection() {
           <MotionDiv
             key={b.title}
             delay={i * 0.1}
-            className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 hover:border-teal-500/40 transition-colors"
+            className="bg-white border border-slate-200/90 rounded-2xl p-6 hover:border-teal-500 hover:shadow-md transition-all shadow-xs"
           >
-            <div className="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-5">
+            <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center mb-5">
               <Icon className="w-6 h-6" />
             </div>
 
-            <h4 className="text-xl font-bold text-white mb-2.5">
+            <h4 className="text-xl font-bold text-slate-900 mb-2.5">
               {b.title}
             </h4>
 
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed font-normal">
               {b.description}
             </p>
           </MotionDiv>

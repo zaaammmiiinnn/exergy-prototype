@@ -15,23 +15,23 @@ export function MethodSteps() {
           <MotionDiv
             key={step.step}
             delay={idx * 0.1}
-            className="relative bg-slate-900/60 border border-slate-800 rounded-xl p-6 hover:border-teal-500/40 transition-colors group"
+            className="relative bg-white border border-slate-200/90 rounded-2xl p-6 hover:border-teal-500 hover:shadow-md transition-all shadow-xs group"
           >
             {/* Step badge */}
             <div className="flex items-center justify-between mb-4">
-              <span className="font-mono text-xs font-bold text-teal-400 bg-teal-500/10 px-2.5 py-1 rounded border border-teal-500/20">
+              <span className="font-mono text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg border border-teal-200">
                 0{step.step}
               </span>
-              <div className="p-2 rounded-lg bg-slate-800/80 text-slate-300 group-hover:text-teal-300 group-hover:bg-slate-800 transition-colors">
+              <div className="p-2.5 rounded-xl bg-slate-100 text-slate-600 group-hover:text-teal-700 group-hover:bg-teal-50 transition-colors">
                 <IconComponent className="w-5 h-5" />
               </div>
             </div>
 
-            <h4 className="text-lg font-bold text-white mb-2 group-hover:text-teal-300 transition-colors">
+            <h4 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-700 transition-colors">
               {step.title}
             </h4>
 
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed font-normal">
               {step.description}
             </p>
           </MotionDiv>

@@ -42,11 +42,11 @@ export function ServicesVideoShowcase() {
               onClick={() => setSelectedSlug(s.slug)}
               className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition-all ${
                 isActive
-                  ? "bg-teal-500 text-slate-950 font-bold shadow-lg shadow-teal-500/20"
-                  : "bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800"
+                  ? "bg-teal-700 text-white font-bold shadow-md shadow-teal-700/20"
+                  : "bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs"
               }`}
             >
-              <span className={isActive ? "text-slate-950" : "text-teal-400"}>
+              <span className={isActive ? "text-white" : "text-teal-700"}>
                 {ICON_MAP[s.slug] || <Sparkles className="w-4 h-4" />}
               </span>
               <span>{s.title}</span>
@@ -68,12 +68,12 @@ export function ServicesVideoShowcase() {
         />
 
         {/* Quick summary below video */}
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <span className="text-xs font-mono text-teal-400 uppercase font-semibold">
+            <span className="text-xs font-mono text-teal-700 uppercase font-bold tracking-wider">
               Thermodynamic Objective
             </span>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
               {activeService.summary}
             </p>
           </div>
@@ -81,14 +81,14 @@ export function ServicesVideoShowcase() {
           <div className="shrink-0 flex items-center gap-3">
             <Link
               href={`/services/${activeService.slug}`}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-teal-400 hover:text-teal-300 text-xs font-bold transition-colors border border-slate-700"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors border border-slate-200"
             >
               <span>Full Technical Specs</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
             </Link>
             <Link
               href={`/assessment?service=${activeService.slug}`}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-500 hover:to-teal-400 text-white text-xs font-bold transition-all shadow-md"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-teal-600 hover:from-blue-800 hover:to-teal-700 text-white text-xs font-bold transition-all shadow-sm"
             >
               <span>Assess Stream</span>
             </Link>

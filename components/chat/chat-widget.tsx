@@ -146,16 +146,16 @@ export function ChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="w-[360px] sm:w-[400px] h-[520px] bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="w-[360px] sm:w-[400px] h-[520px] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
           {/* Header */}
-          <div className="bg-navy-950 border-b border-slate-800 p-4 flex items-center justify-between">
+          <div className="bg-slate-50 border-b border-slate-200 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 border border-teal-500/40 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 border border-teal-300 flex items-center justify-center">
                 <Bot className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white leading-none">Exergy Assistant</h3>
-                <span className="text-[10px] text-teal-400 font-mono">Deterministic Engine (No AI)</span>
+                <h3 className="text-sm font-bold text-slate-900 leading-none">Exergy Assistant</h3>
+                <span className="text-[10px] text-teal-700 font-mono">Deterministic Engine (No AI)</span>
               </div>
             </div>
 
@@ -163,13 +163,13 @@ export function ChatWidget() {
               <button
                 onClick={resetChat}
                 title="Restart Menu"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -177,7 +177,7 @@ export function ChatWidget() {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs bg-slate-50/50">
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -186,8 +186,8 @@ export function ChatWidget() {
                 <div
                   className={`p-3 rounded-xl max-w-[85%] leading-relaxed whitespace-pre-wrap ${
                     m.sender === "visitor"
-                      ? "bg-blue-600 text-white rounded-br-none"
-                      : "bg-slate-900 border border-slate-800 text-slate-200 rounded-bl-none shadow-sm"
+                      ? "bg-blue-600 text-white rounded-br-none shadow-sm"
+                      : "bg-white border border-slate-200 text-slate-800 rounded-bl-none shadow-sm"
                   }`}
                 >
                   {m.text}
@@ -200,7 +200,7 @@ export function ChatWidget() {
                       <button
                         key={idx}
                         onClick={() => dispatchInput(qr.action)}
-                        className="text-[11px] font-medium bg-slate-900 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 rounded-lg px-2.5 py-1 transition-colors"
+                        className="text-[11px] font-medium bg-white hover:bg-teal-50 text-teal-800 border border-teal-300/60 rounded-lg px-2.5 py-1 transition-colors shadow-xs"
                       >
                         {qr.label}
                       </button>
@@ -213,17 +213,17 @@ export function ChatWidget() {
           </div>
 
           {/* Input Bar */}
-          <form onSubmit={handleFormSubmit} className="p-3 border-t border-slate-800 bg-navy-950 flex gap-2">
+          <form onSubmit={handleFormSubmit} className="p-3 border-t border-slate-200 bg-slate-50 flex gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type option number (1-6) or question..."
-              className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500"
             />
             <button
               type="submit"
-              className="p-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-navy-950 font-bold transition-colors"
+              className="p-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition-colors"
             >
               <Send className="w-4 h-4" />
             </button>

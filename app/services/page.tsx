@@ -16,21 +16,21 @@ export default function ServicesPage() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="bg-navy-950 text-white pt-16 pb-20 border-b border-slate-800 relative">
+      <section className="bg-slate-50 text-slate-900 pt-16 pb-20 border-b border-slate-200 relative">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl space-y-6">
             <MotionDiv delay={0.05}>
-              <span className="text-teal-400 font-mono text-xs uppercase tracking-wider font-semibold">
+              <span className="text-teal-700 font-mono text-xs uppercase tracking-wider font-semibold">
                 Turnkey Engineering Services
               </span>
             </MotionDiv>
             <MotionDiv delay={0.15}>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
                 Consulting solutions across every energy and water flow
               </h1>
             </MotionDiv>
             <MotionDiv delay={0.25}>
-              <p className="text-lg text-slate-300 leading-relaxed">
+              <p className="text-lg text-slate-600 leading-relaxed">
                 From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume through rigorous second-law thermodynamic analysis.
               </p>
             </MotionDiv>
@@ -39,17 +39,17 @@ export default function ServicesPage() {
       </section>
 
       {/* Interactive Video Showcase Section */}
-      <section className="py-20 bg-slate-950 text-white border-b border-slate-800">
+      <section className="py-20 bg-white text-slate-900 border-b border-slate-200">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
           <div className="max-w-3xl space-y-3">
-            <div className="flex items-center gap-2 text-teal-400 font-mono text-xs uppercase font-semibold">
+            <div className="flex items-center gap-2 text-teal-700 font-mono text-xs uppercase font-semibold">
               <Film className="w-4 h-4" />
               <span>Interactive Service Video Demonstrations</span>
             </div>
-            <h2 className="text-3xl font-extrabold text-white">
+            <h2 className="text-3xl font-extrabold text-slate-900">
               Thermodynamic Engineering in Action
             </h2>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <p className="text-slate-600 text-sm leading-relaxed">
               Select any of our core industrial streams to view simulated exergy recovery, equipment configurations, and verified performance benchmarks.
             </p>
           </div>
@@ -59,16 +59,16 @@ export default function ServicesPage() {
       </section>
 
       {/* Services Grid */}
-      <section className="py-20 bg-slate-950 text-white">
+      <section className="py-20 bg-slate-50 text-slate-900">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="mb-12 max-w-2xl space-y-2">
-            <span className="text-xs font-mono uppercase text-teal-400 tracking-wider font-semibold">
+            <span className="text-xs font-mono uppercase text-teal-700 tracking-wider font-semibold">
               Complete Service Portfolio
             </span>
-            <h2 className="text-3xl font-bold text-white">
+            <h2 className="text-3xl font-bold text-slate-900">
               Our 6 Core Engineering Solutions
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600">
               Each service is engineered with guaranteed performance metrics and turnkey implementation.
             </p>
           </div>

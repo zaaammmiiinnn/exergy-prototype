@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark scroll-smooth">
-      <body className="min-h-screen bg-navy-950 text-slate-100 flex flex-col font-sans">
+    <html lang="en" className="scroll-smooth">
+      <body className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-teal-500/20 selection:text-teal-900">
         <Navbar />
         <main className="flex-1">{children}</main>
         <ChatWidget />
