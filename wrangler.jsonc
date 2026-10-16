@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "exergy-solutions",
+  "account_id": "a4fc344a969016e89b2f026b0bc87840",
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-10-15",
   "compatibility_flags": ["nodejs_compat"],
@@ -8,14 +9,8 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "r2_buckets": [
-    {
-      "binding": "NEXT_CACHE_WORKERS_KV",
-      "bucket_name": "exergy-solutions-cache"
-    }
-  ],
   "vars": {
-    "NEXT_PUBLIC_SITE_URL": "http://localhost:3000",
-    "ADMIN_NOTIFY_EMAILS": "neuralwaves.official@gmail.com"
+    "NEXT_PUBLIC_SITE_URL": "https://exergy-solutions.zaaammmiiinnn.workers.dev",
+    "ADMIN_NOTIFY_EMAILS": "neuralwaves.official@gmail.com,support@neuralwaves.in"
   }
 }
