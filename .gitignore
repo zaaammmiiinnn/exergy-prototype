@@ -1,37 +1,40 @@
 # Dependencies
 node_modules/
-frontend/node_modules/
-backend/venv/
-backend/env/
+.pnp
+.pnp.js
 .venv/
 env/
 venv/
 
-# Build artifacts
-dist/
-frontend/dist/
-dist-ssr/
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# Next.js & OpenNext build output
+.next/
+.open-next/
+out/
 build/
+dist/
+*.tsbuildinfo
+
+# Cloudflare Workers
+.dev.vars
+.wrangler/
 
 # Python cache & compiled files
 __pycache__/
-backend/__pycache__/
-backend/*/__pycache__/
 *.py[cod]
 *$py.class
 *.egg-info/
 .pytest_cache/
 
-# Databases & local files
-*.db
-*.sqlite
-*.sqlite3
-backend/exergy.db
-*.local
-
 # Environment variables & secrets
 .env
-.env.*
+.env*.local
+.env.development
+.env.test
+.env.production
 !.env.example
 
 # OS generated files

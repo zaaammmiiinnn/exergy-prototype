@@ -1,13 +1,39 @@
 {
-  "name": "exergy-prototype",
-  "private": true,
+  "name": "exergy-solutions",
   "version": "1.0.0",
-  "description": "Exergy Solutions — Full-Stack Energy & Water Consulting Platform",
+  "private": true,
   "scripts": {
-    "dev": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend run build",
-    "preview": "npm --prefix frontend run preview",
-    "install:frontend": "npm --prefix frontend install",
-    "postinstall": "npm --prefix frontend install"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "cf-build": "npx opennextjs-cloudflare build",
+    "cf-deploy": "npx opennextjs-cloudflare deploy",
+    "preview": "wrangler dev"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.11.9",
+    "lucide-react": "^0.453.0",
+    "next": "14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.0",
+    "tailwind-merge": "^2.5.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^0.6.6",
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.114.1"
   }
 }
