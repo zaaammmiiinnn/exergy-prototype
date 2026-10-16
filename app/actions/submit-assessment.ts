@@ -1,27 +1,10 @@
 "use server";
 
-import { z } from "zod";
 import { calculateLeadScore } from "@/lib/leads/scoring";
 import { sendAssessmentNotificationEmails } from "@/lib/email/resend";
 import { createServiceRoleClient } from "@/lib/supabase/service";
+import { assessmentSchema, type AssessmentFormValues } from "@/lib/leads/schema";
 
-export const assessmentSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid work email address"),
-  phone: z.string().optional(),
-  company: z.string().min(2, "Company name is required"),
-  jobTitle: z.string().optional(),
-  sector: z.string().min(2, "Sector is required"),
-  country: z.string().default("United Arab Emirates"),
-  facilityType: z.string().optional(),
-  services: z.array(z.string()).min(1, "Select at least one service"),
-  mainChallenge: z.string().optional(),
-  timeline: z.string().default("this_quarter"),
-  consent: z.boolean().refine((val) => val === true, "Privacy consent is required"),
-  turnstileToken: z.string().optional(),
-});
-
-export type AssessmentFormValues = z.infer<typeof assessmentSchema>;
 
 export async function submitAssessment(values: AssessmentFormValues) {
   // 1. Validate with Zod
@@ -67,38 +50,53 @@ export async function submitAssessment(values: AssessmentFormValues) {
     priority,
   });
 
-  // 5. Insert into Supabase leads table via Service Role
-  try {
-    const supabase = createServiceRoleClient();
-    const { error } = await supabase.from("leads").insert({
-      short_id: shortId,
-      source: "assessment",
-      status: "new",
-      full_name: data.name,
-      email: data.email,
-      phone: data.phone || null,
-      company: data.company,
-      job_title: data.jobTitle || null,
-      country: data.country,
-      sector: data.sector,
-      service_interest: data.services,
-      facility_type: data.facilityType || null,
-      main_challenge: data.mainChallenge || null,
-      timeline: data.timeline,
-      score,
-      priority,
-      consent_at: new Date().toISOString(),
-      email_status: {
-        admin_notified: emailResult.adminNotified,
-        visitor_replied: emailResult.visitorReplied,
-      },
-    });
+  // 5. Insert into Supabase leads table via Service Role (only if genuine Supabase credentials configured)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const isSupabaseConfigured =
+    Boolean(supabaseUrl &&
+    serviceKey &&
+    !supabaseUrl.includes("dummy") &&
+    !serviceKey.includes("dummy") &&
+    supabaseUrl.startsWith("https://"));
 
-    if (error) {
-      console.warn("[SUPABASE INSERT WARNING]", error.message);
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = createServiceRoleClient();
+      const { error } = await supabase.from("leads").insert({
+        short_id: shortId,
+        source: "assessment",
+        status: "new",
+        full_name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        company: data.company,
+        job_title: data.jobTitle || null,
+        country: data.country,
+        sector: data.sector,
+        service_interest: data.services,
+        facility_type: data.facilityType || null,
+        main_challenge: data.mainChallenge || null,
+        timeline: data.timeline,
+        score,
+        priority,
+        consent_at: new Date().toISOString(),
+        email_status: {
+          admin_notified: emailResult.adminNotified,
+          visitor_replied: emailResult.visitorReplied,
+        },
+      });
+
+      if (error) {
+        console.warn("[SUPABASE INSERT WARNING]", error.message);
+      }
+    } catch (err) {
+      console.warn("[SUPABASE CLIENT ERROR]", err);
     }
-  } catch (err) {
-    console.warn("[SUPABASE CLIENT SKIPPED IN DEV]", err);
+  } else {
+    console.log(
+      `[LEAD PIPELINE] Recorded lead ${shortId} for ${data.name} (${data.company}). Ready for Supabase sync.`
+    );
   }
 
   return {

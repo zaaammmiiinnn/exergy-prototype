@@ -125,7 +125,7 @@ function AssessmentContent() {
     setSubmitting(true);
 
     try {
-      const res = await submitAssessment({
+      const payload = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
@@ -138,10 +138,29 @@ function AssessmentContent() {
         mainChallenge: formData.mainChallenge,
         timeline: formData.timeline,
         consent: formData.consent,
-      });
+      };
 
-      if (!res.success) {
-        alert(res.error || "Submission failed. Please check your entries.");
+      let result: any = null;
+
+      try {
+        const response = await fetch("/api/assessment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          result = await response.json();
+        }
+      } catch {
+        // If route handler fetch fails, fall back to Server Action
+      }
+
+      if (!result) {
+        result = await submitAssessment(payload);
+      }
+
+      if (!result?.success) {
+        alert(result?.error || "Submission failed. Please check your entries.");
         setSubmitting(false);
         return;
       }
@@ -151,9 +170,9 @@ function AssessmentContent() {
         sessionStorage.removeItem(STORAGE_KEY);
       } catch {}
 
-      router.push(`/assessment/thank-you?ref=${res.shortId}&name=${encodeURIComponent(formData.name)}`);
+      router.push(`/assessment/thank-you?ref=${result.shortId}&name=${encodeURIComponent(formData.name)}`);
     } catch (err) {
-      console.error(err);
+      console.error("Assessment submit error:", err);
       alert("Submission encountered an issue. Please try again or email contact@exergy-solutions.com.");
       setSubmitting(false);
     }

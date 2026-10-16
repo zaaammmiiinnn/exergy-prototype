@@ -5,7 +5,14 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
-    // OpenNext optimizes server actions and app router
+    serverActions: {
+      allowedOrigins: [
+        "exergy-solutions.neuralwaves.workers.dev",
+        "*.workers.dev",
+        "localhost:3000",
+        "localhost:3001",
+      ],
+    },
   },
 };
 
