@@ -77,10 +77,13 @@ export default function ContactPage() {
 
                 <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-900/60 border border-slate-800">
                   <Mail className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-mono text-slate-400 uppercase block font-semibold">Direct Email</span>
-                    <a href={`mailto:${siteSettingsSeed.email}`} className="text-teal-400 hover:text-teal-300 transition-colors">
-                      {siteSettingsSeed.email}
+                  <div className="space-y-1">
+                    <span className="text-xs font-mono text-slate-400 uppercase block font-semibold">Direct Email & Support</span>
+                    <a href="mailto:neuralwaves.official@gmail.com" className="text-teal-400 hover:text-teal-300 transition-colors block text-sm font-medium">
+                      neuralwaves.official@gmail.com
+                    </a>
+                    <a href="mailto:support@neuralwaves.in" className="text-slate-300 hover:text-teal-300 transition-colors block text-xs">
+                      support@neuralwaves.in
                     </a>
                   </div>
                 </div>

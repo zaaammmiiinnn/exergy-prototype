@@ -25,8 +25,8 @@ export const siteSettingsSeed: SiteSettingsSeed = {
   company_name: "Exergy Solutions",
   tagline: "Turn wasted energy and water into profit",
   address: "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
-  email: "sarfraz@exergy-solutions.com",
-  notify_emails: ["neuralwaves.official@gmail.com"],
+  email: "support@neuralwaves.in",
+  notify_emails: ["neuralwaves.official@gmail.com", "support@neuralwaves.in"],
   linkedin_url: "https://www.linkedin.com/company/135328489/",
   stats: {
     stat_well_designed: "5–10%",

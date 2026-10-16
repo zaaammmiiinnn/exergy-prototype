@@ -33,6 +33,7 @@ describe("Deterministic Chatbot Engine", () => {
     const r6 = handleChatMessage(state, "6");
     assert.strictEqual(r6.nextState.currentNode, "handoff");
     assert.ok(r6.reply.includes("neuralwaves.official@gmail.com"));
+    assert.ok(r6.reply.includes("support@neuralwaves.in"));
   });
 
   test("2. Global shortcuts (menu, 0, start over) reset to main menu", () => {
@@ -61,6 +62,7 @@ describe("Deterministic Chatbot Engine", () => {
       const res = handleChatMessage(state, kw);
       assert.strictEqual(res.nextState.currentNode, "handoff");
       assert.ok(res.reply.includes("neuralwaves.official@gmail.com"));
+      assert.ok(res.reply.includes("support@neuralwaves.in"));
     }
   });
 

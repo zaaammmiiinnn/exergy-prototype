@@ -79,7 +79,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     parent: "main",
     position: 6,
     label: "Talk to a Human",
-    text: "Our engineering operations team has been notified at neuralwaves.official@gmail.com and sarfraz@exergy-solutions.com. An engineer will follow up directly.",
+    text: "Our engineering operations team has been alerted at neuralwaves.official@gmail.com and support@neuralwaves.in. An engineer will follow up directly.",
     keywords: ["human", "agent", "person", "representative", "call", "engineer", "help"],
     action: "handoff",
   },

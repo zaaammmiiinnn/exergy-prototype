@@ -34,11 +34,16 @@ export function Footer() {
                 <MapPin className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
                 <span>{siteSettingsSeed.address}</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-teal-400 shrink-0" />
-                <a href={`mailto:${siteSettingsSeed.email}`} className="hover:text-teal-300 transition-colors">
-                  {siteSettingsSeed.email}
-                </a>
+              <div className="flex items-start gap-2.5">
+                <Mail className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <a href="mailto:neuralwaves.official@gmail.com" className="hover:text-teal-300 transition-colors block">
+                    neuralwaves.official@gmail.com
+                  </a>
+                  <a href="mailto:support@neuralwaves.in" className="hover:text-teal-300 transition-colors block text-slate-400 text-xs">
+                    support@neuralwaves.in
+                  </a>
+                </div>
               </div>
             </div>
             <div className="pt-2">

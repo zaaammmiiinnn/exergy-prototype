@@ -18,6 +18,12 @@ import {
   ChevronRight,
   LogOut,
   Activity,
+  X,
+  Mail,
+  Building,
+  Phone,
+  Calendar,
+  Zap,
 } from "lucide-react";
 
 interface MockLead {
@@ -30,9 +36,43 @@ interface MockLead {
   priority: "hot" | "warm" | "cold";
   status: "new" | "contacted" | "qualified" | "proposal" | "won";
   createdAt: string;
+  phone?: string;
+  services?: string[];
+  timeline?: string;
+  notes?: string;
 }
 
 const MOCK_LEADS: MockLead[] = [
+  {
+    id: "EX-2026-1055",
+    name: "Neural Waves Engineering",
+    email: "neuralwaves.official@gmail.com",
+    company: "Neural Waves Industrial AI",
+    sector: "processing",
+    score: 95,
+    priority: "hot",
+    status: "new",
+    createdAt: "Just now",
+    phone: "+971 50 123 4567",
+    services: ["Cooling Optimization", "Waste Heat Recovery", "Pinch Analysis"],
+    timeline: "immediate",
+    notes: "Thermal fluid integration assessment for 4.2 MW continuous batch reactor line. Looking for turnkey performance guarantee.",
+  },
+  {
+    id: "EX-2026-1054",
+    name: "Neural Waves Support & Ops",
+    email: "support@neuralwaves.in",
+    company: "Neural Waves Facilities Operations",
+    sector: "cooling",
+    score: 82,
+    priority: "hot",
+    status: "contacted",
+    createdAt: "8 mins ago",
+    phone: "+91 98765 43210",
+    services: ["Cooling Systems", "Water & Effluent Reduction"],
+    timeline: "q1_2027",
+    notes: "Multi-chiller plant retrofitting with thermodynamic exergy baselining across GCC regional data center cooling towers.",
+  },
   {
     id: "EX-2026-1042",
     name: "Tariq Mansoor",
@@ -43,6 +83,10 @@ const MOCK_LEADS: MockLead[] = [
     priority: "hot",
     status: "new",
     createdAt: "10 mins ago",
+    phone: "+971 52 987 6543",
+    services: ["Drying Optimization", "Steam & Condensate"],
+    timeline: "immediate",
+    notes: "Dryer hood exhaust steam recovery to preheat boiler feedwater and reduce natural gas consumption.",
   },
   {
     id: "EX-2026-1039",
@@ -54,6 +98,10 @@ const MOCK_LEADS: MockLead[] = [
     priority: "hot",
     status: "contacted",
     createdAt: "2 hours ago",
+    phone: "+971 50 888 1234",
+    services: ["Waste Heat Recovery", "Process Integration"],
+    timeline: "q2_2027",
+    notes: "Crude distillation preheat train pinch analysis. Target 15% reduction in furnace duty.",
   },
   {
     id: "EX-2026-1035",
@@ -65,30 +113,22 @@ const MOCK_LEADS: MockLead[] = [
     priority: "warm",
     status: "qualified",
     createdAt: "Yesterday",
-  },
-  {
-    id: "EX-2026-1028",
-    name: "Rashid Khalifa",
-    email: "rashid@creekhospitality.com",
-    company: "Creek Resorts & Hotels",
-    sector: "hospitality",
-    score: 60,
-    priority: "warm",
-    status: "proposal",
-    createdAt: "3 days ago",
+    phone: "+971 55 432 1098",
+    services: ["Cooling Systems", "Water Optimization"],
+    timeline: "exploring",
+    notes: "Evaluation of blowdown water recycling and delta-T syndrome mitigation.",
   },
 ];
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"leads" | "chats" | "settings">("leads");
   const [searchTerm, setSearchTerm] = useState("");
   const [leads, setLeads] = useState<MockLead[]>(MOCK_LEADS);
+  const [selectedLead, setSelectedLead] = useState<MockLead | null>(null);
 
-  const currentUser = {
-    email: "neuralwaves.official@gmail.com",
-    role: "founder",
-    name: "Admin Lead",
-  };
+  const teamMembers = [
+    { email: "neuralwaves.official@gmail.com", role: "Founder / Administrator" },
+    { email: "support@neuralwaves.in", role: "Support & Operations" },
+  ];
 
   const filteredLeads = leads.filter(
     (l) =>
@@ -97,13 +137,22 @@ export default function AdminDashboardPage() {
       l.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const updateLeadStatus = (id: string, newStatus: MockLead["status"]) => {
+    setLeads((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l))
+    );
+    if (selectedLead && selectedLead.id === id) {
+      setSelectedLead({ ...selectedLead, status: newStatus });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       {/* Top Admin Header */}
       <div className="border-b border-slate-800 bg-navy-950 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-mono font-bold text-sm border border-teal-500/30">
+            <div className="w-9 h-9 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-mono font-bold text-base border border-teal-500/30">
               EX
             </div>
             <div>
@@ -117,12 +166,22 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex items-center gap-4 text-xs">
-            <div className="text-right hidden sm:block">
-              <span className="text-slate-300 font-medium block">{currentUser.email}</span>
-              <span className="text-[11px] font-mono text-teal-400 uppercase font-bold">
-                Role: {currentUser.role}
-              </span>
+            {/* Team Accounts */}
+            <div className="flex items-center gap-3 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-lg">
+              <div className="space-y-0.5 text-left">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-slate-200 font-mono font-medium">neuralwaves.official@gmail.com</span>
+                  <span className="text-[10px] text-teal-400 uppercase font-mono font-bold">(Founder)</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                  <span className="text-slate-400 font-mono">support@neuralwaves.in</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-mono">(Support)</span>
+                </div>
+              </div>
             </div>
+
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
@@ -142,9 +201,9 @@ export default function AdminDashboardPage() {
               <span className="text-xs font-mono uppercase tracking-wider font-semibold">Total Leads (Month)</span>
               <Users className="w-4 h-4 text-blue-400" />
             </div>
-            <div className="text-3xl font-mono font-bold text-white">42</div>
+            <div className="text-3xl font-mono font-bold text-white">44</div>
             <span className="text-[11px] text-teal-400 font-medium mt-1 inline-flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> +18% vs last month
+              <TrendingUp className="w-3 h-3" /> +22% vs last month
             </span>
           </div>
 
@@ -153,7 +212,7 @@ export default function AdminDashboardPage() {
               <span className="text-xs font-mono uppercase tracking-wider font-semibold">Hot Priority Leads</span>
               <Flame className="w-4 h-4 text-amber-400" />
             </div>
-            <div className="text-3xl font-mono font-bold text-amber-400">8</div>
+            <div className="text-3xl font-mono font-bold text-amber-400">10</div>
             <span className="text-[11px] text-slate-400 font-medium mt-1 block">
               Urgent timeline (This quarter)
             </span>
@@ -164,7 +223,7 @@ export default function AdminDashboardPage() {
               <span className="text-xs font-mono uppercase tracking-wider font-semibold">Open Chat Inquiries</span>
               <MessageSquare className="w-4 h-4 text-teal-400" />
             </div>
-            <div className="text-3xl font-mono font-bold text-teal-300">5</div>
+            <div className="text-3xl font-mono font-bold text-teal-300">6</div>
             <span className="text-[11px] text-teal-400 font-medium mt-1 block">
               Deterministic Q&A engine active
             </span>
@@ -175,9 +234,9 @@ export default function AdminDashboardPage() {
               <span className="text-xs font-mono uppercase tracking-wider font-semibold">Median First Contact</span>
               <Clock className="w-4 h-4 text-purple-400" />
             </div>
-            <div className="text-3xl font-mono font-bold text-white">3.4h</div>
+            <div className="text-3xl font-mono font-bold text-white">2.8h</div>
             <span className="text-[11px] text-slate-400 font-medium mt-1 block">
-              SLA target: &lt; 24h
+              Alerts dispatched to team inbox
             </span>
           </div>
         </div>
@@ -205,8 +264,8 @@ export default function AdminDashboardPage() {
               </div>
 
               <button
-                onClick={() => alert("CSV Export generated for admin: neuralwaves.official@gmail.com")}
-                className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 hover:text-white"
+                onClick={() => alert("CSV Export generated for admin: neuralwaves.official@gmail.com & support@neuralwaves.in")}
+                className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 hover:text-white transition-colors"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export CSV</span>
@@ -221,7 +280,7 @@ export default function AdminDashboardPage() {
                   <th className="py-3 px-4">Lead ID</th>
                   <th className="py-3 px-4">Contact</th>
                   <th className="py-3 px-4">Company & Sector</th>
-                  <th className="py-3 px-4">Priority</th>
+                  <th className="py-3 px-4">Priority & Score</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4">Received</th>
                   <th className="py-3 px-4 text-right">Action</th>
@@ -229,13 +288,23 @@ export default function AdminDashboardPage() {
               </thead>
               <tbody className="divide-y divide-slate-800 text-slate-300">
                 {filteredLeads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-slate-850/50 transition-colors">
+                  <tr
+                    key={lead.id}
+                    className={`hover:bg-slate-800/50 transition-colors ${
+                      lead.email.includes("neuralwaves") ? "bg-teal-950/20" : ""
+                    }`}
+                  >
                     <td className="py-3.5 px-4 font-mono font-semibold text-teal-400">
                       {lead.id}
+                      {lead.email.includes("neuralwaves") && (
+                        <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-teal-500/20 text-teal-300 border border-teal-500/30 uppercase">
+                          Test
+                        </span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="font-semibold text-white">{lead.name}</div>
-                      <div className="text-[11px] text-slate-400">{lead.email}</div>
+                      <div className="text-[11px] text-slate-400 font-mono">{lead.email}</div>
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="text-white font-medium">{lead.company}</div>
@@ -249,11 +318,19 @@ export default function AdminDashboardPage() {
                             : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                         }`}
                       >
-                        {lead.priority} ({lead.score})
+                        {lead.priority} ({lead.score}/100)
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="capitalize px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px]">
+                      <span
+                        className={`capitalize px-2 py-0.5 rounded text-[11px] font-mono ${
+                          lead.status === "new"
+                            ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
+                            : lead.status === "contacted"
+                            ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                            : "bg-slate-800 text-slate-300"
+                        }`}
+                      >
                         {lead.status}
                       </span>
                     </td>
@@ -262,10 +339,11 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <button
-                        onClick={() => alert(`Opening lead details for ${lead.name} (${lead.id})`)}
-                        className="text-xs font-semibold text-teal-400 hover:text-teal-300"
+                        onClick={() => setSelectedLead(lead)}
+                        className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-colors"
                       >
-                        Review Lead
+                        <span>Review</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </tr>
@@ -275,6 +353,113 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Selected Lead Modal Drawer */}
+      {selectedLead && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl relative">
+            <button
+              onClick={() => setSelectedLead(null)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+              <div>
+                <span className="text-xs font-mono text-teal-400 uppercase font-semibold">
+                  Facility Assessment File — {selectedLead.id}
+                </span>
+                <h3 className="text-xl font-bold text-white mt-1">
+                  {selectedLead.company}
+                </h3>
+              </div>
+              <span
+                className={`px-2.5 py-1 rounded text-xs font-bold uppercase font-mono ${
+                  selectedLead.priority === "hot"
+                    ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                    : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                }`}
+              >
+                Score: {selectedLead.score}/100 ({selectedLead.priority})
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div className="space-y-1 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                <span className="text-slate-400 uppercase font-mono block">Primary Contact</span>
+                <div className="text-white font-medium text-sm">{selectedLead.name}</div>
+                <div className="text-teal-400 font-mono">{selectedLead.email}</div>
+                {selectedLead.phone && (
+                  <div className="text-slate-400">{selectedLead.phone}</div>
+                )}
+              </div>
+
+              <div className="space-y-1 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                <span className="text-slate-400 uppercase font-mono block">Operational Scope</span>
+                <div className="text-white capitalize font-medium text-sm">Sector: {selectedLead.sector}</div>
+                <div className="text-slate-300">Timeline: {selectedLead.timeline || "Immediate (Q4 2026)"}</div>
+                <div className="text-slate-400">Recorded: {selectedLead.createdAt}</div>
+              </div>
+            </div>
+
+            {selectedLead.services && (
+              <div className="space-y-2">
+                <span className="text-xs uppercase font-mono text-slate-400 font-semibold block">
+                  Requested Services & Thermodynamic Streams
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {selectedLead.services.map((s) => (
+                    <span
+                      key={s}
+                      className="px-2.5 py-1 rounded-md text-xs font-medium bg-teal-500/10 text-teal-300 border border-teal-500/20"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedLead.notes && (
+              <div className="space-y-1.5">
+                <span className="text-xs uppercase font-mono text-slate-400 font-semibold block">
+                  Engineering Notes & Challenge Description
+                </span>
+                <p className="text-xs text-slate-300 bg-slate-950 p-3 rounded-lg border border-slate-800 leading-relaxed">
+                  {selectedLead.notes}
+                </p>
+              </div>
+            )}
+
+            {/* Status Transition Actions */}
+            <div className="pt-2 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-400">Current Status:</span>
+                <span className="text-xs font-bold font-mono uppercase text-teal-400">
+                  {selectedLead.status}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {(["new", "contacted", "qualified", "proposal", "won"] as const).map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => updateLeadStatus(selectedLead.id, st)}
+                    className={`px-2.5 py-1 rounded text-[11px] font-mono capitalize transition-all ${
+                      selectedLead.status === st
+                        ? "bg-teal-500 text-slate-950 font-bold"
+                        : "bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700"
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
