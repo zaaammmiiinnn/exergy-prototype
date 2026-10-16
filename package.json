@@ -20,6 +20,7 @@
     "framer-motion": "^11.11.9",
     "lucide-react": "^0.453.0",
     "next": "14.2.35",
+    "nodemailer": "^10.1.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@opennextjs/cloudflare": "^0.6.6",
     "@types/node": "^20.17.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
