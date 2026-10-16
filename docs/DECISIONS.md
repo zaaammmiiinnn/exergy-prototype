@@ -27,17 +27,24 @@ This document records architectural, technical, and operational decisions made d
 
 ## Decision 003: Administrative & Notification Contact
 - **Date:** 2026-10-16
-- **Context:** User mandate: "every thing should be working with the neuralwaves.official@gmail.com".
-- **Decision:** Formally wired `neuralwaves.official@gmail.com` as:
-  1. Default founder account in admin authentication and seeds (`admins` table).
-  2. Notification recipient in environment variables (`ADMIN_NOTIFY_EMAILS=neuralwaves.official@gmail.com`).
+- **Context:** User mandate: "every thing should be working with the neuralwaves.official@gmail.com" and testing support email `support@neuralwaves.in`.
+- **Decision:** Formally wired `neuralwaves.official@gmail.com` and `support@neuralwaves.in` as:
+  1. Founder and Support accounts in admin header, seeds, and lead pipeline table.
+  2. Multi-recipient alerts in environment variables (`ADMIN_NOTIFY_EMAILS=neuralwaves.official@gmail.com,support@neuralwaves.in`).
   3. Form submission recipient and chatbot human handoff email dispatch target.
-  4. Legal privacy officer in `app/privacy/page.tsx`.
+  4. Legal privacy officer in `app/privacy/page.tsx` and public contact page card.
 
 ---
 
 ## Decision 004: Next.js 14.2 & @opennextjs/cloudflare Adapter Compatibility
 - **Date:** 2026-10-16
 - **Context:** OpenNext Cloudflare v1.x series dropped Next 14 support and made Next 15+ a peer dependency. Next.js was pinned to 14.2.x per `AGENTS.md`.
-- **Decision:** Pinned `@opennextjs/cloudflare` to `^0.6.6` with `wrangler: "^3.114.1"`. Configured `open-next.config.ts` using `r2-incremental-cache` override.
-- **Consequences:** `npx opennextjs-cloudflare build` compiles cleanly into `.open-next/worker.js` without dependency conflicts or runtime regressions.
+- **Decision:** Pinned `@opennextjs/cloudflare` to `^0.6.6` with `wrangler: "^3.114.1"`. Configured `open-next.config.ts` using `dummy` in-memory incremental cache to eliminate external R2 setup hurdles during initial deployment.
+- **Consequences:** `npx opennextjs-cloudflare build` compiles cleanly into `.open-next/worker.js` and deploys seamlessly via `npx opennextjs-cloudflare deploy`.
+
+---
+
+## Decision 005: Cloudflare Workers Deployment & GitHub Synchronization
+- **Date:** 2026-10-16
+- **Context:** Deploy application to Cloudflare Workers and sync repository to GitHub.
+- **Decision:** Pushed all production Next.js 14 code to `https://github.com/zaaammmiiinnn/exergy-prototype.git` on branch `main`. Deployed worker `exergy-solutions` to Cloudflare under account `exergy-solutions` (`a4fc344a969016e89b2f026b0bc87840`) at `https://exergy-solutions.exergy-solutions.workers.dev`.
