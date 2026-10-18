@@ -8,22 +8,19 @@ import {
   Flame,
   Clock,
   TrendingUp,
-  CheckCircle2,
-  Filter,
   Download,
-  Shield,
-  Layers,
   ArrowUpRight,
   Search,
   ChevronRight,
   LogOut,
-  Activity,
   X,
   Mail,
   Building,
   Phone,
   Calendar,
   Zap,
+  ShieldCheck,
+  CheckCircle2,
 } from "lucide-react";
 
 interface MockLead {
@@ -125,11 +122,6 @@ export default function AdminDashboardPage() {
   const [leads, setLeads] = useState<MockLead[]>(MOCK_LEADS);
   const [selectedLead, setSelectedLead] = useState<MockLead | null>(null);
 
-  const teamMembers = [
-    { email: "neuralwaves.official@gmail.com", role: "Founder / Administrator" },
-    { email: "support@neuralwaves.in", role: "Support & Operations" },
-  ];
-
   const filteredLeads = leads.filter(
     (l) =>
       l.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -147,127 +139,176 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col">
-      {/* Top Admin Header */}
-      <div className="border-b border-slate-200 bg-white px-6 py-4 shadow-xs">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-mono font-bold text-base border border-teal-300">
-              EX
-            </div>
-            <div>
-              <span className="text-xs font-mono text-teal-700 block font-semibold">
-                Exergy Operations Command
-              </span>
-              <h1 className="text-base font-bold text-slate-900 leading-none">
-                Admin & Lead Pipeline
-              </h1>
-            </div>
+    <div className="min-h-screen bg-[hsl(190,30%,98%)] text-[#12232b] flex flex-col font-sans">
+      {/* Sovereign Admin Top Header */}
+      <header className="border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-6 py-4 sticky top-0 z-40 shadow-xs">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c758d] to-[#061821] text-white flex items-center justify-center font-heading font-extrabold text-base shadow-sm group-hover:scale-105 transition-transform">
+                EX
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-heading font-extrabold text-lg text-[#12232b] tracking-tight">
+                    Exergy Solutions<span className="text-[#0c758d]">.</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/70 text-[10px] font-mono font-bold uppercase tracking-wider">
+                    Ops Command
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 font-mono">
+                  Administrative Lead & Operations Center
+                </p>
+              </div>
+            </Link>
           </div>
 
-          <div className="flex items-center gap-4 text-xs">
-            {/* Team Accounts */}
-            <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-xs">
-              <div className="space-y-0.5 text-left">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-slate-800 font-mono font-medium">neuralwaves.official@gmail.com</span>
-                  <span className="text-[10px] text-teal-700 uppercase font-mono font-bold">(Founder)</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
-                  <span className="text-slate-600 font-mono">support@neuralwaves.in</span>
-                  <span className="text-[10px] text-slate-500 uppercase font-mono">(Support)</span>
-                </div>
+          <div className="flex flex-wrap items-center gap-3 text-xs">
+            {/* Active Verified Admin Users */}
+            <div className="flex items-center gap-3 bg-slate-50/80 border border-slate-200/80 px-3.5 py-1.5 rounded-full shadow-2xs">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="text-slate-800 font-mono font-medium text-[11px]">
+                  neuralwaves.official@gmail.com
+                </span>
+                <span className="px-1.5 py-0.2 rounded-full bg-emerald-100/70 text-emerald-800 text-[9px] font-mono font-bold uppercase">
+                  Founder
+                </span>
+              </div>
+              <span className="text-slate-300">|</span>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
+                <span className="text-slate-600 font-mono text-[11px]">
+                  support@neuralwaves.in
+                </span>
+                <span className="px-1.5 py-0.2 rounded-full bg-teal-100/70 text-teal-800 text-[9px] font-mono font-bold uppercase">
+                  Support
+                </span>
               </div>
             </div>
 
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-medium text-xs transition-all shadow-2xs hover:shadow-xs"
             >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Public Site</span>
+              <LogOut className="w-3.5 h-3.5 text-slate-500" />
+              <span>Exit to Public Site</span>
             </Link>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full space-y-8 flex-1">
-        {/* KPI Cards */}
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full space-y-8 flex-1">
+        {/* KPI Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">Total Leads (Month)</span>
-              <Users className="w-4 h-4 text-blue-600" />
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between text-slate-500 mb-3">
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold text-slate-400">
+                Total Leads (Month)
+              </span>
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <Users className="w-4 h-4" />
+              </div>
             </div>
-            <div className="text-3xl font-mono font-bold text-slate-900">44</div>
-            <span className="text-[11px] text-teal-700 font-medium mt-1 inline-flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> +22% vs last month
-            </span>
+            <div className="text-3xl font-heading font-extrabold text-[#12232b] tracking-tight">
+              44
+            </div>
+            <div className="mt-2 flex items-center gap-1.5 text-[11px] font-medium text-emerald-600">
+              <TrendingUp className="w-3 h-3" />
+              <span>+22% vs last month</span>
+            </div>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">Hot Priority Leads</span>
-              <Flame className="w-4 h-4 text-amber-500" />
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between text-slate-500 mb-3">
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold text-slate-400">
+                Hot Priority Leads
+              </span>
+              <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                <Flame className="w-4 h-4" />
+              </div>
             </div>
-            <div className="text-3xl font-mono font-bold text-amber-600">10</div>
-            <span className="text-[11px] text-slate-500 font-medium mt-1 block">
+            <div className="text-3xl font-heading font-extrabold text-amber-600 tracking-tight">
+              10
+            </div>
+            <p className="mt-2 text-[11px] text-slate-500">
               Urgent timeline (This quarter)
-            </span>
+            </p>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">Open Chat Inquiries</span>
-              <MessageSquare className="w-4 h-4 text-teal-600" />
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between text-slate-500 mb-3">
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold text-slate-400">
+                Open Chat Inquiries
+              </span>
+              <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#0c758d] flex items-center justify-center">
+                <MessageSquare className="w-4 h-4" />
+              </div>
             </div>
-            <div className="text-3xl font-mono font-bold text-teal-700">6</div>
-            <span className="text-[11px] text-teal-700 font-medium mt-1 block">
+            <div className="text-3xl font-heading font-extrabold text-[#0c758d] tracking-tight">
+              6
+            </div>
+            <p className="mt-2 text-[11px] text-teal-700 font-mono">
               Deterministic Q&A engine active
-            </span>
+            </p>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">Median First Contact</span>
-              <Clock className="w-4 h-4 text-purple-600" />
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between text-slate-500 mb-3">
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold text-slate-400">
+                Median First Contact
+              </span>
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <Clock className="w-4 h-4" />
+              </div>
             </div>
-            <div className="text-3xl font-mono font-bold text-slate-900">2.8h</div>
-            <span className="text-[11px] text-slate-500 font-medium mt-1 block">
+            <div className="text-3xl font-heading font-extrabold text-[#12232b] tracking-tight">
+              2.8h
+            </div>
+            <p className="mt-2 text-[11px] text-slate-500">
               Alerts dispatched to team inbox
-            </span>
+            </p>
           </div>
         </div>
 
         {/* Pipeline Table */}
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-          <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
+          <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <h3 className="text-lg font-bold text-slate-900">Active Assessment Submissions</h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-teal-800 border border-slate-200 text-xs font-mono font-semibold">
-                {filteredLeads.length} leads
+              <h3 className="font-heading font-bold text-lg text-[#12232b]">
+                Active Assessment Submissions
+              </h3>
+              <span className="px-3 py-0.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/70 text-xs font-mono font-semibold">
+                {filteredLeads.length} Leads
               </span>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Filter name, email, company..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-white border border-slate-300 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-xs"
+                  className="bg-slate-50/80 border border-slate-200 rounded-full pl-10 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:bg-white transition-all shadow-2xs w-64"
                 />
               </div>
 
               <button
-                onClick={() => alert("CSV Export generated for admin: neuralwaves.official@gmail.com & support@neuralwaves.in")}
-                className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-xs"
+                onClick={() =>
+                  alert(
+                    "CSV Export dispatched for administrative record: neuralwaves.official@gmail.com & support@neuralwaves.in"
+                  )
+                }
+                className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-2xs"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5 text-slate-500" />
                 <span>Export CSV</span>
               </button>
             </div>
@@ -275,72 +316,74 @@ export default function AdminDashboardPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-mono uppercase">
+              <thead className="bg-slate-50/70 border-b border-slate-100 text-slate-400 font-mono uppercase text-[11px] tracking-wider">
                 <tr>
-                  <th className="py-3 px-4">Lead ID</th>
-                  <th className="py-3 px-4">Contact</th>
-                  <th className="py-3 px-4">Company & Sector</th>
-                  <th className="py-3 px-4">Priority & Score</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Received</th>
-                  <th className="py-3 px-4 text-right">Action</th>
+                  <th className="py-3.5 px-6">Lead ID</th>
+                  <th className="py-3.5 px-6">Contact</th>
+                  <th className="py-3.5 px-6">Company & Sector</th>
+                  <th className="py-3.5 px-6">Priority & Score</th>
+                  <th className="py-3.5 px-6">Status</th>
+                  <th className="py-3.5 px-6">Received</th>
+                  <th className="py-3.5 px-6 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 text-slate-700">
+              <tbody className="divide-y divide-slate-100 text-slate-700">
                 {filteredLeads.map((lead) => (
                   <tr
                     key={lead.id}
-                    className={`hover:bg-slate-50 transition-colors ${
-                      lead.email.includes("neuralwaves") ? "bg-teal-50/60" : ""
+                    className={`hover:bg-slate-50/80 transition-colors ${
+                      lead.email.includes("neuralwaves") ? "bg-teal-50/30" : ""
                     }`}
                   >
-                    <td className="py-3.5 px-4 font-mono font-semibold text-teal-700">
+                    <td className="py-4 px-6 font-mono font-semibold text-[#0c758d]">
                       {lead.id}
                       {lead.email.includes("neuralwaves") && (
-                        <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-teal-100 text-teal-800 border border-teal-300 uppercase">
-                          Test
+                        <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-teal-100 text-teal-800 border border-teal-300 font-bold uppercase">
+                          Verified
                         </span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-900">{lead.name}</div>
-                      <div className="text-[11px] text-slate-500 font-mono">{lead.email}</div>
+                    <td className="py-4 px-6">
+                      <div className="font-semibold text-[#12232b]">{lead.name}</div>
+                      <div className="text-[11px] text-slate-400 font-mono">{lead.email}</div>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-4 px-6">
                       <div className="text-slate-900 font-medium">{lead.company}</div>
-                      <div className="text-[11px] font-mono text-slate-500 uppercase">{lead.sector}</div>
+                      <div className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+                        {lead.sector}
+                      </div>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-4 px-6">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase font-mono ${
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase font-mono ${
                           lead.priority === "hot"
-                            ? "bg-red-50 text-red-700 border border-red-200"
-                            : "bg-amber-50 text-amber-700 border border-amber-200"
+                            ? "bg-red-50 text-red-600 border border-red-200/80"
+                            : "bg-amber-50 text-amber-600 border border-amber-200/80"
                         }`}
                       >
                         {lead.priority} ({lead.score}/100)
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-4 px-6">
                       <span
-                        className={`capitalize px-2 py-0.5 rounded text-[11px] font-mono ${
+                        className={`capitalize px-3 py-1 rounded-full text-[11px] font-mono font-medium ${
                           lead.status === "new"
-                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                            ? "bg-blue-50 text-blue-700 border border-blue-200/80"
                             : lead.status === "contacted"
-                            ? "bg-purple-50 text-purple-700 border border-purple-200"
-                            : "bg-slate-100 text-slate-700 border border-slate-200"
+                            ? "bg-purple-50 text-purple-700 border border-purple-200/80"
+                            : "bg-emerald-50 text-emerald-700 border border-emerald-200/80"
                         }`}
                       >
                         {lead.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
+                    <td className="py-4 px-6 text-slate-400 font-mono text-[11px]">
                       {lead.createdAt}
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <button
                         onClick={() => setSelectedLead(lead)}
-                        className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100 transition-colors shadow-xs"
+                        className="inline-flex items-center gap-1 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/80 hover:bg-[#0c758d] hover:text-white transition-all shadow-2xs"
                       >
                         <span>Review</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -352,33 +395,33 @@ export default function AdminDashboardPage() {
             </table>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Selected Lead Modal Drawer */}
       {selectedLead && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl relative text-slate-900">
+        <div className="fixed inset-0 z-50 bg-[#061821]/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-7 space-y-6 shadow-2xl relative text-slate-900">
             <button
               onClick={() => setSelectedLead(null)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-5">
               <div>
-                <span className="text-xs font-mono text-teal-700 uppercase font-semibold">
+                <span className="text-xs font-mono text-[#0c758d] uppercase font-bold tracking-wider">
                   Facility Assessment File — {selectedLead.id}
                 </span>
-                <h3 className="text-xl font-bold text-slate-900 mt-1">
+                <h3 className="font-heading font-bold text-2xl text-[#12232b] mt-1">
                   {selectedLead.company}
                 </h3>
               </div>
               <span
-                className={`px-2.5 py-1 rounded text-xs font-bold uppercase font-mono ${
+                className={`px-3 py-1 rounded-full text-xs font-bold uppercase font-mono ${
                   selectedLead.priority === "hot"
-                    ? "bg-red-50 text-red-700 border border-red-200"
-                    : "bg-amber-50 text-amber-700 border border-amber-200"
+                    ? "bg-red-50 text-red-600 border border-red-200"
+                    : "bg-amber-50 text-amber-600 border border-amber-200"
                 }`}
               >
                 Score: {selectedLead.score}/100 ({selectedLead.priority})
@@ -386,33 +429,43 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <span className="text-slate-500 uppercase font-mono block">Primary Contact</span>
-                <div className="text-slate-900 font-medium text-sm">{selectedLead.name}</div>
-                <div className="text-teal-700 font-mono font-medium">{selectedLead.email}</div>
+              <div className="space-y-1.5 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80">
+                <span className="text-slate-400 uppercase font-mono text-[10px] font-semibold tracking-wider block">
+                  Primary Contact
+                </span>
+                <div className="font-semibold text-[#12232b] text-sm">{selectedLead.name}</div>
+                <div className="text-[#0c758d] font-mono font-medium">{selectedLead.email}</div>
                 {selectedLead.phone && (
-                  <div className="text-slate-600">{selectedLead.phone}</div>
+                  <div className="text-slate-500">{selectedLead.phone}</div>
                 )}
               </div>
 
-              <div className="space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <span className="text-slate-500 uppercase font-mono block">Operational Scope</span>
-                <div className="text-slate-900 capitalize font-medium text-sm">Sector: {selectedLead.sector}</div>
-                <div className="text-slate-700">Timeline: {selectedLead.timeline || "Immediate (Q4 2026)"}</div>
-                <div className="text-slate-500">Recorded: {selectedLead.createdAt}</div>
+              <div className="space-y-1.5 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80">
+                <span className="text-slate-400 uppercase font-mono text-[10px] font-semibold tracking-wider block">
+                  Operational Scope
+                </span>
+                <div className="text-slate-900 capitalize font-medium text-sm">
+                  Sector: {selectedLead.sector}
+                </div>
+                <div className="text-slate-600">
+                  Timeline: {selectedLead.timeline || "Immediate (Q4 2026)"}
+                </div>
+                <div className="text-slate-400 font-mono text-[11px]">
+                  Recorded: {selectedLead.createdAt}
+                </div>
               </div>
             </div>
 
             {selectedLead.services && (
               <div className="space-y-2">
-                <span className="text-xs uppercase font-mono text-slate-500 font-semibold block">
+                <span className="text-xs uppercase font-mono text-slate-400 font-semibold tracking-wider block">
                   Requested Services & Thermodynamic Streams
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedLead.services.map((s) => (
                     <span
                       key={s}
-                      className="px-2.5 py-1 rounded-md text-xs font-medium bg-teal-50 text-teal-800 border border-teal-200"
+                      className="px-3 py-1 rounded-full text-xs font-medium bg-teal-50 text-[#0c758d] border border-teal-200/80"
                     >
                       {s}
                     </span>
@@ -422,21 +475,21 @@ export default function AdminDashboardPage() {
             )}
 
             {selectedLead.notes && (
-              <div className="space-y-1.5">
-                <span className="text-xs uppercase font-mono text-slate-500 font-semibold block">
+              <div className="space-y-2">
+                <span className="text-xs uppercase font-mono text-slate-400 font-semibold tracking-wider block">
                   Engineering Notes & Challenge Description
                 </span>
-                <p className="text-xs text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200 leading-relaxed">
+                <p className="text-xs text-slate-700 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80 leading-relaxed">
                   {selectedLead.notes}
                 </p>
               </div>
             )}
 
             {/* Status Transition Actions */}
-            <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500">Current Status:</span>
-                <span className="text-xs font-bold font-mono uppercase text-teal-700">
+                <span className="text-xs text-slate-400 font-medium">Status:</span>
+                <span className="text-xs font-bold font-mono uppercase text-[#0c758d]">
                   {selectedLead.status}
                 </span>
               </div>
@@ -446,10 +499,10 @@ export default function AdminDashboardPage() {
                   <button
                     key={st}
                     onClick={() => updateLeadStatus(selectedLead.id, st)}
-                    className={`px-2.5 py-1 rounded text-[11px] font-mono capitalize transition-all ${
+                    className={`px-3 py-1 rounded-full text-[11px] font-mono capitalize transition-all ${
                       selectedLead.status === st
-                        ? "bg-teal-600 text-white font-bold"
-                        : "bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border border-slate-200"
+                        ? "bg-[#0c758d] text-white font-bold shadow-xs"
+                        : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200 border border-slate-200"
                     }`}
                   >
                     {st}
@@ -463,3 +516,4 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
+

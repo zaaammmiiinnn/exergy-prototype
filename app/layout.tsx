@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { Sora, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/site/navbar";
-import { Footer } from "@/components/site/footer";
-import { ChatWidget } from "@/components/chat/chat-widget";
-import { WhatsAppLauncher } from "@/components/site/whatsapp-launcher";
-import { IntroAnimation } from "@/components/IntroAnimation";
+import { SiteChrome } from "@/components/site/site-chrome";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -49,12 +45,7 @@ export default function RootLayout({
       className={`scroll-smooth ${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="min-h-screen bg-[hsl(190,30%,98%)] text-[hsl(200,40%,12%)] flex flex-col font-sans antialiased selection:bg-teal-100 selection:text-teal-900">
-        <IntroAnimation />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <WhatsAppLauncher />
-        <ChatWidget />
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
