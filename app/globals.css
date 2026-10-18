@@ -2,72 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 215 28% 97%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 217 91% 40%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 215 25% 27%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 174 72% 40%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 40%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222 47% 7%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 10%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 174 72% 40%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-  }
+:root {
+  --bg: #0A1628;
+  --bg-elev: #0F1E33;
+  --bg-light: #F8FAFC;
+  --border-dark: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(10, 22, 40, 0.10);
+  --text: #F1F5F9;
+  --text-dark: #0A1628;
+  --text-muted: #94A3B8;
+  --accent: #00B4D8;
+  --accent-2: #0077B6;
+  --accent-warm: #F59E0B;
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-teal-500/20 selection:text-teal-700;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body), Inter, system-ui, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1, "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), "Space Grotesk", sans-serif;
+    letter-spacing: -0.03em;
+    font-weight: 600;
   }
 }
 
-/* Engineering grid pattern */
-.bg-grid-pattern {
+/* Engineering blueprint grid pattern (1px lines at 3% opacity, 40px spacing) */
+.bg-blueprint-dark {
+  background-color: #0A1628;
   background-size: 40px 40px;
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
-.bg-grid-light {
+.bg-blueprint-elevated {
+  background-color: #0F1E33;
   background-size: 40px 40px;
-  background-image: linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
+
+.bg-blueprint-light {
+  background-color: #F8FAFC;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(10, 22, 40, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 22, 40, 0.04) 1px, transparent 1px);
+}
+
+/* Engineering hairline borders */
+.border-hairline-dark {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.border-hairline-light {
+  border: 1px solid rgba(10, 22, 40, 0.10);
+}
+
+/* Technical corner crosshair annotation markers */
+.corner-crosshair-container {
+  position: relative;
+}
+
+.corner-crosshair-container::before {
+  content: "+";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  line-height: 1;
+  color: rgba(0, 180, 216, 0.7);
+  pointer-events: none;
+}
+
+.corner-crosshair-container::after {
+  content: "+";
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  line-height: 1;
+  color: rgba(0, 180, 216, 0.7);
+  pointer-events: none;
+}
+
