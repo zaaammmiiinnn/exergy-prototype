@@ -82,13 +82,18 @@
       4. `ProcessIntegrationSchematic`: Pinch analysis composite curves (Hot & Cold Composite Curves, internal heat recovery shaded zone, vertical pinch line ΔT_min 10K, Q_H,min / Q_C,min targets).
     - Integrated into [components/site/services-accordion.tsx](file:///Volumes/Zamin/exergy-prototype/components/site/services-accordion.tsx) with staggered 300ms line draw-in animations triggered upon expanding each service drawer.
   - Verified 100% clean typecheck (`npx tsc --noEmit`), unit tests (7/7 passed), and visual capture via browser subagent.
+  - Pushed to GitHub repository (`https://github.com/zaaammmiiinnn/exergy-prototype.git`) commit `acde122`.
+  - Built via `@opennextjs/cloudflare` and deployed live to Cloudflare Workers:
+    - Production URL: `https://exergy-solutions.neuralwaves.workers.dev`
+    - Version ID: `fdd1268c-8b7a-425d-ae84-54af9a7c9994`
+    - Live health check verified (`HTTP/2 200 OK`).
 
 ---
 
 ## What Is Next
 1. User review of Tier 1 (Hero schematic) and Tier 2 (Service schematics).
 2. Upon approval, proceed to Tier 3 (Methodology visuals: 5 diagrams) and Tier 4 (Industry icons: 6 technical line-art icons).
-3. Production deployment to Cloudflare Workers (`npx opennextjs-cloudflare deploy`).
+3. Commit and push Tier 3 & Tier 4 increments to GitHub and deploy to Cloudflare Workers.
 
 
 
