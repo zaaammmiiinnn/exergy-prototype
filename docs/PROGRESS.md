@@ -1,11 +1,22 @@
 # Project Progress & Status Tracker
 
-**Current Phase:** Theme Alignment Complete (`frontend-ruby-tau-96.vercel.app`) & Cloudflare Production Deployment  
-**Last Updated:** 2026-10-18
+**Current Phase:** Live Supabase Database Connected & Production Deployed (`https://exergy-solutions.neuralwaves.workers.dev`)  
+**Last Updated:** 2026-10-19
 
 ---
 
 ## What Was Done
+- **Phase 7 (Supabase Database Connection & Live Admin Lead Pipeline)**:
+  - Linked Supabase project `twwdvliikafbtvzsotks` under `neuralwaves.official@gmail.com`.
+  - Created and seeded production schema for all tables: `leads`, `services`, `industries`, `chat_sessions`, `chat_messages`, `chat_qa_bank`, `site_settings`.
+  - Configured environment variables in `.env.local`, `.dev.vars`, and `wrangler.jsonc` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+  - Added secret bindings to Cloudflare Workers via `wrangler secret put` (`SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`).
+  - Implemented server action `app/actions/admin-leads.ts` (`fetchAdminLeads`, `updateLeadStatusAction`) for real-time lead synchronization and status updates with PostgreSQL.
+  - Isolated `/admin` route in `components/site/site-chrome.tsx` to suppress public marketing navbar, preloader, WhatsApp launcher, chat widget, and footer.
+  - Re-themed `/admin` dashboard with Google Font `Sora`, emerald/teal badges, rounded-2xl metric cards, and a live Supabase database sync button.
+  - Verified live Supabase lead insert and retrieval end-to-end.
+  - Built and deployed with `@opennextjs/cloudflare` to `https://exergy-solutions.neuralwaves.workers.dev`.
+  - Pushed all code, migrations, and scripts to GitHub `main`.
 - **Theme Redesign (`frontend-ruby-tau-96.vercel.app` Alignment)**:
   - Configured `@next/font/google` with Google Font `Sora` as the primary heading & display typography, paired with `Inter` for body copy and `JetBrains Mono` for engineering metrics.
   - Aligned design system palette with reference site: Deep Teal (`#0c758d`), Eco Emerald (`#30a66a`), Thermodynamic Amber (`#F0A431`), and Rich Petrol Navy (`#061821` / `from-[hsl(200,65%,7%)]/95 via-[hsl(200,60%,10%)]/90 to-[hsl(190,55%,14%)]/75`).
