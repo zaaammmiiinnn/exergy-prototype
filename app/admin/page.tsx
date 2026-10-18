@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Users,
@@ -21,7 +21,14 @@ import {
   Zap,
   ShieldCheck,
   CheckCircle2,
+  RefreshCw,
+  Database,
 } from "lucide-react";
+import {
+  fetchAdminLeads,
+  updateLeadStatusAction,
+  type AdminLeadItem,
+} from "@/app/actions/admin-leads";
 
 interface MockLead {
   id: string;
@@ -121,6 +128,32 @@ export default function AdminDashboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [leads, setLeads] = useState<MockLead[]>(MOCK_LEADS);
   const [selectedLead, setSelectedLead] = useState<MockLead | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+
+  const loadLeads = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetchAdminLeads();
+      if (res.success && res.leads.length > 0) {
+        setIsSupabaseConnected(true);
+        // Put live Supabase leads first, then distinct mock leads
+        const existingIds = new Set(res.leads.map((l) => l.id));
+        const nonDuplicateMocks = MOCK_LEADS.filter((m) => !existingIds.has(m.id));
+        setLeads([...res.leads, ...nonDuplicateMocks]);
+      } else {
+        setIsSupabaseConnected(false);
+      }
+    } catch (err) {
+      console.warn("Failed to load admin leads:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadLeads();
+  }, [loadLeads]);
 
   const filteredLeads = leads.filter(
     (l) =>
@@ -129,12 +162,17 @@ export default function AdminDashboardPage() {
       l.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const updateLeadStatus = (id: string, newStatus: MockLead["status"]) => {
+  const updateLeadStatus = async (id: string, newStatus: MockLead["status"]) => {
     setLeads((prev) =>
       prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l))
     );
     if (selectedLead && selectedLead.id === id) {
       setSelectedLead({ ...selectedLead, status: newStatus });
+    }
+    try {
+      await updateLeadStatusAction(id, newStatus);
+    } catch (err) {
+      console.warn("Failed to sync status update to Supabase:", err);
     }
   };
 
@@ -165,6 +203,18 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3 text-xs">
+            {/* Supabase Sync Status Indicator & Refresh */}
+            <button
+              onClick={() => loadLeads()}
+              disabled={isLoading}
+              title="Click to refresh leads from Supabase"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-teal-200/80 bg-teal-50/70 hover:bg-teal-100/70 text-[#0c758d] font-mono text-[11px] font-semibold transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+            >
+              <Database className="w-3.5 h-3.5 text-teal-600" />
+              <span>{isSupabaseConnected ? "Supabase Live" : "Supabase Sync"}</span>
+              <RefreshCw className={`w-3 h-3 text-teal-600 ml-0.5 ${isLoading ? "animate-spin" : ""}`} />
+            </button>
+
             {/* Active Verified Admin Users */}
             <div className="flex items-center gap-3 bg-slate-50/80 border border-slate-200/80 px-3.5 py-1.5 rounded-full shadow-2xs">
               <div className="flex items-center gap-2">

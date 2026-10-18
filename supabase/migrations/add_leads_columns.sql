@@ -1,0 +1,17 @@
+alter table public.leads add column if not exists short_id text;
+alter table public.leads add column if not exists phone text;
+alter table public.leads add column if not exists job_title text;
+alter table public.leads add column if not exists country text default 'United Arab Emirates';
+alter table public.leads add column if not exists sector text default 'general';
+alter table public.leads add column if not exists service_interest text[] default '{}';
+alter table public.leads add column if not exists facility_type text;
+alter table public.leads add column if not exists main_challenge text;
+alter table public.leads add column if not exists timeline text;
+alter table public.leads add column if not exists message text;
+alter table public.leads add column if not exists score int not null default 0;
+alter table public.leads add column if not exists priority text default 'warm';
+alter table public.leads add column if not exists source text default 'assessment';
+alter table public.leads add column if not exists consent_at timestamptz default now();
+alter table public.leads add column if not exists email_status jsonb default '{"admin_notified": false, "visitor_replied": false}'::jsonb;
+alter table public.leads add column if not exists updated_at timestamptz default now();
+notify pgrst, 'reload schema';
