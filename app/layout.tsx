@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { ChatWidget } from "@/components/chat/chat-widget";
+import { IntroAnimation } from "@/components/IntroAnimation";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -46,7 +47,8 @@ export default function RootLayout({
       lang="en"
       className={`scroll-smooth ${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-screen bg-[#0A1628] text-[#F1F5F9] flex flex-col font-sans antialiased selection:bg-[#00B4D8]/20 selection:text-[#00B4D8]">
+      <body className="min-h-screen bg-[#0A1628] text-[#F1F5F9] flex flex-col font-sans antialiased selection:bg-[#2C7FB8]/20 selection:text-[#2C7FB8]">
+        <IntroAnimation />
         <Navbar />
         <main className="flex-1">{children}</main>
         <ChatWidget />

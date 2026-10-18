@@ -239,10 +239,10 @@ export function ServicesAccordion() {
                     !isLast ? "border-b border-white/[0.08]" : ""
                   } ${isOpen ? "bg-[#0F1E33]/90" : "bg-[#0A1628] hover:bg-[#0F1E33]/40"}`}
                 >
-                  {/* Left accent hairline on active / hover */}
+                  {/* Left accent hairline on active / hover (Logo Primary & Accent) */}
                   <div
                     className={`absolute left-0 top-0 bottom-0 w-[2px] transition-colors duration-200 ${
-                      isOpen ? "bg-[#00B4D8]" : "bg-transparent group-hover:bg-[#00B4D8]/40"
+                      isOpen ? "bg-[#2C7FB8]" : "bg-transparent group-hover:bg-[#2C7FB8]/40"
                     }`}
                   />
 
@@ -251,7 +251,7 @@ export function ServicesAccordion() {
                     type="button"
                     onClick={() => toggleRow(index)}
                     aria-expanded={isOpen}
-                    className="w-full text-left p-6 sm:p-8 flex items-start justify-between gap-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#00B4D8]"
+                    className="w-full text-left p-6 sm:p-8 flex items-start justify-between gap-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#2C7FB8]"
                   >
                     <div className="flex items-start gap-5 sm:gap-6">
                       {/* Mono index in muted color */}
@@ -259,9 +259,9 @@ export function ServicesAccordion() {
                         {item.code}
                       </span>
 
-                      {/* Line-art Icon (32px, 1.5px stroke, no fill) */}
-                      <div className="text-[#94A3B8] group-hover:text-[#00B4D8] transition-colors mt-0.5 shrink-0">
-                        <Icon className="w-8 h-8 text-[#00B4D8]" />
+                      {/* Line-art Icon (32px, 1.5px stroke, no fill, using logo colors) */}
+                      <div className="text-[#94A3B8] group-hover:text-[#2C7FB8] transition-colors mt-0.5 shrink-0">
+                        <Icon className={`w-8 h-8 transition-colors ${isOpen ? "text-[#F0A431]" : "text-[#2C7FB8]"}`} />
                       </div>
 
                       {/* Title & Short Description */}
@@ -279,7 +279,7 @@ export function ServicesAccordion() {
                     <div className="shrink-0 mt-1.5">
                       <ChevronDown
                         className={`w-5 h-5 text-[#94A3B8] transition-transform duration-300 ${
-                          isOpen ? "rotate-180 text-[#00B4D8]" : ""
+                          isOpen ? "rotate-180 text-[#F0A431]" : ""
                         }`}
                       />
                     </div>
@@ -298,7 +298,7 @@ export function ServicesAccordion() {
                         <div className="px-6 pb-8 pt-2 sm:px-8 sm:pb-8 border-t border-white/[0.04]">
                           {/* Target Scope Badge */}
                           <div className="mb-4">
-                            <span className="font-mono text-[10px] text-[#00B4D8] uppercase tracking-wider bg-[#00B4D8]/10 px-2 py-0.5 border border-[#00B4D8]/20">
+                            <span className="font-mono text-[10px] text-[#2C7FB8] uppercase tracking-wider bg-[#2C7FB8]/10 px-2 py-0.5 border border-[#2C7FB8]/25">
                               {item.badge}
                             </span>
                           </div>
@@ -307,8 +307,8 @@ export function ServicesAccordion() {
                           <div className="grid grid-cols-1 gap-2.5 mb-6">
                             {item.bullets.map((bullet, bIdx) => (
                               <div key={bIdx} className="flex items-start gap-2.5">
-                                <div className="w-4 h-4 rounded-[2px] bg-[#00B4D8]/10 border border-[#00B4D8]/30 flex items-center justify-center shrink-0 mt-0.5">
-                                  <Check className="w-3 h-3 text-[#00B4D8]" />
+                                <div className="w-4 h-4 rounded-[2px] bg-[#2C7FB8]/10 border border-[#2C7FB8]/30 flex items-center justify-center shrink-0 mt-0.5">
+                                  <Check className="w-3 h-3 text-[#2C7FB8]" />
                                 </div>
                                 <span className="text-xs sm:text-sm text-[#F1F5F9]/90 font-mono leading-relaxed">
                                   {bullet}
@@ -326,7 +326,7 @@ export function ServicesAccordion() {
                           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
                             <Link
                               href={`/assessment?service=${item.paramKey}`}
-                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00B4D8] text-[#0A1628] font-mono text-xs uppercase tracking-wider font-semibold rounded-[2px] hover:bg-[#00B4D8]/90 transition-all shadow-[0_0_15px_rgba(0,180,216,0.2)]"
+                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2C7FB8] text-white font-mono text-xs uppercase tracking-wider font-semibold rounded-[2px] hover:bg-[#2C7FB8]/90 transition-all shadow-[0_0_15px_rgba(44,127,184,0.3)]"
                             >
                               <span>Request assessment</span>
                               <ArrowRight className="w-3.5 h-3.5" />
@@ -336,7 +336,7 @@ export function ServicesAccordion() {
                               className="font-mono text-xs text-[#94A3B8] hover:text-[#F1F5F9] transition-colors flex items-center gap-1"
                             >
                               <span>View technical documentation</span>
-                              <span className="text-[#00B4D8]">→</span>
+                              <span className="text-[#2C7FB8]">→</span>
                             </Link>
                           </div>
 
