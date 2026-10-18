@@ -69,11 +69,26 @@
   - Built **Step 10 (Footer Rebuild)**: Engineering precision dark footer with top cyan gradient hairline, 4-column architecture, Dubai contact details, and direct links.
   - Verified 100% clean TypeScript check (`npx tsc --noEmit`), unit test suite (7/7 passing), Next.js production build (`npm run build`), and OpenNext Cloudflare worker compilation (`npm run cf-build`).
 
+- **Phase 8 (Illustration System — Tier 1 & Tier 2 Completed)**:
+  - **Tier 1 (Hero Blueprint Schematic)**:
+    - Designed and implemented [components/site/hero-schematic.tsx](file:///Volumes/Zamin/exergy-prototype/components/site/hero-schematic.tsx): responsive 480×480 SVG schematic with 1.5px uniform stroke, no fills, blueprint corner crosses `+`, coordinate labels (`25.2°N / 55.3°E`), and `FIG 01 // REV 2.4`.
+    - Depicts `"FUEL IN (100%) → CONVERSION PROCESS (η_II 72.4%) → USEFUL WORK (+35%)"` with upper exergy destruction zone (`T₀·S_gen`, `-38% IRREVERSIBILITY`) featuring an animated cyan radar pulsing node (`TARGET LOSS`), and a bottom closed thermal recycle loop through `HEX-01`.
+    - Integrated into [components/site/hero.tsx](file:///Volumes/Zamin/exergy-prototype/components/site/hero.tsx) with mobile-responsive stacking order (`order-1` above text on mobile, `order-2` 5-column on desktop).
+  - **Tier 2 (Service Schematics)**:
+    - Designed and implemented [components/site/service-schematics.tsx](file:///Volumes/Zamin/exergy-prototype/components/site/service-schematics.tsx) with 4 engineering schematics:
+      1. `CoolingSchematic`: Chilled-water loop (COP 6.42 chiller, AHU load with ΔT: +8.2°C, VPF pump, cooling tower condenser loop).
+      2. `HeatingSchematic`: Boiler & steam system (8.5 bar boiler, process HEX, >88% condensate return, trap audit, flue gas economizer 82°C).
+      3. `WaterSchematic`: High-recovery RO & ZLD loop (Raw feed intake, 88.5% recovery rate RO, plant use loop with CoC 7.2, zero-effluent ZLD recycle).
+      4. `ProcessIntegrationSchematic`: Pinch analysis composite curves (Hot & Cold Composite Curves, internal heat recovery shaded zone, vertical pinch line ΔT_min 10K, Q_H,min / Q_C,min targets).
+    - Integrated into [components/site/services-accordion.tsx](file:///Volumes/Zamin/exergy-prototype/components/site/services-accordion.tsx) with staggered 300ms line draw-in animations triggered upon expanding each service drawer.
+  - Verified 100% clean typecheck (`npx tsc --noEmit`), unit tests (7/7 passed), and visual capture via browser subagent.
+
 ---
 
 ## What Is Next
-1. Review live visual presentation and layout responsiveness across viewports (375px mobile, 768px tablet, 1440px desktop).
-2. Deploy the latest OpenNext build to Cloudflare Workers (`npx opennextjs-cloudflare deploy`).
-3. Conduct final Lighthouse performance and WCAG AA accessibility audit on live worker.
+1. User review of Tier 1 (Hero schematic) and Tier 2 (Service schematics).
+2. Upon approval, proceed to Tier 3 (Methodology visuals: 5 diagrams) and Tier 4 (Industry icons: 6 technical line-art icons).
+3. Production deployment to Cloudflare Workers (`npx opennextjs-cloudflare deploy`).
+
 
 

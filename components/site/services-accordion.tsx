@@ -87,151 +87,12 @@ function NetworkIcon({ className = "w-8 h-8" }: { className?: string }) {
   );
 }
 
-// Mini Technical SVG Schematics
-function CoolingDiagram() {
-  return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-4 relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8]/70 border-b border-white/[0.06] pb-2 mb-3">
-        <span className="text-[#00B4D8] font-bold">SCHEMATIC: CHILLED WATER DELTA-T LOOP</span>
-        <span>REV 2.1</span>
-      </div>
-      <svg viewBox="0 0 460 110" className="w-full h-auto text-slate-300">
-        <rect x="10" y="25" width="85" height="55" fill="#0A1628" stroke="#00B4D8" strokeWidth="1" />
-        <text x="52" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">CHILLER</text>
-        <text x="52" y="62" fill="#00B4D8" textAnchor="middle" fontSize="8">η_ex: 68.4%</text>
-
-        {/* Chilled supply pipe */}
-        <path d="M95 40 H200" stroke="#00B4D8" strokeWidth="1.5" strokeDasharray="3 2" />
-        <polygon points="195,37 202,40 195,43" fill="#00B4D8" />
-        <text x="145" y="34" fill="#94A3B8" fontSize="7" textAnchor="middle">CHW SUPPLY 6.5°C</text>
-
-        {/* Load plant */}
-        <rect x="200" y="25" width="95" height="55" fill="#0A1628" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-        <text x="247" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">FACILITY LOAD</text>
-        <text x="247" y="62" fill="#94A3B8" textAnchor="middle" fontSize="8">ΔT: +8.2°C</text>
-
-        {/* Return pipe */}
-        <path d="M200 68 H95" stroke="#0077B6" strokeWidth="1.5" />
-        <polygon points="105,65 98,68 105,71" fill="#0077B6" />
-        <text x="145" y="80" fill="#94A3B8" fontSize="7" textAnchor="middle">CHW RETURN 14.7°C</text>
-
-        {/* Cooling tower reject */}
-        <rect x="340" y="25" width="110" height="55" fill="#0A1628" stroke="#F59E0B" strokeWidth="1" />
-        <text x="395" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">TOWER DELTA-T</text>
-        <text x="395" y="62" fill="#F59E0B" textAnchor="middle" fontSize="8">APPROACH 2.8°C</text>
-        <path d="M295 50 H340" stroke="#F59E0B" strokeWidth="1" strokeDasharray="2 2" />
-      </svg>
-      <div className="flex justify-between items-center text-[9px] text-[#94A3B8]/60 mt-2 border-t border-white/[0.06] pt-1.5">
-        <span>EXERGY EFFICIENCY GAIN: +24%</span>
-        <span>COP: 6.42 STEADY-STATE</span>
-      </div>
-    </div>
-  );
-}
-
-function HeatingDiagram() {
-  return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-4 relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8]/70 border-b border-white/[0.06] pb-2 mb-3">
-        <span className="text-[#00B4D8] font-bold">SCHEMATIC: BOILER FLUE & CONDENSATE RECLAIM</span>
-        <span>REV 3.0</span>
-      </div>
-      <svg viewBox="0 0 460 110" className="w-full h-auto text-slate-300">
-        <rect x="10" y="25" width="85" height="55" fill="#0A1628" stroke="#F59E0B" strokeWidth="1" />
-        <text x="52" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">HP BOILER</text>
-        <text x="52" y="62" fill="#F59E0B" textAnchor="middle" fontSize="8">10.5 BAR SAT.</text>
-
-        <path d="M95 40 H180" stroke="#F59E0B" strokeWidth="1.5" />
-        <polygon points="175,37 182,40 175,43" fill="#F59E0B" />
-        <text x="135" y="34" fill="#94A3B8" fontSize="7" textAnchor="middle">STEAM 184°C</text>
-
-        <rect x="180" y="25" width="105" height="55" fill="#0A1628" stroke="#00B4D8" strokeWidth="1" />
-        <text x="232" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">ECONOMIZER</text>
-        <text x="232" y="62" fill="#00B4D8" textAnchor="middle" fontSize="8">RECLAIM: +18.2%</text>
-
-        <path d="M285 40 H360" stroke="#00B4D8" strokeWidth="1.5" strokeDasharray="3 2" />
-        <polygon points="355,37 362,40 355,43" fill="#00B4D8" />
-
-        <rect x="360" y="25" width="90" height="55" fill="#0A1628" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-        <text x="405" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">CONDENSATE</text>
-        <text x="405" y="62" fill="#94A3B8" textAnchor="middle" fontSize="8">RETURN 94°C</text>
-
-        {/* Flue gas drop */}
-        <path d="M232 80 V95" stroke="#94A3B8" strokeWidth="1" strokeDasharray="2 2" />
-        <text x="232" y="105" fill="#94A3B8" fontSize="7" textAnchor="middle">STACK TEMP: 62°C (LOW ENTHALPY)</text>
-      </svg>
-      <div className="flex justify-between items-center text-[9px] text-[#94A3B8]/60 mt-2 border-t border-white/[0.06] pt-1.5">
-        <span>ENTHALPY RECOVERY: 4.8 MWth</span>
-        <span>ANNUAL CO2 REDUCTION: 3,420 TONS</span>
-      </div>
-    </div>
-  );
-}
-
-function WaterDiagram() {
-  return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-4 relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8]/70 border-b border-white/[0.06] pb-2 mb-3">
-        <span className="text-[#00B4D8] font-bold">SCHEMATIC: REGENERATIVE REVERSE OSMOSIS TRAIN</span>
-        <span>REV 1.8</span>
-      </div>
-      <svg viewBox="0 0 460 110" className="w-full h-auto text-slate-300">
-        <rect x="10" y="25" width="90" height="55" fill="#0A1628" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-        <text x="55" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">RAW FEED</text>
-        <text x="55" y="62" fill="#94A3B8" textAnchor="middle" fontSize="8">TDS: 38,000 PPM</text>
-
-        <path d="M100 52 H180" stroke="#00B4D8" strokeWidth="1.5" />
-        <polygon points="175,49 182,52 175,55" fill="#00B4D8" />
-        <text x="140" y="44" fill="#94A3B8" fontSize="7" textAnchor="middle">HP PUMP</text>
-
-        <rect x="180" y="25" width="115" height="55" fill="#0A1628" stroke="#00B4D8" strokeWidth="1" />
-        <text x="237" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">RO MEMBRANES</text>
-        <text x="237" y="62" fill="#00B4D8" textAnchor="middle" fontSize="8">PX ENERGY RECOVERY</text>
-
-        <path d="M295 40 H360" stroke="#00B4D8" strokeWidth="1.5" />
-        <polygon points="355,37 362,40 355,43" fill="#00B4D8" />
-        <rect x="360" y="25" width="90" height="55" fill="#0A1628" stroke="#00B4D8" strokeWidth="1" />
-        <text x="405" y="48" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">PERMEATE</text>
-        <text x="405" y="62" fill="#00B4D8" textAnchor="middle" fontSize="8">&lt; 85 PPM TDS</text>
-      </svg>
-      <div className="flex justify-between items-center text-[9px] text-[#94A3B8]/60 mt-2 border-t border-white/[0.06] pt-1.5">
-        <span>SPECIFIC POWER: 2.18 kWh/m³</span>
-        <span>BRINE ENERGY RECOVERY: 96.5%</span>
-      </div>
-    </div>
-  );
-}
-
-function ProcessDiagram() {
-  return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-4 relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8]/70 border-b border-white/[0.06] pb-2 mb-3">
-        <span className="text-[#00B4D8] font-bold">SCHEMATIC: PINCH ANALYSIS COMPOSITE CURVES</span>
-        <span>REV 4.2</span>
-      </div>
-      <svg viewBox="0 0 460 110" className="w-full h-auto text-slate-300">
-        {/* Hot Composite Curve */}
-        <path d="M30 25 L160 55 L380 95" stroke="#F59E0B" strokeWidth="2" fill="none" />
-        <text x="50" y="20" fill="#F59E0B" fontSize="8">HOT COMPOSITE (HEAT SOURCE)</text>
-
-        {/* Cold Composite Curve */}
-        <path d="M80 35 L210 65 L430 105" stroke="#00B4D8" strokeWidth="2" fill="none" />
-        <text x="330" y="102" fill="#00B4D8" fontSize="8">COLD COMPOSITE (HEAT SINK)</text>
-
-        {/* Pinch line */}
-        <line x1="185" y1="15" x2="185" y2="105" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="3 3" />
-        <text x="185" y="12" fill="#F1F5F9" textAnchor="middle" fontSize="8" fontWeight="bold">PINCH POINT (ΔT_min: 10°C)</text>
-
-        {/* Heat Recovery Area */}
-        <text x="260" y="60" fill="#94A3B8" fontSize="8">ZERO CROSS-PINCH HEAT</text>
-      </svg>
-      <div className="flex justify-between items-center text-[9px] text-[#94A3B8]/60 mt-2 border-t border-white/[0.06] pt-1.5">
-        <span>MIN. HOT UTILITY (Q_H): -38%</span>
-        <span>MIN. COLD UTILITY (Q_C): -44%</span>
-      </div>
-    </div>
-  );
-}
+import {
+  CoolingSchematic,
+  HeatingSchematic,
+  WaterSchematic,
+  ProcessIntegrationSchematic,
+} from "./service-schematics";
 
 const SERVICES_DATA: ServiceItem[] = [
   {
@@ -247,7 +108,7 @@ const SERVICES_DATA: ServiceItem[] = [
     ],
     paramKey: "cooling",
     badge: "TARGET: CHILLED WATER & INDUSTRIAL REFRIGERATION",
-    diagram: <CoolingDiagram />,
+    diagram: <CoolingSchematic />,
     icon: SnowflakeIcon,
   },
   {
@@ -263,7 +124,7 @@ const SERVICES_DATA: ServiceItem[] = [
     ],
     paramKey: "heating",
     badge: "TARGET: STEAM BOILERS & THERMAL DISTRIBUTION",
-    diagram: <HeatingDiagram />,
+    diagram: <HeatingSchematic />,
     icon: FlameIcon,
   },
   {
@@ -279,7 +140,7 @@ const SERVICES_DATA: ServiceItem[] = [
     ],
     paramKey: "water",
     badge: "TARGET: RO DESALINATION & INDUSTRIAL EFFLUENT",
-    diagram: <WaterDiagram />,
+    diagram: <WaterSchematic />,
     icon: WaterIcon,
   },
   {
@@ -295,7 +156,7 @@ const SERVICES_DATA: ServiceItem[] = [
     ],
     paramKey: "process",
     badge: "TARGET: WHOLE-FACILITY PINCH INTEGRATION",
-    diagram: <ProcessDiagram />,
+    diagram: <ProcessIntegrationSchematic />,
     icon: NetworkIcon,
   },
 ];
