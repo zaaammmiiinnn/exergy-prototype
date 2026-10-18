@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Sora, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { ChatWidget } from "@/components/chat/chat-widget";
+import { WhatsAppLauncher } from "@/components/site/whatsapp-launcher";
 import { IntroAnimation } from "@/components/IntroAnimation";
 
-const spaceGrotesk = Space_Grotesk({
+const sora = Sora({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-heading",
   display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-body",
   display: "swap",
 });
@@ -45,12 +46,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`scroll-smooth ${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`scroll-smooth ${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-screen bg-[#0A1628] text-[#F1F5F9] flex flex-col font-sans antialiased selection:bg-[#2C7FB8]/20 selection:text-[#2C7FB8]">
+      <body className="min-h-screen bg-[hsl(190,30%,98%)] text-[hsl(200,40%,12%)] flex flex-col font-sans antialiased selection:bg-teal-100 selection:text-teal-900">
         <IntroAnimation />
         <Navbar />
         <main className="flex-1">{children}</main>
+        <WhatsAppLauncher />
         <ChatWidget />
         <Footer />
       </body>

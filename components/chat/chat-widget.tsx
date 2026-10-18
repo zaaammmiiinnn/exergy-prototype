@@ -136,11 +136,11 @@ export function ChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2.5 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-500 hover:to-teal-400 text-white font-semibold py-3.5 px-5 rounded-full shadow-2xl hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-teal-400"
+          className="flex items-center gap-2.5 bg-[#0c758d] hover:bg-[#095f73] text-white font-semibold py-3.5 px-5 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-[#0c758d]/30"
           aria-label="Open Exergy Engineering Chatbot"
         >
           <MessageSquare className="w-5 h-5" />
-          <span className="text-xs tracking-wide">Ask Exergy</span>
+          <span className="text-xs font-sans tracking-wide">Ask Exergy</span>
         </button>
       )}
 
@@ -148,14 +148,14 @@ export function ChatWidget() {
       {isOpen && (
         <div className="w-[360px] sm:w-[400px] h-[520px] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
           {/* Header */}
-          <div className="bg-slate-50 border-b border-slate-200 p-4 flex items-center justify-between">
+          <div className="bg-slate-50/90 border-b border-slate-200 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 border border-teal-300 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200 flex items-center justify-center">
                 <Bot className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900 leading-none">Exergy Assistant</h3>
-                <span className="text-[10px] text-teal-700 font-mono">Deterministic Engine (No AI)</span>
+                <h3 className="text-sm font-heading font-bold text-slate-900 leading-none">Exergy Assistant</h3>
+                <span className="text-[10px] text-[#0c758d] font-mono">Deterministic Engine (No AI)</span>
               </div>
             </div>
 
@@ -163,13 +163,13 @@ export function ChatWidget() {
               <button
                 onClick={resetChat}
                 title="Restart Menu"
-                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -184,10 +184,10 @@ export function ChatWidget() {
                 className={`flex flex-col ${m.sender === "visitor" ? "items-end" : "items-start"}`}
               >
                 <div
-                  className={`p-3 rounded-xl max-w-[85%] leading-relaxed whitespace-pre-wrap ${
+                  className={`p-3.5 rounded-2xl max-w-[85%] leading-relaxed whitespace-pre-wrap font-sans ${
                     m.sender === "visitor"
-                      ? "bg-blue-600 text-white rounded-br-none shadow-sm"
-                      : "bg-white border border-slate-200 text-slate-800 rounded-bl-none shadow-sm"
+                      ? "bg-[#0c758d] text-white rounded-br-none shadow-xs"
+                      : "bg-white border border-slate-200/80 text-slate-800 rounded-bl-none shadow-xs"
                   }`}
                 >
                   {m.text}
@@ -200,7 +200,7 @@ export function ChatWidget() {
                       <button
                         key={idx}
                         onClick={() => dispatchInput(qr.action)}
-                        className="text-[11px] font-medium bg-white hover:bg-teal-50 text-teal-800 border border-teal-300/60 rounded-lg px-2.5 py-1 transition-colors shadow-xs"
+                        className="text-[11px] font-medium bg-white hover:bg-teal-50 text-[#0c758d] border border-teal-200 rounded-full px-3 py-1 transition-colors shadow-xs"
                       >
                         {qr.label}
                       </button>
@@ -213,17 +213,17 @@ export function ChatWidget() {
           </div>
 
           {/* Input Bar */}
-          <form onSubmit={handleFormSubmit} className="p-3 border-t border-slate-200 bg-slate-50 flex gap-2">
+          <form onSubmit={handleFormSubmit} className="p-3 border-t border-slate-200 bg-white flex gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type option number (1-6) or question..."
-              className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
             />
             <button
               type="submit"
-              className="p-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition-colors"
+              className="p-2 rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white transition-colors"
             >
               <Send className="w-4 h-4" />
             </button>

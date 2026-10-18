@@ -1,11 +1,22 @@
 # Project Progress & Status Tracker
 
-**Current Phase:** Brand Logo Color Extraction & Full Tier 1-4 Technical Illustrations System Complete  
+**Current Phase:** Theme Alignment Complete (`frontend-ruby-tau-96.vercel.app`) & Cloudflare Production Deployment  
 **Last Updated:** 2026-10-18
 
 ---
 
 ## What Was Done
+- **Theme Redesign (`frontend-ruby-tau-96.vercel.app` Alignment)**:
+  - Configured `@next/font/google` with Google Font `Sora` as the primary heading & display typography, paired with `Inter` for body copy and `JetBrains Mono` for engineering metrics.
+  - Aligned design system palette with reference site: Deep Teal (`#0c758d`), Eco Emerald (`#30a66a`), Thermodynamic Amber (`#F0A431`), and Rich Petrol Navy (`#061821` / `from-[hsl(200,65%,7%)]/95 via-[hsl(200,60%,10%)]/90 to-[hsl(190,55%,14%)]/75`).
+  - Added clean mint-tinted light background (`hsl(190, 30%, 98%)` / `#F4F8F8`) across the main page flow with contrasting dark petrol hero and showcase cards.
+  - Replaced navbar with clean white background, backdrop blur, centered floating pill navigation, and outline/solid pill buttons.
+  - Added animated infinite scrolling teal marquee ticker banner (`bg-[#0c758d] text-white py-3.5`) with utility domains.
+  - Added "About Us" philosophy block ("Saving the earth, one efficient process at a time") with `5–10%` reduction and `25–30%` cut cards.
+  - Added wavy hand-drawn emerald SVG brush underline (`#30a66a`) under "profit" in the hero headline.
+  - Re-themed Services Accordion, Methodology Timeline, Impact Metrics Bento Grid, Industries Section, and Case Study Showcase with `rounded-2xl` / `rounded-3xl` cards, soft teal icon containers, and full pill badges.
+  - Added floating WhatsApp circular launcher (`#25D366`) on the bottom-left with pulse effect, and re-styled Chatbot widget with `#0c758d` (teal) pill trigger on bottom-right.
+  - Verified zero TypeScript errors (`npx tsc --noEmit`) and verified rendering via browser subagent.
 - **Phase 0 (Content Extraction)**:
   - Extracted verbatim content from live site via Playwright crawler.
   - Resolved 6 target industries and 6 engineering services.

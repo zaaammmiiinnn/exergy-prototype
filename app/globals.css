@@ -3,32 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0A1628;
-  --bg-elev: #0F1E33;
-  --bg-light: #F8FAFC;
-  --border-dark: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(10, 22, 40, 0.10);
-  --text: #F1F5F9;
-  --text-dark: #0A1628;
-  --text-muted: #94A3B8;
-  --accent: #00B4D8;
-  --accent-2: #0077B6;
-  --accent-warm: #F59E0B;
+  --background: 190 30% 98%;
+  --foreground: 200 40% 12%;
+  --primary: 191 84% 30%; /* #0c758d */
+  --primary-hover: 191 85% 24%; /* #095f73 */
+  --secondary: 150 55% 42%; /* #30a66a */
+  --accent: 36 86% 57%; /* #F0A431 */
+  --border: 214 32% 91%;
+  --bg-light: #F4F8F8;
 }
 
 @layer base {
   body {
-    background-color: var(--bg);
-    color: var(--text);
+    background-color: hsl(190, 30%, 98%);
+    color: hsl(200, 40%, 12%);
     font-family: var(--font-body), Inter, system-ui, sans-serif;
-    font-feature-settings: "rlig" 1, "calt" 1, "tnum" 1;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading), "Space Grotesk", sans-serif;
-    letter-spacing: -0.03em;
-    font-weight: 600;
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: var(--font-heading), "Sora", sans-serif;
+    letter-spacing: -0.025em;
+    font-weight: 700;
   }
 }
 
@@ -94,4 +91,18 @@
   color: rgba(0, 180, 216, 0.7);
   pointer-events: none;
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
 

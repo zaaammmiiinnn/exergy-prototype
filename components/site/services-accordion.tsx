@@ -170,12 +170,12 @@ export function ServicesAccordion() {
   };
 
   return (
-    <section id="services" className="relative w-full bg-[#0A1628] border-b border-white/[0.08] py-24 sm:py-32">
+    <section id="services" className="relative w-full bg-[hsl(190,30%,98%)] border-b border-slate-200/80 py-24 sm:py-32">
       {/* Corner annotation marks */}
-      <div className="absolute top-4 left-4 text-white/20 font-mono text-[9px] pointer-events-none hidden sm:block">
+      <div className="absolute top-4 left-4 text-slate-400 font-mono text-[9px] pointer-events-none hidden sm:block">
         + DISCIPLINE.MATRIX // SEC.01
       </div>
-      <div className="absolute top-4 right-4 text-white/20 font-mono text-[9px] pointer-events-none hidden sm:block">
+      <div className="absolute top-4 right-4 text-slate-400 font-mono text-[9px] pointer-events-none hidden sm:block">
         + SPEC: EN-12831-DUBAI
       </div>
 
@@ -184,65 +184,66 @@ export function ServicesAccordion() {
           
           {/* LEFT COLUMN: Sticky on desktop (35%) */}
           <div className="lg:w-[35%] lg:sticky lg:top-28 self-start">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-1.5 h-1.5 bg-[#00B4D8]" />
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/60 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0c758d]" />
+              <span className="font-mono text-xs uppercase tracking-[0.14em] text-[#0c758d] font-semibold">
                 01 / SERVICES
               </span>
             </div>
 
-            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-[#F1F5F9] leading-[1.05] mb-6">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-[#12232b] leading-[1.08] mb-6">
               Four disciplines.
               <br />
-              <span className="text-[#00B4D8]">One system.</span>
+              <span className="text-[#0c758d]">One system.</span>
             </h2>
 
-            <p className="text-base text-[#94A3B8] leading-relaxed mb-8 max-w-md">
+            <p className="text-base text-slate-600 leading-relaxed mb-8 max-w-md font-sans">
               From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume.
             </p>
 
             <div className="pt-2">
               <Link
                 href="/services"
-                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#00B4D8] hover:text-[#F1F5F9] transition-colors group"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-teal-200 bg-white text-[#0c758d] font-medium text-xs uppercase tracking-wider hover:bg-teal-50 hover:border-teal-300 transition-all shadow-xs group"
               >
                 <span>View all services</span>
-                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
             {/* Quick engineering spec callout */}
-            <div className="hidden lg:block mt-12 p-4 border border-white/[0.08] bg-[#071120]/80">
-              <div className="font-mono text-[10px] text-[#94A3B8]/60 uppercase tracking-widest mb-1">
+            <div className="hidden lg:block mt-10 p-5 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+              <div className="font-mono text-[10px] text-slate-400 uppercase tracking-widest mb-1 font-semibold">
                 DELIVERY MODEL
               </div>
-              <div className="font-mono text-xs text-[#F1F5F9] font-medium">
+              <div className="font-heading text-sm text-[#12232b] font-bold">
                 100% Turnkey EPC & Guaranteed M&V
               </div>
-              <div className="font-mono text-[11px] text-[#94A3B8] mt-1">
+              <div className="text-xs text-slate-500 mt-1 font-sans">
                 Savings contractually bound against ASHRAE Level III audit baseline.
               </div>
             </div>
           </div>
 
           {/* RIGHT COLUMN: Accordion (65%) */}
-          <div className="lg:w-[65%] flex flex-col border border-white/[0.08] bg-[#0A1628]">
+          <div className="lg:w-[65%] flex flex-col gap-4">
             {SERVICES_DATA.map((item, index) => {
               const isOpen = openIndex === index;
               const Icon = item.icon;
-              const isLast = index === SERVICES_DATA.length - 1;
 
               return (
                 <div
                   key={item.id}
-                  className={`relative transition-all duration-200 ${
-                    !isLast ? "border-b border-white/[0.08]" : ""
-                  } ${isOpen ? "bg-[#0F1E33]/90" : "bg-[#0A1628] hover:bg-[#0F1E33]/40"}`}
+                  className={`relative rounded-2xl border transition-all duration-300 overflow-hidden bg-white ${
+                    isOpen 
+                      ? "border-[#0c758d]/50 shadow-md ring-1 ring-[#0c758d]/10" 
+                      : "border-slate-200/80 shadow-xs hover:border-slate-300 hover:shadow-sm"
+                  }`}
                 >
-                  {/* Left accent hairline on active / hover (Logo Primary & Accent) */}
+                  {/* Left accent indicator bar */}
                   <div
-                    className={`absolute left-0 top-0 bottom-0 w-[2px] transition-colors duration-200 ${
-                      isOpen ? "bg-[#2C7FB8]" : "bg-transparent group-hover:bg-[#2C7FB8]/40"
+                    className={`absolute left-0 top-0 bottom-0 w-[4px] transition-colors duration-200 ${
+                      isOpen ? "bg-[#0c758d]" : "bg-transparent group-hover:bg-[#0c758d]/30"
                     }`}
                   />
 
@@ -251,37 +252,47 @@ export function ServicesAccordion() {
                     type="button"
                     onClick={() => toggleRow(index)}
                     aria-expanded={isOpen}
-                    className="w-full text-left p-6 sm:p-8 flex items-start justify-between gap-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#2C7FB8]"
+                    className="w-full text-left p-6 sm:p-7 flex items-start justify-between gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0c758d] group"
                   >
-                    <div className="flex items-start gap-5 sm:gap-6">
-                      {/* Mono index in muted color */}
-                      <span className="font-mono text-sm sm:text-base text-[#94A3B8] font-bold mt-1">
-                        {item.code}
-                      </span>
-
-                      {/* Line-art Icon (32px, 1.5px stroke, no fill, using logo colors) */}
-                      <div className="text-[#94A3B8] group-hover:text-[#2C7FB8] transition-colors mt-0.5 shrink-0">
-                        <Icon className={`w-8 h-8 transition-colors ${isOpen ? "text-[#F0A431]" : "text-[#2C7FB8]"}`} />
+                    <div className="flex items-start gap-4 sm:gap-5">
+                      {/* Icon container */}
+                      <div className={`w-12 h-12 rounded-xl border flex items-center justify-center shrink-0 transition-colors ${
+                        isOpen 
+                          ? "bg-teal-50 border-teal-200 text-[#0c758d]" 
+                          : "bg-slate-50 border-slate-200/60 text-slate-600 group-hover:text-[#0c758d] group-hover:border-teal-200 group-hover:bg-teal-50/50"
+                      }`}>
+                        <Icon className="w-6 h-6" />
                       </div>
 
                       {/* Title & Short Description */}
-                      <div className="pr-4">
-                        <h3 className="font-heading text-xl sm:text-2xl font-semibold text-[#F1F5F9] tracking-[-0.02em]">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-[#94A3B8] mt-1.5 leading-relaxed line-clamp-2 sm:line-clamp-none">
+                      <div className="pr-2">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-mono text-xs font-bold text-[#0c758d]">
+                            {item.code}
+                          </span>
+                          <h3 className="font-heading text-lg sm:text-xl font-semibold text-[#12232b] tracking-[-0.02em] group-hover:text-[#0c758d] transition-colors">
+                            {item.title}
+                          </h3>
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2 sm:line-clamp-none font-sans">
                           {item.shortDesc}
                         </p>
                       </div>
                     </div>
 
                     {/* Toggle Arrow */}
-                    <div className="shrink-0 mt-1.5">
-                      <ChevronDown
-                        className={`w-5 h-5 text-[#94A3B8] transition-transform duration-300 ${
-                          isOpen ? "rotate-180 text-[#F0A431]" : ""
-                        }`}
-                      />
+                    <div className="shrink-0 mt-2">
+                      <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
+                        isOpen 
+                          ? "bg-teal-50 border-teal-200 text-[#0c758d]" 
+                          : "bg-slate-50 border-slate-200 text-slate-400 group-hover:text-slate-600"
+                      }`}>
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            isOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </div>
                     </div>
                   </button>
 
@@ -295,10 +306,10 @@ export function ServicesAccordion() {
                         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}
                         className="overflow-hidden"
                       >
-                        <div className="px-6 pb-8 pt-2 sm:px-8 sm:pb-8 border-t border-white/[0.04]">
+                        <div className="px-6 pb-7 pt-2 sm:px-7 sm:pb-8 border-t border-slate-100">
                           {/* Target Scope Badge */}
                           <div className="mb-4">
-                            <span className="font-mono text-[10px] text-[#2C7FB8] uppercase tracking-wider bg-[#2C7FB8]/10 px-2 py-0.5 border border-[#2C7FB8]/25">
+                            <span className="inline-block font-mono text-[11px] text-[#0c758d] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-200/60 font-semibold">
                               {item.badge}
                             </span>
                           </div>
@@ -306,37 +317,37 @@ export function ServicesAccordion() {
                           {/* 3 Technical Bullet Points */}
                           <div className="grid grid-cols-1 gap-2.5 mb-6">
                             {item.bullets.map((bullet, bIdx) => (
-                              <div key={bIdx} className="flex items-start gap-2.5">
-                                <div className="w-4 h-4 rounded-[2px] bg-[#2C7FB8]/10 border border-[#2C7FB8]/30 flex items-center justify-center shrink-0 mt-0.5">
-                                  <Check className="w-3 h-3 text-[#2C7FB8]" />
+                              <div key={bIdx} className="flex items-start gap-3">
+                                <div className="w-5 h-5 rounded-full bg-teal-100/80 text-[#0c758d] flex items-center justify-center shrink-0 mt-0.5">
+                                  <Check className="w-3 h-3 stroke-[2.5]" />
                                 </div>
-                                <span className="text-xs sm:text-sm text-[#F1F5F9]/90 font-mono leading-relaxed">
+                                <span className="text-xs sm:text-sm text-slate-700 font-sans leading-relaxed">
                                   {bullet}
                                 </span>
                               </div>
                             ))}
                           </div>
 
-                          {/* Mini Technical Diagram */}
-                          <div className="mb-6">
+                          {/* Mini Technical Diagram wrapped in dark petrol card for schematic clarity */}
+                          <div className="mb-6 p-3 rounded-2xl bg-gradient-to-br from-[#061821] to-[#0f323c] border border-slate-800 shadow-md">
                             {item.diagram}
                           </div>
 
-                          {/* CTA Button */}
+                          {/* CTA Buttons */}
                           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
                             <Link
                               href={`/assessment?service=${item.paramKey}`}
-                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2C7FB8] text-white font-mono text-xs uppercase tracking-wider font-semibold rounded-[2px] hover:bg-[#2C7FB8]/90 transition-all shadow-[0_0_15px_rgba(44,127,184,0.3)]"
+                              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0c758d] text-white font-sans text-xs uppercase tracking-wider font-semibold rounded-full hover:bg-[#095f73] transition-all shadow-xs"
                             >
                               <span>Request assessment</span>
                               <ArrowRight className="w-3.5 h-3.5" />
                             </Link>
                             <Link
                               href={`/services/${item.paramKey}`}
-                              className="font-mono text-xs text-[#94A3B8] hover:text-[#F1F5F9] transition-colors flex items-center gap-1"
+                              className="font-sans text-xs font-medium text-slate-600 hover:text-[#0c758d] transition-colors flex items-center gap-1.5"
                             >
                               <span>View technical documentation</span>
-                              <span className="text-[#2C7FB8]">→</span>
+                              <span className="text-[#0c758d]">→</span>
                             </Link>
                           </div>
 

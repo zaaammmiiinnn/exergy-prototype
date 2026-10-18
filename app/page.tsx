@@ -10,7 +10,7 @@ import { AssessmentCTA } from "@/components/site/assessment-cta";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col bg-[#0A1628]">
+    <div className="flex flex-col bg-[hsl(190,30%,98%)] min-h-screen text-[#12232b]">
       {/* 1. Hero (Step 2) */}
       <Hero />
 

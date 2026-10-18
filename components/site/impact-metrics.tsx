@@ -33,41 +33,41 @@ export function ImpactMetrics() {
     <section
       id="impact"
       ref={containerRef}
-      className="relative w-full bg-[#0A1628] border-b border-white/[0.08] py-24 sm:py-32"
+      className="relative w-full bg-[hsl(190,30%,98%)] border-b border-slate-200/80 py-24 sm:py-32 text-[#12232b]"
     >
       {/* Blueprint Grid Overlay */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          backgroundImage: `linear-gradient(to right, #F1F5F9 1px, transparent 1px), linear-gradient(to bottom, #F1F5F9 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(to right, #0A1628 1px, transparent 1px), linear-gradient(to bottom, #0A1628 1px, transparent 1px)`,
           backgroundSize: "40px 40px",
         }}
       />
 
       {/* Engineering Corner Annotations */}
-      <div className="absolute top-4 left-4 text-white/20 font-mono text-[9px] pointer-events-none hidden sm:block">
+      <div className="absolute top-4 left-4 text-slate-400 font-mono text-[9px] pointer-events-none hidden sm:block">
         + DATA.ENGINE: M&V LOGS // REGION-GCC
       </div>
-      <div className="absolute top-4 right-4 text-white/20 font-mono text-[9px] pointer-events-none hidden sm:block">
+      <div className="absolute top-4 right-4 text-slate-400 font-mono text-[9px] pointer-events-none hidden sm:block">
         + TELEMETRY: 24/7 STEADY-STATE
       </div>
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
         <div className="max-w-3xl mb-14 sm:mb-16">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-1.5 h-1.5 bg-[#00B4D8]" />
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-medium">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/60 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c758d]" />
+            <span className="font-mono text-xs uppercase tracking-[0.14em] text-[#0c758d] font-semibold">
               03 / IMPACT
             </span>
           </div>
 
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-[#F1F5F9] leading-[1.05] mb-4">
+          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-[#12232b] leading-[1.08] mb-4">
             Measured. Verified.{" "}
-            <span className="text-[#00B4D8]">Guaranteed.</span>
+            <span className="text-[#0c758d]">Guaranteed.</span>
           </h2>
 
-          <p className="text-base text-[#94A3B8] max-w-2xl leading-relaxed">
+          <p className="text-base text-slate-600 max-w-2xl leading-relaxed font-sans">
             Industrial efficiency proven through rigorous second-law accounting. Every kilojoule, kilowatt-hour, and cubic meter is tracked against audited operational baselines.
           </p>
         </div>
@@ -78,36 +78,36 @@ export function ImpactMetrics() {
           {/* =========================================================================
               CARD 1 (LARGE, Spans 2 cols on lg): Energy Saved Bar Chart
              ========================================================================= */}
-          <div className="lg:col-span-2 p-6 sm:p-8 bg-[#0F1E33] border border-white/[0.08] rounded-[2px] flex flex-col justify-between relative">
+          <div className="lg:col-span-2 p-6 sm:p-8 bg-white border border-slate-200/80 rounded-2xl flex flex-col justify-between relative shadow-xs hover:shadow-md transition-all">
             <div>
               {/* Header inside Card */}
-              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-white/[0.08] pb-4 mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-slate-100 pb-4 mb-6">
                 <div>
-                  <span className="font-mono text-[10px] text-[#00B4D8] uppercase tracking-wider block mb-1">
+                  <span className="font-mono text-[10px] text-[#0c758d] uppercase tracking-wider block mb-1 font-semibold">
                     PERFORMANCE BENCHMARK // GCC SECTOR AUDITS
                   </span>
-                  <div className="font-heading text-2xl sm:text-3xl font-bold text-[#F1F5F9] tracking-tight">
-                    <span className="font-mono text-[#00B4D8]">
+                  <div className="font-heading text-2xl sm:text-3xl font-bold text-[#12232b] tracking-tight">
+                    <span className="font-mono text-[#0c758d]">
                       <CountUp to={30} duration={1.2} />–<CountUp to={45} duration={1.2} suffix="%" />
                     </span>{" "}
                     typical energy saved
                   </div>
                 </div>
-                <div className="font-mono text-xs text-[#94A3B8] text-left sm:text-right">
+                <div className="font-mono text-xs text-slate-400 text-left sm:text-right">
                   M&V STANDARD: IPMVP PROTOCOL
                 </div>
               </div>
 
               {/* Pure SVG Animated Bar Chart */}
               <div className="w-full pt-2 pb-4">
-                <div className="grid grid-cols-6 gap-2 sm:gap-4 items-end h-48 border-b border-white/20 pb-2 relative">
+                <div className="grid grid-cols-6 gap-2 sm:gap-4 items-end h-48 border-b border-slate-200 pb-2 relative">
                   
                   {/* Subtle horizontal grid lines */}
-                  <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
-                    <div className="border-b border-dashed border-white/40 w-full" />
-                    <div className="border-b border-dashed border-white/40 w-full" />
-                    <div className="border-b border-dashed border-white/40 w-full" />
-                    <div className="border-b border-dashed border-white/40 w-full" />
+                  <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-40">
+                    <div className="border-b border-dashed border-slate-200 w-full" />
+                    <div className="border-b border-dashed border-slate-200 w-full" />
+                    <div className="border-b border-dashed border-slate-200 w-full" />
+                    <div className="border-b border-dashed border-slate-200 w-full" />
                   </div>
 
                   {BAR_CHART_DATA.map((bar, idx) => {
@@ -115,12 +115,12 @@ export function ImpactMetrics() {
                     return (
                       <div key={bar.code} className="flex flex-col items-center h-full justify-end relative z-10 group">
                         {/* Tooltip on hover / value on top */}
-                        <span className="font-mono text-[10px] sm:text-xs text-[#00B4D8] font-bold mb-1.5 opacity-90 group-hover:scale-110 transition-transform">
+                        <span className="font-mono text-[10px] sm:text-xs text-[#0c758d] font-bold mb-1.5 opacity-90 group-hover:scale-110 transition-transform">
                           <CountUp to={bar.pct} suffix="%" duration={1.2} />
                         </span>
 
                         {/* Animated Bar */}
-                        <div className="w-full max-w-[42px] bg-[#0A1628] border border-[#00B4D8]/40 h-full flex items-end">
+                        <div className="w-full max-w-[42px] bg-slate-50 border border-slate-200/80 rounded-t-lg h-full flex items-end overflow-hidden">
                           <motion.div
                             initial={shouldReduceMotion ? { height: `${heightPct}%` } : { height: 0 }}
                             whileInView={{ height: `${heightPct}%` }}
@@ -130,16 +130,16 @@ export function ImpactMetrics() {
                               delay: idx * 0.08,
                               ease: [0.25, 0.1, 0.25, 1.0],
                             }}
-                            className="w-full bg-gradient-to-t from-[#0077B6] to-[#00B4D8] transition-colors group-hover:brightness-110"
+                            className="w-full bg-gradient-to-t from-[#0c758d] to-[#30a66a] transition-all group-hover:brightness-105 rounded-t-lg"
                           />
                         </div>
 
                         {/* Label bottom */}
                         <div className="mt-3 text-center">
-                          <span className="font-mono text-[10px] text-[#94A3B8] font-semibold block uppercase">
+                          <span className="font-mono text-[10px] text-slate-700 font-semibold block uppercase">
                             {bar.code}
                           </span>
-                          <span className="font-mono text-[9px] text-[#94A3B8]/60 hidden sm:block truncate max-w-[65px]">
+                          <span className="font-mono text-[9px] text-slate-400 hidden sm:block truncate max-w-[65px]">
                             {bar.name}
                           </span>
                         </div>
@@ -151,22 +151,22 @@ export function ImpactMetrics() {
             </div>
 
             {/* Bottom info strip */}
-            <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-[#94A3B8]">
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-400">
               <span>SAMPLE: 48 REGIONAL INDUSTRIAL FACILITIES</span>
-              <span>VERIFIED AVERAGE: 37.4% REDUCTION</span>
+              <span className="text-[#30a66a] font-semibold">VERIFIED AVERAGE: 37.4% REDUCTION</span>
             </div>
           </div>
 
           {/* =========================================================================
               CARD 2: Circular 100% Turnkey Guarantee
              ========================================================================= */}
-          <div className="p-6 sm:p-8 bg-[#0F1E33] border border-white/[0.08] rounded-[2px] flex flex-col justify-between">
+          <div className="p-6 sm:p-8 bg-white border border-slate-200/80 rounded-2xl flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
             <div>
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-6">
-                <span className="font-mono text-[10px] text-[#00B4D8] uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-6">
+                <span className="font-mono text-[10px] text-[#30a66a] uppercase tracking-wider font-semibold">
                   CONTRACTUAL BOND
                 </span>
-                <span className="font-mono text-[10px] text-[#94A3B8]">METRIC // 02</span>
+                <span className="font-mono text-[10px] text-slate-400">METRIC // 02</span>
               </div>
 
               {/* Animated Progress Ring */}
@@ -178,8 +178,8 @@ export function ImpactMetrics() {
                       cx="80"
                       cy="80"
                       r={radius}
-                      stroke="rgba(255,255,255,0.08)"
-                      strokeWidth="8"
+                      stroke="#f1f5f9"
+                      strokeWidth="10"
                       fill="none"
                     />
                     {/* Animated Foreground Ring */}
@@ -187,8 +187,8 @@ export function ImpactMetrics() {
                       cx="80"
                       cy="80"
                       r={radius}
-                      stroke="#00B4D8"
-                      strokeWidth="8"
+                      stroke="#30a66a"
+                      strokeWidth="10"
                       fill="none"
                       strokeLinecap="round"
                       strokeDasharray={circumference}
@@ -201,27 +201,27 @@ export function ImpactMetrics() {
 
                   {/* Center Text */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="font-mono text-3xl font-bold text-[#F1F5F9]">
+                    <span className="font-mono text-3xl font-bold text-[#12232b]">
                       <CountUp to={100} duration={1.4} suffix="%" />
                     </span>
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-[#00B4D8] font-semibold">
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-[#30a66a] font-semibold">
                       GUARANTEED
                     </span>
                   </div>
                 </div>
 
                 <div className="text-center mt-4">
-                  <h3 className="font-heading text-lg font-bold text-[#F1F5F9]">
+                  <h3 className="font-heading text-lg font-bold text-[#12232b]">
                     Turnkey & Guaranteed
                   </h3>
-                  <p className="text-xs text-[#94A3B8] mt-1 max-w-xs leading-relaxed">
+                  <p className="text-xs text-slate-600 mt-1 max-w-xs leading-relaxed font-sans">
                     Full EPC execution with savings contractually underwritten against your audited baseline.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-white/[0.06] flex items-center justify-center gap-2 text-[10px] font-mono text-[#00B4D8]">
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-center gap-2 text-[10px] font-mono text-[#30a66a]">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>ZERO CAPEX PENALTY GUARANTEE</span>
             </div>
@@ -230,43 +230,43 @@ export function ImpactMetrics() {
           {/* =========================================================================
               CARD 3: 12-Month Payback Line Chart
              ========================================================================= */}
-          <div className="p-6 sm:p-8 bg-[#0F1E33] border border-white/[0.08] rounded-[2px] flex flex-col justify-between">
+          <div className="p-6 sm:p-8 bg-white border border-slate-200/80 rounded-2xl flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
             <div>
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-5">
-                <span className="font-mono text-[10px] text-[#00B4D8] uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
+                <span className="font-mono text-[10px] text-[#0c758d] uppercase tracking-wider font-semibold">
                   FINANCIAL AMORTIZATION
                 </span>
-                <span className="font-mono text-[10px] text-[#94A3B8]">METRIC // 03</span>
+                <span className="font-mono text-[10px] text-slate-400">METRIC // 03</span>
               </div>
 
               <div>
-                <div className="font-heading text-2xl font-bold text-[#F1F5F9] mb-1">
-                  <span className="font-mono text-[#00B4D8]">
+                <div className="font-heading text-2xl font-bold text-[#12232b] mb-1">
+                  <span className="font-mono text-[#0c758d]">
                     <CountUp to={12} duration={1.2} suffix="-month" />
                   </span>{" "}
                   average payback
                 </div>
-                <p className="text-xs text-[#94A3B8] leading-relaxed mb-4">
+                <p className="text-xs text-slate-600 leading-relaxed mb-4 font-sans">
                   Cumulative net energy savings amortize total equipment & engineering investment within year one.
                 </p>
               </div>
 
               {/* Pure SVG Animated ROI Line Chart */}
-              <div className="w-full bg-[#071120] border border-white/[0.08] p-3 mb-2 font-mono text-[9px]">
-                <div className="flex justify-between text-[#94A3B8]/60 mb-2">
+              <div className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 mb-2 font-mono text-[9px]">
+                <div className="flex justify-between text-slate-400 mb-2">
                   <span>CUMULATIVE NET CASHFLOW</span>
-                  <span className="text-[#00B4D8]">BREAKEVEN: M.12</span>
+                  <span className="text-[#0c758d] font-semibold">BREAKEVEN: M.12</span>
                 </div>
                 <svg viewBox="0 0 300 110" className="w-full h-auto overflow-visible">
                   {/* Zero axis */}
-                  <line x1="20" y1="75" x2="290" y2="75" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="3 3" />
-                  <text x="15" y="77" fill="#94A3B8" fontSize="7" textAnchor="end">0</text>
+                  <line x1="20" y1="75" x2="290" y2="75" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+                  <text x="15" y="77" fill="#94a3b8" fontSize="7" textAnchor="end">0</text>
                   
                   {/* Negative capex dip & recovery curve */}
                   <motion.path
                     d="M 20 75 Q 70 100 130 85 T 220 35 T 290 15"
                     fill="none"
-                    stroke="#00B4D8"
+                    stroke="#0c758d"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
@@ -279,29 +279,29 @@ export function ImpactMetrics() {
                   <path
                     d="M 170 75 Q 220 35 290 15 L 290 75 Z"
                     fill="url(#roi-glow)"
-                    opacity="0.25"
+                    opacity="0.2"
                   />
                   <defs>
                     <linearGradient id="roi-glow" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#00B4D8" />
-                      <stop offset="100%" stopColor="#00B4D8" stopOpacity="0" />
+                      <stop offset="0%" stopColor="#0c758d" />
+                      <stop offset="100%" stopColor="#0c758d" stopOpacity="0" />
                     </linearGradient>
                   </defs>
 
                   {/* Breakeven Marker dot */}
-                  <circle cx="170" cy="75" r="3.5" fill="#00B4D8" />
-                  <text x="170" y="92" fill="#F1F5F9" fontSize="7" textAnchor="middle">PAYBACK</text>
+                  <circle cx="170" cy="75" r="4" fill="#0c758d" stroke="#ffffff" strokeWidth="1.5" />
+                  <text x="170" y="92" fill="#12232b" fontSize="7" fontWeight="bold" textAnchor="middle">PAYBACK</text>
                 </svg>
-                <div className="flex justify-between text-[8px] text-[#94A3B8]/50 mt-1">
+                <div className="flex justify-between text-[8px] text-slate-400 mt-1">
                   <span>M0 (CAPEX)</span>
                   <span>M6</span>
                   <span>M12</span>
-                  <span>M24 (+180% ROI)</span>
+                  <span className="text-[#30a66a] font-semibold">M24 (+180% ROI)</span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-white/[0.06] text-[10px] font-mono text-[#94A3B8]">
+            <div className="pt-3 border-t border-slate-100 text-[10px] font-mono text-slate-400">
               IRR ESTIMATE: 44–72% ANNUALIZED
             </div>
           </div>
@@ -309,24 +309,24 @@ export function ImpactMetrics() {
           {/* =========================================================================
               CARD 4 (Large on Tablet / 2-Col on lg or spans 2 cols): 6 Industries
              ========================================================================= */}
-          <div className="lg:col-span-2 p-6 sm:p-8 bg-[#0F1E33] border border-white/[0.08] rounded-[2px] flex flex-col justify-between">
+          <div className="lg:col-span-2 p-6 sm:p-8 bg-white border border-slate-200/80 rounded-2xl flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
             <div>
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-6">
-                <span className="font-mono text-[10px] text-[#00B4D8] uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-6">
+                <span className="font-mono text-[10px] text-[#0c758d] uppercase tracking-wider font-semibold">
                   INDUSTRIAL PORTFOLIO
                 </span>
-                <span className="font-mono text-[10px] text-[#94A3B8]">METRIC // 04</span>
+                <span className="font-mono text-[10px] text-slate-400">METRIC // 04</span>
               </div>
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
                 <div>
-                  <div className="font-heading text-3xl sm:text-4xl font-bold text-[#F1F5F9]">
-                    <span className="font-mono text-[#00B4D8]">
+                  <div className="font-heading text-3xl sm:text-4xl font-bold text-[#12232b]">
+                    <span className="font-mono text-[#0c758d]">
                       <CountUp to={6} duration={1.0} />
                     </span>{" "}
                     Industries Served
                   </div>
-                  <p className="text-xs sm:text-sm text-[#94A3B8] mt-1 max-w-xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl leading-relaxed font-sans">
                     Heavy thermal, steam, cooling, and water-intensive industrial assets across the UAE and broader GCC region.
                   </p>
                 </div>
@@ -346,17 +346,17 @@ export function ImpactMetrics() {
                   return (
                     <div
                       key={item.name}
-                      className="p-3 bg-[#0A1628] border border-white/[0.08] rounded-[2px] flex flex-col justify-between hover:border-[#00B4D8]/50 transition-colors"
+                      className="p-3 bg-slate-50/80 border border-slate-200/60 rounded-xl flex flex-col justify-between hover:border-[#0c758d]/50 hover:bg-teal-50/40 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-mono text-[9px] text-[#94A3B8]">0{i + 1}</span>
-                        <Icon className="w-4 h-4 text-[#00B4D8]" />
+                        <span className="font-mono text-[9px] text-slate-400">0{i + 1}</span>
+                        <Icon className="w-4 h-4 text-[#0c758d]" />
                       </div>
                       <div>
-                        <div className="font-mono text-xs font-bold text-[#F1F5F9] truncate">
+                        <div className="font-mono text-xs font-bold text-[#12232b] truncate">
                           {item.name}
                         </div>
-                        <div className="font-mono text-[9px] text-[#94A3B8]/60 truncate mt-0.5">
+                        <div className="font-mono text-[9px] text-slate-400 truncate mt-0.5">
                           {item.spec}
                         </div>
                       </div>
@@ -366,7 +366,7 @@ export function ImpactMetrics() {
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-[#94A3B8]">
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-400">
               <span>APPLICATIONS: HEATING · COOLING · DRYING · WATER QUALITY · PINCH</span>
               <span>COVERAGE: UAE / SAUDI / OMAN</span>
             </div>
