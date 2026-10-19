@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { Menu } from "lucide-react";
 
@@ -9,7 +10,45 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isAuthChecking, setIsAuthChecking] = useState(pathname !== "/admin/login");
+
+  useEffect(() => {
+    if (pathname === "/admin/login") {
+      setIsAuthChecking(false);
+      return;
+    }
+
+    // Check if session exists in cookie or localStorage
+    try {
+      const hasCookie = document.cookie.includes("exergy_admin_session");
+      const hasStorage = !!localStorage.getItem("exergy_admin_session");
+      if (!hasCookie && !hasStorage) {
+        router.replace("/admin/login");
+        return;
+      }
+    } catch {}
+
+    setIsAuthChecking(false);
+  }, [pathname, router]);
+
+  // For /admin/login, render standalone without sidebar
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-[#06101E] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-2 border-[#2C7FB8] border-t-transparent animate-spin" />
+          <span className="text-xs font-mono text-slate-400">Verifying administrator session...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[hsl(190,30%,98%)] flex">

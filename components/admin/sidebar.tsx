@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -13,7 +13,9 @@ import {
   Settings,
   LogOut,
   X,
+  RefreshCw,
 } from "lucide-react";
+import { adminSignOutAction } from "@/app/actions/admin-auth";
 
 interface NavItem {
   name: string;
@@ -68,6 +70,36 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [adminUser, setAdminUser] = useState<{ email: string; role: string; name: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("exergy_admin_session");
+      if (stored) {
+        setAdminUser(JSON.parse(stored));
+      }
+    } catch {}
+  }, []);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await adminSignOutAction();
+    } catch (e) {
+      console.warn("Sign out action error:", e);
+    }
+
+    try {
+      localStorage.removeItem("exergy_admin_session");
+      document.cookie = "exergy_admin_session=; path=/; max-age=0";
+    } catch {}
+
+    // Redirect to login page
+    router.replace("/admin/login");
+    router.refresh();
+  };
 
   return (
     <>
@@ -178,30 +210,36 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
         <div className="p-3.5 border-t border-white/[0.08] bg-[#07101d] shrink-0">
           <div className="flex items-center gap-2.5 mb-3 px-1">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2C7FB8] to-[#0E4A4F] text-white flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/10">
-              NW
+              {adminUser?.email?.startsWith("support") ? "ES" : "NW"}
             </div>
             <div className="flex-1 min-w-0">
               <p
                 className="text-xs font-medium text-white truncate"
-                title="neuralwaves.official@gmail.com"
+                title={adminUser?.email || "neuralwaves.official@gmail.com"}
               >
-                neuralwaves.official@gmail.com
+                {adminUser?.email || "neuralwaves.official@gmail.com"}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  Founder
+                  {adminUser?.role === "admin" ? "Support Ops" : "Founder"}
                 </span>
               </div>
             </div>
           </div>
 
-          <Link
-            href="/"
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer disabled:opacity-50"
           >
-            <LogOut className="w-3.5 h-3.5 text-slate-400 group-hover:text-white" />
-            <span>Sign Out</span>
-          </Link>
+            {isSigningOut ? (
+              <RefreshCw className="w-3.5 h-3.5 text-slate-400 animate-spin" />
+            ) : (
+              <LogOut className="w-3.5 h-3.5 text-slate-400 group-hover:text-white" />
+            )}
+            <span>{isSigningOut ? "Signing Out..." : "Sign Out"}</span>
+          </button>
         </div>
       </aside>
     </>

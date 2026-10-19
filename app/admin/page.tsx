@@ -32,6 +32,8 @@ import {
   deleteLeadAction,
   type AdminLeadItem,
 } from "@/app/actions/admin-leads";
+import { useRouter } from "next/navigation";
+import { adminSignOutAction } from "@/app/actions/admin-auth";
 
 interface MockLead {
   id: string;
@@ -134,6 +136,7 @@ const MOCK_LEADS: MockLead[] = [
 ];
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [leads, setLeads] = useState<MockLead[]>([]);
   const [selectedLead, setSelectedLead] = useState<MockLead | null>(null);
@@ -142,6 +145,20 @@ export default function AdminDashboardPage() {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
   const [statusSaveFeedback, setStatusSaveFeedback] = useState<string | null>(null);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await adminSignOutAction();
+    } catch {}
+    try {
+      localStorage.removeItem("exergy_admin_session");
+      document.cookie = "exergy_admin_session=; path=/; max-age=0";
+    } catch {}
+    router.replace("/admin/login");
+    router.refresh();
+  };
 
   const getCachedStatuses = (): Record<string, MockLead["status"]> => {
     try {
@@ -390,11 +407,19 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
+            <button
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-red-200/80 bg-red-50/70 hover:bg-red-100 text-red-700 font-medium text-xs transition-all shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-50"
+            >
+              <LogOut className={`w-3.5 h-3.5 text-red-600 ${isSigningOut ? "animate-spin" : ""}`} />
+              <span>{isSigningOut ? "Signing Out..." : "Sign Out"}</span>
+            </button>
+
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-medium text-xs transition-all shadow-2xs hover:shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-medium text-xs transition-all shadow-2xs hover:shadow-xs"
             >
-              <LogOut className="w-3.5 h-3.5 text-slate-500" />
               <span>Exit to Public Site</span>
             </Link>
           </div>
