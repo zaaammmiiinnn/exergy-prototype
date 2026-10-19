@@ -34,14 +34,14 @@ export default function AdminSettingsPage() {
           <div className="space-y-2 text-xs font-mono">
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
               <span>neuralwaves.official@gmail.com</span>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                Founder
+              <span className="text-[10px] font-bold text-[#0c758d] bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                Admin (Primary)
               </span>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
               <span>support@neuralwaves.in</span>
-              <span className="text-[10px] font-bold text-teal-700 bg-teal-100 px-2 py-0.5 rounded-full">
-                Support
+              <span className="text-[10px] font-bold text-[#0c758d] bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                Admin (Operations)
               </span>
             </div>
           </div>

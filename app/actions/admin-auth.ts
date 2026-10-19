@@ -10,52 +10,142 @@ export interface AdminSession {
   authenticatedAt: string;
 }
 
-const ALLOWED_ADMINS: Record<string, { role: AdminSession["role"]; name: string }> = {
-  "neuralwaves.official@gmail.com": { role: "founder", name: "Neural Waves Founder" },
-  "support@neuralwaves.in": { role: "admin", name: "Exergy Operations Support" },
-};
-
-export async function adminLoginAction(email: string, password?: string): Promise<{ success: boolean; session?: AdminSession; error?: string }> {
+/**
+ * Verify PBKDF2 password hash using standard Web Crypto API (Cloudflare Workers compatible)
+ */
+async function verifyPasswordWebCrypto(password: string, storedHash: string): Promise<boolean> {
   try {
-    const normalizedEmail = email.toLowerCase().trim();
-    const adminConfig = ALLOWED_ADMINS[normalizedEmail];
+    const parts = storedHash.split(":");
+    if (parts.length !== 2) return false;
+    const [saltHex, expectedHashHex] = parts;
 
-    if (!adminConfig) {
+    const salt = new Uint8Array(
+      saltHex.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
+    );
+
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw",
+      enc.encode(password),
+      { name: "PBKDF2" },
+      false,
+      ["deriveBits"]
+    );
+
+    const derivedBits = await crypto.subtle.deriveBits(
+      {
+        name: "PBKDF2",
+        salt: salt,
+        iterations: 100000,
+        hash: "SHA-256",
+      },
+      keyMaterial,
+      256
+    );
+
+    const derivedHex = Array.from(new Uint8Array(derivedBits))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
+    return derivedHex === expectedHashHex;
+  } catch (err) {
+    console.warn("[VERIFY PASSWORD ERROR]", err);
+    return false;
+  }
+}
+
+export async function adminLoginAction(
+  email: string,
+  password?: string
+): Promise<{ success: boolean; session?: AdminSession; error?: string }> {
+  try {
+    const normalizedEmail = email?.toLowerCase().trim();
+    if (!normalizedEmail || !password || password.trim() === "") {
       return {
         success: false,
-        error: "Access denied. Only authorized administrators (@neuralwaves.in / @gmail.com) can access this console.",
+        error: "Please enter your administrator email and password.",
       };
     }
 
-    // Optional Supabase Auth credential validation if password provided
-    if (password && password.trim() !== "") {
+    const supabase = createServiceRoleClient();
+
+    // 1. Fetch user from admin_users database table
+    const { data: adminUser, error: dbError } = await supabase
+      .from("admin_users")
+      .select("id, email, password_hash, full_name, role, is_active")
+      .eq("email", normalizedEmail)
+      .single();
+
+    if (dbError || !adminUser) {
+      return {
+        success: false,
+        error: "Access denied. Administrator account not found in database.",
+      };
+    }
+
+    if (!adminUser.is_active) {
+      return {
+        success: false,
+        error: "Administrator account is inactive. Please contact system support.",
+      };
+    }
+
+    // 2. Verify password against database hash or Supabase Auth
+    let isValidPassword = false;
+    if (adminUser.password_hash) {
+      isValidPassword = await verifyPasswordWebCrypto(password, adminUser.password_hash);
+    }
+
+    if (!isValidPassword) {
+      // Fallback check against Supabase Auth
       try {
-        const supabase = createServiceRoleClient();
         const { error: authError } = await supabase.auth.signInWithPassword({
           email: normalizedEmail,
           password: password,
         });
-
-        // If credentials exist and failed, reject
-        if (authError && !authError.message.toLowerCase().includes("not confirmed")) {
-          // Allow valid preset default password or Supabase Auth
-          if (password !== "Exergy2026!Admin" && password !== "Exergy2026!Support") {
-            return { success: false, error: "Invalid administrator credentials." };
-          }
+        if (!authError) {
+          isValidPassword = true;
         }
       } catch (authErr) {
         console.warn("[ADMIN SUPABASE AUTH CHECK]", authErr);
       }
     }
 
+    // Fallback check for initial bootstrap passwords
+    if (!isValidPassword) {
+      if (password === "Exergy2026!Admin" || password === "Exergy2026!Support") {
+        isValidPassword = true;
+      }
+    }
+
+    if (!isValidPassword) {
+      return {
+        success: false,
+        error: "Invalid administrator credentials.",
+      };
+    }
+
+    // 3. Update last_login_at in database
+    try {
+      await supabase
+        .from("admin_users")
+        .update({
+          last_login_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", adminUser.id);
+    } catch (updateErr) {
+      console.warn("[ADMIN UPDATE LAST LOGIN]", updateErr);
+    }
+
     const session: AdminSession = {
-      email: normalizedEmail,
-      role: adminConfig.role,
-      name: adminConfig.name,
+      email: adminUser.email,
+      role: (adminUser.role as AdminSession["role"]) || "admin",
+      name: adminUser.full_name || "Administrator",
       authenticatedAt: new Date().toISOString(),
     };
 
-    // Store in cookie
+    // 4. Store in secure cookie
     const cookieStore = cookies();
     cookieStore.set("exergy_admin_session", JSON.stringify(session), {
       path: "/",
@@ -97,3 +187,4 @@ export async function getAdminSessionAction(): Promise<AdminSession | null> {
     return null;
   }
 }
+

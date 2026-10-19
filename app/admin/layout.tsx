@@ -81,8 +81,8 @@ export default function AdminLayout({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold uppercase">
-              Founder
+            <span className="px-2 py-0.5 rounded-full bg-[#2C7FB8]/20 text-[#60a5fa] border border-[#2C7FB8]/30 text-[10px] font-mono font-bold uppercase">
+              Admin
             </span>
           </div>
         </header>

@@ -210,18 +210,22 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
         <div className="p-3.5 border-t border-white/[0.08] bg-[#07101d] shrink-0">
           <div className="flex items-center gap-2.5 mb-3 px-1">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2C7FB8] to-[#0E4A4F] text-white flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/10">
-              {adminUser?.email?.startsWith("support") ? "ES" : "NW"}
+              {adminUser?.name
+                ? adminUser.name.slice(0, 2).toUpperCase()
+                : adminUser?.email
+                ? adminUser.email.slice(0, 2).toUpperCase()
+                : "AD"}
             </div>
             <div className="flex-1 min-w-0">
               <p
                 className="text-xs font-medium text-white truncate"
-                title={adminUser?.email || "neuralwaves.official@gmail.com"}
+                title={adminUser?.name || adminUser?.email || "Administrator"}
               >
-                {adminUser?.email || "neuralwaves.official@gmail.com"}
+                {adminUser?.name || adminUser?.email || "Administrator"}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  {adminUser?.role === "admin" ? "Support Ops" : "Founder"}
+                <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold uppercase bg-[#2C7FB8]/20 text-[#60a5fa] border border-[#2C7FB8]/30">
+                  {adminUser?.role === "admin" ? "Admin" : adminUser?.role || "Admin"}
                 </span>
               </div>
             </div>

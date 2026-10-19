@@ -381,30 +381,18 @@ export default function AdminDashboardPage() {
               <RefreshCw className={`w-3 h-3 text-teal-600 ml-0.5 ${isLoading ? "animate-spin" : ""}`} />
             </button>
 
-            {/* Active Verified Admin Users */}
-            <div className="flex items-center gap-3 bg-slate-50/80 border border-slate-200/80 px-3.5 py-1.5 rounded-full shadow-2xs">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                </span>
-                <span className="text-slate-800 font-mono font-medium text-[11px]">
-                  neuralwaves.official@gmail.com
-                </span>
-                <span className="px-1.5 py-0.2 rounded-full bg-emerald-100/70 text-emerald-800 text-[9px] font-mono font-bold uppercase">
-                  Founder
-                </span>
-              </div>
-              <span className="text-slate-300">|</span>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
-                <span className="text-slate-600 font-mono text-[11px]">
-                  support@neuralwaves.in
-                </span>
-                <span className="px-1.5 py-0.2 rounded-full bg-teal-100/70 text-teal-800 text-[9px] font-mono font-bold uppercase">
-                  Support
-                </span>
-              </div>
+            {/* Active Verified Admin Session */}
+            <div className="flex items-center gap-2 bg-slate-50/80 border border-slate-200/80 px-3.5 py-1.5 rounded-full shadow-2xs">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="text-slate-800 font-mono font-medium text-[11px]">
+                Active Administrator
+              </span>
+              <span className="px-1.5 py-0.2 rounded-full bg-[#2C7FB8]/15 text-[#2C7FB8] text-[9px] font-mono font-bold uppercase">
+                Database Verified
+              </span>
             </div>
 
             <button

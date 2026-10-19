@@ -8,8 +8,8 @@ import { adminLoginAction } from "@/app/actions/admin-auth";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("neuralwaves.official@gmail.com");
-  const [password, setPassword] = useState("Exergy2026!Admin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -40,11 +40,6 @@ export default function AdminLoginPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleQuickLogin = (targetEmail: string, targetPass: string) => {
-    setEmail(targetEmail);
-    setPassword(targetPass);
   };
 
   return (
@@ -141,50 +136,6 @@ export default function AdminLoginPage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          {/* Quick Admin Profile Switcher */}
-          <div className="pt-4 border-t border-white/[0.08] space-y-2">
-            <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider block">
-              Authorized Accounts:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("neuralwaves.official@gmail.com", "Exergy2026!Admin")}
-                className={`p-2.5 rounded-lg border text-left transition-all ${
-                  email === "neuralwaves.official@gmail.com"
-                    ? "border-[#2C7FB8] bg-[#2C7FB8]/10 text-white"
-                    : "border-white/5 bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-white truncate">Founder</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                </div>
-                <div className="text-[10px] font-mono text-slate-400 truncate mt-0.5">
-                  neuralwaves.official
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("support@neuralwaves.in", "Exergy2026!Support")}
-                className={`p-2.5 rounded-lg border text-left transition-all ${
-                  email === "support@neuralwaves.in"
-                    ? "border-[#2C7FB8] bg-[#2C7FB8]/10 text-white"
-                    : "border-white/5 bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-white truncate">Support Ops</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                </div>
-                <div className="text-[10px] font-mono text-slate-400 truncate mt-0.5">
-                  support@neuralwaves.in
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Back to Public Site */}
