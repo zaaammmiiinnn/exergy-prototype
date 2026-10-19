@@ -12,6 +12,7 @@ export interface AdminLeadItem {
   priority: "hot" | "warm" | "cold";
   status: "new" | "contacted" | "qualified" | "proposal" | "won";
   createdAt: string;
+  rawCreatedAt?: string;
   phone?: string;
   services?: string[];
   timeline?: string;
@@ -46,6 +47,7 @@ export async function fetchAdminLeads(): Promise<{ success: boolean; leads: Admi
         priority: (item.priority as "hot" | "warm" | "cold") || "warm",
         status: (item.status as AdminLeadItem["status"]) || "new",
         createdAt: formattedDate,
+        rawCreatedAt: item.created_at || undefined,
         phone: item.phone || undefined,
         services: Array.isArray(item.service_interest) ? item.service_interest : undefined,
         timeline: item.timeline || undefined,
@@ -57,6 +59,29 @@ export async function fetchAdminLeads(): Promise<{ success: boolean; leads: Admi
   } catch (err) {
     console.warn("[ADMIN LEADS FETCH ERROR]", err);
     return { success: false, leads: [] };
+  }
+}
+
+export async function deleteLeadAction(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = createServiceRoleClient();
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+    const deleteQuery = isUUID
+      ? supabase.from("leads").delete().eq("id", id)
+      : supabase.from("leads").delete().eq("short_id", id);
+
+    const { error } = await deleteQuery;
+
+    if (error) {
+      console.warn("[DELETE LEAD ERROR]", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.warn("[DELETE LEAD CLIENT ERROR]", err);
+    return { success: false, error: "Network or runtime error" };
   }
 }
 

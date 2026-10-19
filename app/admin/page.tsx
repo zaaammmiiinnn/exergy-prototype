@@ -23,10 +23,12 @@ import {
   CheckCircle2,
   RefreshCw,
   Database,
+  Trash2,
 } from "lucide-react";
 import {
   fetchAdminLeads,
   updateLeadStatusAction,
+  deleteLeadAction,
   type AdminLeadItem,
 } from "@/app/actions/admin-leads";
 
@@ -40,6 +42,7 @@ interface MockLead {
   priority: "hot" | "warm" | "cold";
   status: "new" | "contacted" | "qualified" | "proposal" | "won";
   createdAt: string;
+  rawCreatedAt?: string;
   phone?: string;
   services?: string[];
   timeline?: string;
@@ -57,6 +60,7 @@ const MOCK_LEADS: MockLead[] = [
     priority: "hot",
     status: "new",
     createdAt: "Just now",
+    rawCreatedAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
     phone: "+971 50 123 4567",
     services: ["Cooling Optimization", "Waste Heat Recovery", "Pinch Analysis"],
     timeline: "immediate",
@@ -72,6 +76,7 @@ const MOCK_LEADS: MockLead[] = [
     priority: "hot",
     status: "contacted",
     createdAt: "8 mins ago",
+    rawCreatedAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
     phone: "+91 98765 43210",
     services: ["Cooling Systems", "Water & Effluent Reduction"],
     timeline: "q1_2027",
@@ -87,6 +92,7 @@ const MOCK_LEADS: MockLead[] = [
     priority: "hot",
     status: "new",
     createdAt: "10 mins ago",
+    rawCreatedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
     phone: "+971 52 987 6543",
     services: ["Drying Optimization", "Steam & Condensate"],
     timeline: "immediate",
@@ -102,6 +108,7 @@ const MOCK_LEADS: MockLead[] = [
     priority: "hot",
     status: "contacted",
     createdAt: "2 hours ago",
+    rawCreatedAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
     phone: "+971 50 888 1234",
     services: ["Waste Heat Recovery", "Process Integration"],
     timeline: "q2_2027",
@@ -117,6 +124,7 @@ const MOCK_LEADS: MockLead[] = [
     priority: "warm",
     status: "qualified",
     createdAt: "Yesterday",
+    rawCreatedAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
     phone: "+971 55 432 1098",
     services: ["Cooling Systems", "Water Optimization"],
     timeline: "exploring",
@@ -132,6 +140,7 @@ export default function AdminDashboardPage() {
   const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
   const [statusSaveFeedback, setStatusSaveFeedback] = useState<string | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
 
   const getCachedStatuses = (): Record<string, MockLead["status"]> => {
     try {
@@ -152,27 +161,70 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const getDeletedLeadIds = (): Set<string> => {
+    try {
+      const stored = localStorage.getItem("exergy_admin_deleted_leads");
+      return new Set(stored ? JSON.parse(stored) : []);
+    } catch {
+      return new Set();
+    }
+  };
+
+  const addDeletedLeadId = (id: string) => {
+    try {
+      const set = getDeletedLeadIds();
+      set.add(id);
+      localStorage.setItem("exergy_admin_deleted_leads", JSON.stringify(Array.from(set)));
+    } catch {
+      // storage blocked fallback
+    }
+  };
+
+  const formatReceivedTime = (lead: MockLead): string => {
+    if (lead.rawCreatedAt) {
+      const date = new Date(lead.rawCreatedAt);
+      if (!isNaN(date.getTime())) {
+        const diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
+        if (diffSec < 60) return "Just now";
+        if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+        if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+        if (diffSec < 86400 * 2) return "Yesterday";
+        if (diffSec < 86400 * 7) return `${Math.floor(diffSec / 86400)}d ago`;
+        return date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+    }
+    return lead.createdAt || "Recent";
+  };
+
   const loadLeads = useCallback(async () => {
     setIsLoading(true);
     try {
       const cachedStatuses = getCachedStatuses();
+      const deletedIds = getDeletedLeadIds();
       const res = await fetchAdminLeads();
       if (res.success && res.leads.length > 0) {
         setIsSupabaseConnected(true);
         // Put live Supabase leads first, then distinct mock leads
         const existingIds = new Set(res.leads.map((l) => l.id));
         const nonDuplicateMocks = MOCK_LEADS.filter((m) => !existingIds.has(m.id));
-        const combined = [...res.leads, ...nonDuplicateMocks].map((item) => {
-          if (cachedStatuses[item.id]) {
-            return { ...item, status: cachedStatuses[item.id] };
-          }
-          return item;
-        });
+        const combined = [...res.leads, ...nonDuplicateMocks]
+          .filter((item) => !deletedIds.has(item.id))
+          .map((item) => {
+            if (cachedStatuses[item.id]) {
+              return { ...item, status: cachedStatuses[item.id] };
+            }
+            return item;
+          });
         setLeads(combined);
       } else {
         setIsSupabaseConnected(false);
         setLeads(
-          MOCK_LEADS.map((item) => {
+          MOCK_LEADS.filter((item) => !deletedIds.has(item.id)).map((item) => {
             if (cachedStatuses[item.id]) {
               return { ...item, status: cachedStatuses[item.id] };
             }
@@ -197,6 +249,36 @@ export default function AdminDashboardPage() {
       l.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
       l.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDeleteLead = async (id: string, name: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete lead "${id}" (${name})?\n\nThis will remove the lead record from both the dashboard and the Supabase database.`
+    );
+    if (!confirmed) return;
+
+    setIsDeletingId(id);
+
+    // Optimistically remove from state
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+    if (selectedLead?.id === id) {
+      setSelectedLead(null);
+    }
+
+    // Persist to local deletion cache
+    addDeletedLeadId(id);
+
+    // Sync deletion with Supabase PostgreSQL
+    try {
+      const res = await deleteLeadAction(id);
+      if (!res.success) {
+        console.warn("Supabase lead deletion warning:", res.error);
+      }
+    } catch (err) {
+      console.warn("Failed to delete lead from Supabase:", err);
+    } finally {
+      setIsDeletingId(null);
+    }
+  };
 
   const updateLeadStatus = async (id: string, newStatus: MockLead["status"]) => {
     setIsUpdatingStatus(newStatus);
@@ -494,17 +576,33 @@ export default function AdminDashboardPage() {
                         {lead.status}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-slate-400 font-mono text-[11px]">
-                      {lead.createdAt}
+                    <td
+                      className="py-4 px-6 text-slate-500 font-mono text-[11px]"
+                      title={lead.rawCreatedAt ? new Date(lead.rawCreatedAt).toLocaleString() : lead.createdAt}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="font-medium text-slate-700">{formatReceivedTime(lead)}</span>
+                      </div>
                     </td>
                     <td className="py-4 px-6 text-right">
-                      <button
-                        onClick={() => setSelectedLead(lead)}
-                        className="inline-flex items-center gap-1 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/80 hover:bg-[#0c758d] hover:text-white transition-all shadow-2xs"
-                      >
-                        <span>Review</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setSelectedLead(lead)}
+                          className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/80 hover:bg-[#0c758d] hover:text-white transition-all shadow-2xs cursor-pointer"
+                        >
+                          <span>Review</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteLead(lead.id, lead.name)}
+                          disabled={isDeletingId === lead.id}
+                          title="Permanently delete this lead"
+                          className="p-1.5 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer disabled:opacity-40"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -520,7 +618,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-7 space-y-6 shadow-2xl relative text-slate-900">
             <button
               onClick={() => setSelectedLead(null)}
-              className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -567,8 +665,9 @@ export default function AdminDashboardPage() {
                 <div className="text-slate-600">
                   Timeline: {selectedLead.timeline || "Immediate (Q4 2026)"}
                 </div>
-                <div className="text-slate-400 font-mono text-[11px]">
-                  Recorded: {selectedLead.createdAt}
+                <div className="text-slate-500 font-mono text-[11px] flex items-center gap-1.5 mt-1">
+                  <Clock className="w-3 h-3 text-slate-400" />
+                  <span>Received: {formatReceivedTime(selectedLead)}</span>
                 </div>
               </div>
             </div>
@@ -602,7 +701,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* Status Transition Actions */}
+            {/* Status Transition Actions & Delete Option */}
             <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs text-slate-400 font-medium">Status:</span>
@@ -623,7 +722,7 @@ export default function AdminDashboardPage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap justify-end">
                 {(["new", "contacted", "qualified", "proposal", "won"] as const).map((st) => (
                   <button
                     key={st}
@@ -638,6 +737,16 @@ export default function AdminDashboardPage() {
                     {st}
                   </button>
                 ))}
+
+                <button
+                  onClick={() => handleDeleteLead(selectedLead.id, selectedLead.name)}
+                  disabled={isDeletingId === selectedLead.id}
+                  title="Permanently delete this lead from Supabase"
+                  className="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono font-semibold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  <span>Delete</span>
+                </button>
               </div>
             </div>
           </div>
