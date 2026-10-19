@@ -19,7 +19,12 @@ export interface AdminLeadItem {
   notes?: string;
 }
 
-export async function fetchAdminLeads(): Promise<{ success: boolean; leads: AdminLeadItem[] }> {
+export async function fetchAdminLeads(): Promise<{
+  success: boolean;
+  leads: AdminLeadItem[];
+  isConnected: boolean;
+  error?: string;
+}> {
   try {
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase
@@ -27,11 +32,12 @@ export async function fetchAdminLeads(): Promise<{ success: boolean; leads: Admi
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error || !data || data.length === 0) {
-      return { success: false, leads: [] };
+    if (error) {
+      console.warn("[ADMIN LEADS FETCH ERROR]", error);
+      return { success: false, leads: [], isConnected: false, error: error.message };
     }
 
-    const mapped: AdminLeadItem[] = data.map((item) => {
+    const mapped: AdminLeadItem[] = (data || []).map((item) => {
       const d = new Date(item.created_at);
       const formattedDate = !isNaN(d.getTime())
         ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
@@ -55,10 +61,10 @@ export async function fetchAdminLeads(): Promise<{ success: boolean; leads: Admi
       };
     });
 
-    return { success: true, leads: mapped };
-  } catch (err) {
+    return { success: true, leads: mapped, isConnected: true };
+  } catch (err: any) {
     console.warn("[ADMIN LEADS FETCH ERROR]", err);
-    return { success: false, leads: [] };
+    return { success: false, leads: [], isConnected: false, error: err?.message || "Failed to fetch leads" };
   }
 }
 
