@@ -56,14 +56,16 @@ export function AboutVideoSection() {
           </div>
           <div className="relative aspect-video w-full bg-black">
             <video
-              src="/videos/illustrative-explainer.webm"
               controls
               autoPlay
               muted
               loop
               playsInline
               className="w-full h-full object-contain"
-            />
+            >
+              <source src="/videos/illustrative-explainer.webm" type="video/webm" />
+              <source src="/videos/illustrative-explainer.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       )}

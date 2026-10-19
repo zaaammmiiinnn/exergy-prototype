@@ -140,7 +140,7 @@ export default function AboutPage() {
       </section>
 
       {/* 4. Engineering Video Walkthrough Section */}
-      <section className="py-20 bg-slate-50 border-b border-slate-200/80">
+      <section id="explainer-video" className="py-20 bg-slate-50 border-b border-slate-200/80 scroll-mt-20">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
             <span className="text-[#0c758d] font-mono text-xs uppercase tracking-wider font-bold">

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronRight, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import { HeroSchematic } from "./hero-schematic";
 
@@ -91,6 +91,14 @@ export function Hero() {
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-white font-medium text-sm border border-white/25 hover:border-white/40 transition-colors"
               >
                 <span>Explore services</span>
+              </Link>
+
+              <Link
+                href="/about#explainer-video"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-200 font-medium text-sm border border-cyan-500/30 hover:border-cyan-400/60 transition-all group"
+              >
+                <Play className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400 group-hover:scale-110 transition-transform" />
+                <span>Watch Explainer</span>
               </Link>
             </motion.div>
 
