@@ -89,13 +89,6 @@ export function Navbar() {
         {/* Right Action CTAs */}
         <div className="hidden md:flex items-center gap-3">
           <Link
-            href="/admin"
-            className="rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 text-xs font-semibold transition-colors"
-          >
-            Portal
-          </Link>
-
-          <Link
             href="/assessment"
             className="rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white font-semibold text-xs px-5 py-2.5 shadow-sm transition-all duration-150 flex items-center gap-1.5"
           >

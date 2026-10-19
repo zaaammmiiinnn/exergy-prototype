@@ -4,7 +4,7 @@ import Image from "next/image";
 import { siteSettingsSeed } from "@/content/seed/settings";
 import { servicesSeed } from "@/content/seed/services";
 import { industriesSeed } from "@/content/seed/industries";
-import { MapPin, Mail, Phone, Linkedin, ArrowUpRight, MessageSquare } from "lucide-react";
+import { MapPin, Mail, Phone, Linkedin, ArrowUpRight, MessageSquare, Twitter, Youtube, Lock } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -16,6 +16,7 @@ export function Footer() {
     { label: "Applications & Projects", href: "/applications" },
     { label: "Benefits & Value", href: "/benefits" },
     { label: "Engineering Assessment", href: "/assessment" },
+    { label: "Portal", href: "/admin" },
   ];
 
   return (
@@ -57,29 +58,60 @@ export function Footer() {
               Thermodynamic modeling and Second-Law exergy analysis to reduce capex and opex across energy- and water-intensive industrial assets. Guaranteed turnkey implementation.
             </p>
 
-            <div className="pt-2 flex items-center gap-3">
-              <a
-                href={siteSettingsSeed.linkedin_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-slate-300 hover:text-[#0c758d] px-4 py-2 border border-slate-700/80 rounded-full bg-white/5 hover:border-[#0c758d]/50 transition-colors"
-                aria-label="Connect on LinkedIn"
-              >
-                <Linkedin className="w-3.5 h-3.5 text-[#0c758d]" />
-                <span>LinkedIn</span>
-                <ArrowUpRight className="w-3 h-3 text-slate-400" />
-              </a>
+            {/* Follow Us & Social Media Links */}
+            <div className="space-y-3 pt-2">
+              <span className="text-[11px] font-mono uppercase tracking-[0.14em] text-slate-400 font-semibold block">
+                Follow Us & Connect
+              </span>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <a
+                  href={siteSettingsSeed.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-slate-300 hover:text-white px-3.5 py-1.5 border border-slate-700/80 rounded-full bg-white/5 hover:bg-[#0c758d]/20 hover:border-[#0c758d] transition-all"
+                  aria-label="Follow Exergy Solutions on LinkedIn"
+                >
+                  <Linkedin className="w-3.5 h-3.5 text-[#0c758d]" />
+                  <span>LinkedIn</span>
+                  <ArrowUpRight className="w-3 h-3 text-slate-500" />
+                </a>
 
-              <a
-                href="https://wa.me/971501234567"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-slate-300 hover:text-[#25D366] px-4 py-2 border border-slate-700/80 rounded-full bg-white/5 hover:border-[#25D366]/50 transition-colors"
-                aria-label="Direct WhatsApp Desk"
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
-                <span>WhatsApp</span>
-              </a>
+                <a
+                  href="https://twitter.com/exergysolutions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-slate-300 hover:text-white px-3.5 py-1.5 border border-slate-700/80 rounded-full bg-white/5 hover:bg-[#0c758d]/20 hover:border-[#0c758d] transition-all"
+                  aria-label="Follow Exergy Solutions on X (Twitter)"
+                >
+                  <Twitter className="w-3.5 h-3.5 text-sky-400" />
+                  <span>X / Twitter</span>
+                  <ArrowUpRight className="w-3 h-3 text-slate-500" />
+                </a>
+
+                <a
+                  href="https://youtube.com/@exergysolutions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-slate-300 hover:text-white px-3.5 py-1.5 border border-slate-700/80 rounded-full bg-white/5 hover:bg-red-500/20 hover:border-red-500/50 transition-all"
+                  aria-label="Watch Exergy Engineering Case Studies on YouTube"
+                >
+                  <Youtube className="w-3.5 h-3.5 text-red-500" />
+                  <span>YouTube</span>
+                  <ArrowUpRight className="w-3 h-3 text-slate-500" />
+                </a>
+
+                <a
+                  href="https://wa.me/971501234567"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-slate-300 hover:text-white px-3.5 py-1.5 border border-slate-700/80 rounded-full bg-white/5 hover:bg-[#25D366]/20 hover:border-[#25D366] transition-all"
+                  aria-label="Direct WhatsApp Engineering Desk"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
+                  <span>WhatsApp</span>
+                  <ArrowUpRight className="w-3 h-3 text-slate-500" />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -153,13 +185,17 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="pt-2 border-t border-teal-900/40">
+            <div className="pt-3 border-t border-teal-900/40 space-y-2">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold block">
+                Internal Operations & Console
+              </span>
               <Link
                 href="/admin"
-                className="font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-[#0c758d] transition-colors inline-flex items-center gap-1.5"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-teal-500/40 bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 hover:text-white text-xs font-mono font-medium transition-all group"
               >
-                <span>Executive Admin Console</span>
-                <ArrowUpRight className="w-3 h-3" />
+                <Lock className="w-3.5 h-3.5 text-teal-400" />
+                <span>Portal Access</span>
+                <ArrowUpRight className="w-3 h-3 text-teal-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </div>
           </div>
@@ -173,6 +209,11 @@ export function Footer() {
           </div>
 
           <div className="flex items-center gap-6">
+            <Link href="/admin" className="text-teal-400 hover:text-teal-300 transition-colors flex items-center gap-1 font-semibold">
+              <Lock className="w-3 h-3 text-teal-400" />
+              <span>Portal</span>
+            </Link>
+            <span className="text-teal-800">|</span>
             <Link href="/privacy" className="hover:text-[#0c758d] transition-colors">
               Privacy Policy
             </Link>

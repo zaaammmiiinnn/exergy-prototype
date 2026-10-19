@@ -40,10 +40,19 @@ export function ServiceVideoPlayer({
       videoRef.current.pause();
       setIsPlaying(false);
     } else {
-      videoRef.current.play().catch(() => {
-        // Fallback if browser autoplay policies block
-      });
-      setIsPlaying(true);
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.warn("Video playback requires user gesture or mute:", err);
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              setIsMuted(true);
+              videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+            }
+          });
+      }
     }
   };
 
@@ -57,6 +66,17 @@ export function ServiceVideoPlayer({
     if (!videoRef.current) return;
     if (videoRef.current.requestFullscreen) {
       videoRef.current.requestFullscreen();
+    }
+  };
+
+  const handleChapterClick = (idx: number, timeStr: string) => {
+    setActiveChapter(idx);
+    if (!videoRef.current) return;
+    const parts = timeStr.split(":").map(Number);
+    const seconds = parts.length === 2 ? parts[0] * 60 + parts[1] : 0;
+    if (!isNaN(seconds)) {
+      videoRef.current.currentTime = seconds;
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
 
@@ -184,7 +204,7 @@ export function ServiceVideoPlayer({
             {chapters.map((ch, idx) => (
               <div
                 key={ch.time}
-                onClick={() => setActiveChapter(idx)}
+                onClick={() => handleChapterClick(idx, ch.time)}
                 className={`p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
                   activeChapter === idx
                     ? "bg-teal-50/80 border-teal-300 shadow-xs"
