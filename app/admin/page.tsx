@@ -130,19 +130,55 @@ export default function AdminDashboardPage() {
   const [selectedLead, setSelectedLead] = useState<MockLead | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
+  const [statusSaveFeedback, setStatusSaveFeedback] = useState<string | null>(null);
+
+  const getCachedStatuses = (): Record<string, MockLead["status"]> => {
+    try {
+      const stored = localStorage.getItem("exergy_admin_status_cache");
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  };
+
+  const setCachedStatus = (id: string, status: MockLead["status"]) => {
+    try {
+      const cached = getCachedStatuses();
+      cached[id] = status;
+      localStorage.setItem("exergy_admin_status_cache", JSON.stringify(cached));
+    } catch {
+      // storage blocked fallback
+    }
+  };
 
   const loadLeads = useCallback(async () => {
     setIsLoading(true);
     try {
+      const cachedStatuses = getCachedStatuses();
       const res = await fetchAdminLeads();
       if (res.success && res.leads.length > 0) {
         setIsSupabaseConnected(true);
         // Put live Supabase leads first, then distinct mock leads
         const existingIds = new Set(res.leads.map((l) => l.id));
         const nonDuplicateMocks = MOCK_LEADS.filter((m) => !existingIds.has(m.id));
-        setLeads([...res.leads, ...nonDuplicateMocks]);
+        const combined = [...res.leads, ...nonDuplicateMocks].map((item) => {
+          if (cachedStatuses[item.id]) {
+            return { ...item, status: cachedStatuses[item.id] };
+          }
+          return item;
+        });
+        setLeads(combined);
       } else {
         setIsSupabaseConnected(false);
+        setLeads(
+          MOCK_LEADS.map((item) => {
+            if (cachedStatuses[item.id]) {
+              return { ...item, status: cachedStatuses[item.id] };
+            }
+            return item;
+          })
+        );
       }
     } catch (err) {
       console.warn("Failed to load admin leads:", err);
@@ -163,16 +199,52 @@ export default function AdminDashboardPage() {
   );
 
   const updateLeadStatus = async (id: string, newStatus: MockLead["status"]) => {
+    setIsUpdatingStatus(newStatus);
+    setStatusSaveFeedback(null);
+
+    // Optimistic UI state update
     setLeads((prev) =>
       prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l))
     );
     if (selectedLead && selectedLead.id === id) {
       setSelectedLead({ ...selectedLead, status: newStatus });
     }
+
+    // Persist to local cache immediately
+    setCachedStatus(id, newStatus);
+
+    // Persist to live Supabase Postgres
     try {
-      await updateLeadStatusAction(id, newStatus);
+      const target = leads.find((l) => l.id === id) || selectedLead;
+      const res = await updateLeadStatusAction(
+        id,
+        newStatus,
+        target
+          ? {
+              name: target.name,
+              email: target.email,
+              company: target.company,
+              sector: target.sector,
+              score: target.score,
+              priority: target.priority,
+              phone: target.phone,
+              services: target.services,
+              timeline: target.timeline,
+              notes: target.notes,
+            }
+          : undefined
+      );
+
+      if (res.success) {
+        setStatusSaveFeedback("Saved");
+        setTimeout(() => setStatusSaveFeedback(null), 3000);
+      } else {
+        console.warn("Supabase sync warning:", res.error);
+      }
     } catch (err) {
       console.warn("Failed to sync status update to Supabase:", err);
+    } finally {
+      setIsUpdatingStatus(null);
     }
   };
 
@@ -532,21 +604,34 @@ export default function AdminDashboardPage() {
 
             {/* Status Transition Actions */}
             <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs text-slate-400 font-medium">Status:</span>
                 <span className="text-xs font-bold font-mono uppercase text-[#0c758d]">
                   {selectedLead.status}
                 </span>
+
+                {isUpdatingStatus && (
+                  <span className="text-[10px] text-amber-700 font-mono font-semibold flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 animate-pulse">
+                    <RefreshCw className="w-2.5 h-2.5 animate-spin" /> Saving to Supabase...
+                  </span>
+                )}
+
+                {statusSaveFeedback && !isUpdatingStatus && (
+                  <span className="text-[10px] text-emerald-700 font-mono font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <CheckCircle2 className="w-2.5 h-2.5" /> Saved & Persisted
+                  </span>
+                )}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {(["new", "contacted", "qualified", "proposal", "won"] as const).map((st) => (
                   <button
                     key={st}
                     onClick={() => updateLeadStatus(selectedLead.id, st)}
-                    className={`px-3 py-1 rounded-full text-[11px] font-mono capitalize transition-all ${
+                    disabled={isUpdatingStatus !== null}
+                    className={`px-3 py-1.5 rounded-full text-[11px] font-mono capitalize transition-all cursor-pointer disabled:opacity-50 ${
                       selectedLead.status === st
-                        ? "bg-[#0c758d] text-white font-bold shadow-xs"
+                        ? "bg-[#0c758d] text-white font-bold shadow-xs ring-2 ring-[#0c758d]/30"
                         : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200 border border-slate-200"
                     }`}
                   >

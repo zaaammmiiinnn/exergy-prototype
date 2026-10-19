@@ -60,19 +60,78 @@ export async function fetchAdminLeads(): Promise<{ success: boolean; leads: Admi
   }
 }
 
-export async function updateLeadStatusAction(id: string, newStatus: string) {
+export async function updateLeadStatusAction(
+  id: string,
+  newStatus: string,
+  fallbackLeadData?: {
+    name?: string;
+    email?: string;
+    company?: string;
+    sector?: string;
+    score?: number;
+    priority?: string;
+    phone?: string;
+    services?: string[];
+    timeline?: string;
+    notes?: string;
+  }
+) {
   try {
     const supabase = createServiceRoleClient();
-    const { error } = await supabase
-      .from("leads")
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
-      .or(`short_id.eq.${id},id.eq.${id}`);
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+    // 1. Try updating existing record in Supabase
+    const updateQuery = isUUID
+      ? supabase
+          .from("leads")
+          .update({ status: newStatus, updated_at: new Date().toISOString() })
+          .eq("id", id)
+          .select()
+      : supabase
+          .from("leads")
+          .update({ status: newStatus, updated_at: new Date().toISOString() })
+          .eq("short_id", id)
+          .select();
+
+    const { data: updatedRows, error } = await updateQuery;
 
     if (error) {
       console.warn("[UPDATE LEAD STATUS ERROR]", error);
       return { success: false, error: error.message };
     }
-    return { success: true };
+
+    // 2. If record was not in Supabase yet (e.g. mock lead from initial list), insert it!
+    if (!updatedRows || updatedRows.length === 0) {
+      const now = new Date().toISOString();
+      const { data: inserted, error: insertError } = await supabase
+        .from("leads")
+        .insert({
+          short_id: id,
+          source: "assessment",
+          status: newStatus,
+          full_name: fallbackLeadData?.name || "Assessment Lead",
+          email: fallbackLeadData?.email || "neuralwaves.official@gmail.com",
+          phone: fallbackLeadData?.phone || null,
+          company: fallbackLeadData?.company || "Exergy Industrial Client",
+          sector: fallbackLeadData?.sector || "processing",
+          service_interest: fallbackLeadData?.services || ["Cooling Optimization"],
+          main_challenge: fallbackLeadData?.notes || null,
+          timeline: fallbackLeadData?.timeline || "immediate",
+          score: fallbackLeadData?.score ?? 85,
+          priority: fallbackLeadData?.priority || "hot",
+          consent_at: now,
+          updated_at: now,
+        })
+        .select();
+
+      if (insertError) {
+        console.warn("[LEAD UPSERT ERROR]", insertError);
+        return { success: false, error: insertError.message };
+      }
+      return { success: true, lead: inserted?.[0] };
+    }
+
+    return { success: true, lead: updatedRows?.[0] };
   } catch (err) {
     console.warn("[UPDATE LEAD STATUS CLIENT ERROR]", err);
     return { success: false, error: "Network or runtime error" };
