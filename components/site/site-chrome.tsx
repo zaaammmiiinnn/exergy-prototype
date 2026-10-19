@@ -13,11 +13,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const isAdmin = pathname?.startsWith("/admin");
 
   if (isAdmin) {
-    return (
-      <main className="flex-1 flex flex-col min-h-screen bg-[hsl(190,30%,98%)] text-[#12232b]">
-        {children}
-      </main>
-    );
+    return <>{children}</>;
   }
 
   return (

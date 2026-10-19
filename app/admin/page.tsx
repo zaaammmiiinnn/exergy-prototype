@@ -182,24 +182,19 @@ export default function AdminDashboardPage() {
       <header className="border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-6 py-4 sticky top-0 z-40 shadow-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c758d] to-[#061821] text-white flex items-center justify-center font-heading font-extrabold text-base shadow-sm group-hover:scale-105 transition-transform">
-                EX
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="font-heading font-extrabold text-xl text-[#12232b] tracking-tight">
+                  Operations Dashboard
+                </h1>
+                <span className="px-2 py-0.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/70 text-[10px] font-mono font-bold uppercase tracking-wider">
+                  Live Feed
+                </span>
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-heading font-extrabold text-lg text-[#12232b] tracking-tight">
-                    Exergy Solutions<span className="text-[#0c758d]">.</span>
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/70 text-[10px] font-mono font-bold uppercase tracking-wider">
-                    Ops Command
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 font-mono">
-                  Administrative Lead & Operations Center
-                </p>
-              </div>
-            </Link>
+              <p className="text-xs text-slate-500 font-mono">
+                Thermodynamic assessment pipeline & lead intelligence
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 text-xs">
