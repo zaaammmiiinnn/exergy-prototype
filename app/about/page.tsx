@@ -144,13 +144,13 @@ export default function AboutPage() {
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
             <span className="text-[#0c758d] font-mono text-xs uppercase tracking-wider font-bold">
-              02 / Technical Video Demonstrations
+              02 / Illustrative Explainer Video
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#12232b] tracking-tight">
-              Watch Exergy in Motion
+              Watch How Exergy Analysis Works
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed font-sans">
-              Industrial facilities discharge vast quantities of useful work potential. Watch how our Second-Law engineering interventions re-engineer chillers, steam networks, and water desalination systems.
+              An illustrative breakdown explaining who we are, why conventional audits miss 30–45% of usable energy, our 4-step engineering discipline, and guaranteed client ROI.
             </p>
           </div>
 

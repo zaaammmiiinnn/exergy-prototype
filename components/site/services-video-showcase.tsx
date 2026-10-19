@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { servicesSeed } from "@/content/seed/services";
 import { ServiceVideoPlayer } from "@/components/site/service-video-player";
+import { IllustrativeExplainerVideo } from "@/components/site/illustrative-explainer-video";
 import {
   Snowflake,
   Flame,
@@ -27,26 +28,40 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 export function ServicesVideoShowcase() {
-  const [selectedSlug, setSelectedSlug] = useState<string>("cooling");
+  const [selectedSlug, setSelectedSlug] = useState<string>("overview");
   const activeService = servicesSeed.find((s) => s.slug === selectedSlug) || servicesSeed[0];
 
   return (
     <div className="space-y-8">
       {/* Category Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <button
+          onClick={() => setSelectedSlug("overview")}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition-all cursor-pointer ${
+            selectedSlug === "overview"
+              ? "bg-[#0c758d] text-white font-bold shadow-md shadow-[#0c758d]/20"
+              : "bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs"
+          }`}
+        >
+          <span className={selectedSlug === "overview" ? "text-white" : "text-[#0c758d]"}>
+            <Sparkles className="w-4 h-4" />
+          </span>
+          <span>Illustrative Explainer: What, Problem &amp; Benefits</span>
+        </button>
+
         {servicesSeed.map((s) => {
           const isActive = s.slug === selectedSlug;
           return (
             <button
               key={s.slug}
               onClick={() => setSelectedSlug(s.slug)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition-all ${
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? "bg-teal-700 text-white font-bold shadow-md shadow-teal-700/20"
+                  ? "bg-[#0c758d] text-white font-bold shadow-md shadow-[#0c758d]/20"
                   : "bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs"
               }`}
             >
-              <span className={isActive ? "text-white" : "text-teal-700"}>
+              <span className={isActive ? "text-white" : "text-[#0c758d]"}>
                 {ICON_MAP[s.slug] || <Sparkles className="w-4 h-4" />}
               </span>
               <span>{s.title}</span>
@@ -57,15 +72,19 @@ export function ServicesVideoShowcase() {
 
       {/* Video Viewport */}
       <div className="space-y-6">
-        <ServiceVideoPlayer
-          title={activeService.video_title}
-          subtitle={activeService.title}
-          videoUrl={activeService.video_url}
-          posterUrl={activeService.video_poster}
-          duration={activeService.video_duration}
-          chapters={activeService.video_chapters}
-          serviceTitle={activeService.title}
-        />
+        {selectedSlug === "overview" ? (
+          <IllustrativeExplainerVideo />
+        ) : (
+          <ServiceVideoPlayer
+            title={activeService.video_title}
+            subtitle={activeService.title}
+            videoUrl={activeService.video_url}
+            posterUrl={activeService.video_poster}
+            duration={activeService.video_duration}
+            chapters={activeService.video_chapters}
+            serviceTitle={activeService.title}
+          />
+        )}
 
         {/* Quick summary below video */}
         <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
