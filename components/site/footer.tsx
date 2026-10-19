@@ -15,7 +15,6 @@ export function Footer() {
     { label: "Industries Served", href: "/industries" },
     { label: "Applications & Projects", href: "/applications" },
     { label: "Benefits & Value", href: "/benefits" },
-    { label: "Track Your Request", href: "/track" },
     { label: "Client Account Portal", href: "/portal" },
     { label: "Engineering Assessment", href: "/assessment" },
     { label: "Operations Admin", href: "/admin" },

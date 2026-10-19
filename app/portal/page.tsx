@@ -332,13 +332,10 @@ export default function CustomerPortalPage() {
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                  <Link
-                    href={`/track?ref=${activeRequest.shortId}`}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-semibold transition-colors border border-slate-200"
-                  >
-                    <span>Full Tracking Page</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-50 text-teal-800 text-xs font-mono font-semibold border border-teal-200">
+                    <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+                    <span>Verified Client Session</span>
+                  </span>
                 </div>
               </div>
 

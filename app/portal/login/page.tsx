@@ -350,10 +350,10 @@ function CustomerLoginContent() {
 
         <div className="text-center mt-6">
           <Link
-            href="/track"
+            href="/"
             className="text-xs text-slate-500 hover:text-[#0c758d] font-mono transition-colors"
           >
-            ← Or use Quick Reference ID Tracking (No login required)
+            ← Return to Exergy Solutions Home
           </Link>
         </div>
       </div>

@@ -88,7 +88,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     parent: "main",
     position: 7,
     label: "Track Your Request",
-    text: "You can track the live status of your assessment request anytime at our Tracking Portal (/track). Enter your Reference ID (e.g., EX-2026-6253) or email to see assigned engineers, thermodynamic modeling progress, and guaranteed scope updates.",
+    text: "You can track the live status of your assessment request anytime inside your Client Account Portal (/portal). Sign in to view assigned engineers, thermodynamic modeling progress, and direct contact details.",
     keywords: ["track", "tracking", "status", "progress", "reference", "my request", "check status", "order", "lead"],
   },
 };

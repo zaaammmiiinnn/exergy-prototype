@@ -43,10 +43,10 @@ function ThankYouContent() {
           </div>
 
           <Link
-            href={`/track?ref=${encodeURIComponent(ref)}`}
+            href="/portal"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
           >
-            <span>Track Request Status Online</span>
+            <span>Track in Client Account Portal</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
