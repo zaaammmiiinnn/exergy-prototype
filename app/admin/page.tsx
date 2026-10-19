@@ -250,11 +250,15 @@ export default function AdminDashboardPage() {
       l.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteLead = async (id: string, name: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to permanently delete lead "${id}" (${name})?\n\nThis will remove the lead record from both the dashboard and the Supabase database.`
-    );
-    if (!confirmed) return;
+  const [leadToDelete, setLeadToDelete] = useState<{ id: string; name: string } | null>(null);
+
+  const requestDeleteLead = (id: string, name: string) => {
+    setLeadToDelete({ id, name });
+  };
+
+  const confirmDeleteLead = async () => {
+    if (!leadToDelete) return;
+    const { id } = leadToDelete;
 
     setIsDeletingId(id);
 
@@ -263,6 +267,7 @@ export default function AdminDashboardPage() {
     if (selectedLead?.id === id) {
       setSelectedLead(null);
     }
+    setLeadToDelete(null);
 
     // Persist to local deletion cache
     addDeletedLeadId(id);
@@ -595,7 +600,7 @@ export default function AdminDashboardPage() {
                           <ChevronRight className="w-3.5 h-3.5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteLead(lead.id, lead.name)}
+                          onClick={() => requestDeleteLead(lead.id, lead.name)}
                           disabled={isDeletingId === lead.id}
                           title="Permanently delete this lead"
                           className="p-1.5 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer disabled:opacity-40"
@@ -739,7 +744,7 @@ export default function AdminDashboardPage() {
                 ))}
 
                 <button
-                  onClick={() => handleDeleteLead(selectedLead.id, selectedLead.name)}
+                  onClick={() => requestDeleteLead(selectedLead.id, selectedLead.name)}
                   disabled={isDeletingId === selectedLead.id}
                   title="Permanently delete this lead from Supabase"
                   className="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono font-semibold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 transition-all cursor-pointer disabled:opacity-50"
@@ -748,6 +753,65 @@ export default function AdminDashboardPage() {
                   <span>Delete</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* In-App Delete Confirmation Modal */}
+      {leadToDelete && (
+        <div className="fixed inset-0 z-50 bg-[#061821]/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative text-slate-900 animate-in fade-in zoom-in-95 duration-150">
+            <button
+              onClick={() => setLeadToDelete(null)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-200/60">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-heading font-bold text-lg text-slate-900">
+                  Delete Lead Record?
+                </h3>
+                <p className="text-xs text-slate-500 font-mono">
+                  {leadToDelete.id} — {leadToDelete.name}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              Are you sure you want to permanently delete this lead? This will remove the record from both the operations dashboard and the Supabase PostgreSQL database.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+              <button
+                onClick={() => setLeadToDelete(null)}
+                disabled={isDeletingId !== null}
+                className="px-4 py-2 rounded-full text-xs font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteLead}
+                disabled={isDeletingId !== null}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-white bg-red-600 hover:bg-red-700 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {isDeletingId ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Permanently</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
