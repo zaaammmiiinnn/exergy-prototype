@@ -95,26 +95,6 @@ function CustomerLoginContent() {
     }
   };
 
-  const handleDemoSignIn = async (demoEmail: string) => {
-    setEmail(demoEmail);
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await customerLoginAction(demoEmail);
-      if (res.success) {
-        router.push(redirectUrl);
-        router.refresh();
-      } else {
-        setError(res.error || "Sign in failed.");
-      }
-    } catch {
-      setError("Sign in encountered an issue.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background ambient lighting */}
@@ -253,46 +233,6 @@ function CustomerLoginContent() {
                   </>
                 )}
               </button>
-
-              {/* Demo Sign In Options */}
-              <div className="pt-4 border-t border-slate-100 space-y-2.5">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block text-center">
-                  Quick 1-Click Client Sign In
-                </span>
-                <div className="grid grid-cols-1 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleDemoSignIn("neuralwaves.official@gmail.com")}
-                    className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0c758d]/50 bg-slate-50 hover:bg-slate-100 transition-colors flex items-center justify-between text-xs cursor-pointer group"
-                  >
-                    <div>
-                      <div className="font-semibold text-slate-900 group-hover:text-[#0c758d]">
-                        NeuralWaves Ai
-                      </div>
-                      <div className="text-[11px] text-slate-500 font-mono">
-                        neuralwaves.official@gmail.com
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono text-[#0c758d] font-bold">Sign In →</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleDemoSignIn("t.mansoor@gulfpaper.ae")}
-                    className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0c758d]/50 bg-slate-50 hover:bg-slate-100 transition-colors flex items-center justify-between text-xs cursor-pointer group"
-                  >
-                    <div>
-                      <div className="font-semibold text-slate-900 group-hover:text-[#0c758d]">
-                        Gulf Paper Mills FZCO
-                      </div>
-                      <div className="text-[11px] text-slate-500 font-mono">
-                        t.mansoor@gulfpaper.ae
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono text-[#0c758d] font-bold">Sign In →</span>
-                  </button>
-                </div>
-              </div>
             </form>
           ) : (
             /* Registration Form */
