@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowUpRight, Compass } from "lucide-react";
+import { Menu, X, ArrowUpRight, Compass, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -88,23 +88,36 @@ export function Navbar() {
         </nav>
 
         {/* Right Action CTAs */}
-        <div className="hidden md:flex items-center gap-2.5">
+        <div className="hidden md:flex items-center gap-2">
           <Link
             href="/track"
             className={cn(
-              "rounded-full border font-medium text-xs px-4 py-2 transition-all flex items-center gap-1.5",
+              "rounded-full border font-medium text-xs px-3.5 py-2 transition-all flex items-center gap-1.5",
               pathname === "/track"
                 ? "bg-[#0c758d]/10 border-[#0c758d] text-[#0c758d] font-semibold"
                 : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-200/90"
             )}
           >
             <Compass className="w-3.5 h-3.5 text-[#0c758d]" />
-            <span>Track Request</span>
+            <span>Track</span>
+          </Link>
+
+          <Link
+            href="/portal"
+            className={cn(
+              "rounded-full border font-medium text-xs px-3.5 py-2 transition-all flex items-center gap-1.5",
+              pathname?.startsWith("/portal")
+                ? "bg-[#0c758d] text-white border-[#0c758d] font-semibold"
+                : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-200/90"
+            )}
+          >
+            <User className="w-3.5 h-3.5 text-[#0c758d]" />
+            <span>Client Portal</span>
           </Link>
 
           <Link
             href="/assessment"
-            className="rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white font-semibold text-xs px-5 py-2.5 shadow-sm transition-all duration-150 flex items-center gap-1.5"
+            className="rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white font-semibold text-xs px-4 py-2 shadow-sm transition-all duration-150 flex items-center gap-1.5"
           >
             <span>Request Audit</span>
             <ArrowUpRight className="w-3.5 h-3.5" />

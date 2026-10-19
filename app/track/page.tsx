@@ -179,6 +179,17 @@ function TrackRequestContent() {
                 </button>
               ))}
             </div>
+
+            <div className="mt-4 pt-3.5 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-300">
+              <span>Have an active client account?</span>
+              <Link
+                href="/portal"
+                className="inline-flex items-center gap-1.5 text-cyan-300 hover:text-white font-semibold underline underline-offset-4"
+              >
+                <span>Sign in to Client Account Portal</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
