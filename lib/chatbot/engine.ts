@@ -30,7 +30,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     key: "main",
     position: 0,
     label: "Main Menu",
-    text: "Welcome to Exergy Solutions. I am your automated engineering assistant. How can we optimize your plant today?\n\n1. Services Overview\n2. Industries Served\n3. Request an Assessment\n4. Frequently Asked Questions\n5. About Our Physics Approach\n6. Talk to a Human Specialist",
+    text: "Welcome to Exergy Solutions. I am your automated engineering assistant. How can we optimize your plant today?\n\n1. Services Overview\n2. Industries Served\n3. Request an Assessment\n4. Frequently Asked Questions\n5. About Our Physics Approach\n6. Talk to a Human Specialist\n7. Track Your Request Status",
     keywords: ["menu", "main", "start", "restart", "home"],
   },
   services: {
@@ -82,6 +82,14 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     text: "Our engineering operations team has been alerted at neuralwaves.official@gmail.com and support@neuralwaves.in. An engineer will follow up directly.",
     keywords: ["human", "agent", "person", "representative", "call", "engineer", "help"],
     action: "handoff",
+  },
+  track: {
+    key: "track",
+    parent: "main",
+    position: 7,
+    label: "Track Your Request",
+    text: "You can track the live status of your assessment request anytime at our Tracking Portal (/track). Enter your Reference ID (e.g., EX-2026-6253) or email to see assigned engineers, thermodynamic modeling progress, and guaranteed scope updates.",
+    keywords: ["track", "tracking", "status", "progress", "reference", "my request", "check status", "order", "lead"],
   },
 };
 
@@ -153,7 +161,7 @@ export function handleChatMessage(
   }
 
   // 5. Position Number Matching
-  if (/^[1-6]$/.test(normalized)) {
+  if (/^[1-7]$/.test(normalized)) {
     const num = parseInt(normalized, 10);
     const targetNode = Object.values(CHAT_MENU_TREE).find((n) => n.position === num);
     if (targetNode) {
@@ -225,6 +233,7 @@ export function handleChatMessage(
       { label: "1. Services", action: "services" },
       { label: "2. Industries", action: "industries" },
       { label: "3. Assessment", action: "assessment" },
+      { label: "7. Track Request", action: "track" },
       { label: "Talk to Human", action: "handoff" },
     ],
     nextState: { ...state, fallbackCount: newFallback },
@@ -244,7 +253,8 @@ function formatNodeOutput(
       { label: "3. Assessment", action: "assessment" },
       { label: "4. FAQs", action: "faqs" },
       { label: "5. Approach", action: "approach" },
-      { label: "6. Talk to Human", action: "handoff" }
+      { label: "6. Talk to Human", action: "handoff" },
+      { label: "7. Track Request", action: "track" }
     );
   } else if (node.key === "services") {
     quickReplies.push(
@@ -255,6 +265,12 @@ function formatNodeOutput(
   } else if (node.key === "industries") {
     quickReplies.push(
       { label: "Book Assessment", action: "assessment" },
+      { label: "Main Menu", action: "main" },
+      { label: "Talk to Human", action: "handoff" }
+    );
+  } else if (node.key === "track") {
+    quickReplies.push(
+      { label: "Open Tracking Portal", action: "track" },
       { label: "Main Menu", action: "main" },
       { label: "Talk to Human", action: "handoff" }
     );

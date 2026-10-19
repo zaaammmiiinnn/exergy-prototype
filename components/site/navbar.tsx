@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X, ArrowUpRight, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: "About Us", href: "/about" },
   { label: "Industries", href: "/industries" },
   { label: "Benefits", href: "/benefits" },
+  { label: "Track Request", href: "/track" },
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -87,7 +88,20 @@ export function Navbar() {
         </nav>
 
         {/* Right Action CTAs */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
+          <Link
+            href="/track"
+            className={cn(
+              "rounded-full border font-medium text-xs px-4 py-2 transition-all flex items-center gap-1.5",
+              pathname === "/track"
+                ? "bg-[#0c758d]/10 border-[#0c758d] text-[#0c758d] font-semibold"
+                : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-200/90"
+            )}
+          >
+            <Compass className="w-3.5 h-3.5 text-[#0c758d]" />
+            <span>Track Request</span>
+          </Link>
+
           <Link
             href="/assessment"
             className="rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white font-semibold text-xs px-5 py-2.5 shadow-sm transition-all duration-150 flex items-center gap-1.5"
@@ -127,6 +141,13 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+            <Link
+              href="/track"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-2.5 rounded-full border border-slate-200"
+            >
+              Track Request Status
+            </Link>
             <Link
               href="/assessment"
               onClick={() => setMobileMenuOpen(false)}

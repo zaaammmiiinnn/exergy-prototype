@@ -31,14 +31,24 @@ function ThankYouContent() {
           Your industrial assessment request has been recorded. Our thermodynamic team is preparing a preliminary scope review.
         </p>
 
-        {/* Reference Code Box */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-8 flex flex-col items-center justify-center">
-          <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">
-            Tracking Reference ID
-          </span>
-          <span className="text-xl font-mono font-bold text-teal-700 tracking-wider">
-            {ref}
-          </span>
+        {/* Reference Code Box with Direct Tracking Option */}
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8 flex flex-col items-center justify-center space-y-3">
+          <div className="flex flex-col items-center justify-center">
+            <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">
+              Tracking Reference ID
+            </span>
+            <span className="text-2xl font-mono font-extrabold text-[#0c758d] tracking-wider">
+              {ref}
+            </span>
+          </div>
+
+          <Link
+            href={`/track?ref=${encodeURIComponent(ref)}`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+          >
+            <span>Track Request Status Online</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
         {/* What Happens Next */}
@@ -51,10 +61,18 @@ function ThankYouContent() {
             <li>Our engineering lead will review your facility profile and thermodynamic load requirements.</li>
             <li>We will contact you within one business day via email or phone to align on baseline data.</li>
             <li>An introductory technical brief will be prepared outlining potential 25–30% resource reduction opportunities.</li>
+            <li>You can track live milestone progress anytime on the customer tracking portal.</li>
           </ul>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href={`/track?ref=${encodeURIComponent(ref)}`}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-bold py-3 px-6 rounded-xl transition-all shadow-md"
+          >
+            <span>Track Your Request</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
           <Link
             href="/"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold py-3 px-6 rounded-xl transition-colors shadow-xs"
@@ -64,10 +82,9 @@ function ThankYouContent() {
           </Link>
           <Link
             href="/services"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-teal-500 text-white text-xs font-semibold py-3 px-6 rounded-xl transition-all shadow-md"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold py-3 px-6 rounded-xl transition-colors shadow-xs"
           >
-            <span>Explore Engineering Services</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Explore Services</span>
           </Link>
         </div>
       </div>

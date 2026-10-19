@@ -688,9 +688,21 @@ export default function AdminDashboardPage() {
 
             <div className="flex items-start justify-between border-b border-slate-100 pb-5">
               <div>
-                <span className="text-xs font-mono text-[#0c758d] uppercase font-bold tracking-wider">
-                  Facility Assessment File — {selectedLead.id}
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-mono text-[#0c758d] uppercase font-bold tracking-wider">
+                    Facility Assessment File — {selectedLead.id}
+                  </span>
+                  <a
+                    href={`/track?ref=${encodeURIComponent(selectedLead.id)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-teal-50 text-teal-800 hover:bg-teal-100 border border-teal-200 transition-colors cursor-pointer"
+                    title="View live customer-facing status tracking page for this request"
+                  >
+                    <span>View Customer Tracking Page</span>
+                    <ArrowUpRight className="w-3 h-3 text-teal-600" />
+                  </a>
+                </div>
                 <h3 className="font-heading font-bold text-2xl text-[#12232b] mt-1">
                   {selectedLead.company}
                 </h3>
@@ -780,7 +792,7 @@ export default function AdminDashboardPage() {
 
                 {statusSaveFeedback && !isUpdatingStatus && (
                   <span className="text-[10px] text-emerald-700 font-mono font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    <CheckCircle2 className="w-2.5 h-2.5" /> Saved & Persisted
+                    <CheckCircle2 className="w-2.5 h-2.5" /> Saved &amp; Synced with Customer Portal
                   </span>
                 )}
               </div>
