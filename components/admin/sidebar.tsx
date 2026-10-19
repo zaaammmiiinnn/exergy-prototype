@@ -14,8 +14,9 @@ import {
   LogOut,
   X,
   RefreshCw,
+  ShieldCheck,
 } from "lucide-react";
-import { adminSignOutAction } from "@/app/actions/admin-auth";
+import { adminSignOutAction, getAdminSessionAction, type AdminSession } from "@/app/actions/admin-auth";
 
 interface NavItem {
   name: string;
@@ -24,7 +25,7 @@ interface NavItem {
   badge?: string | number;
 }
 
-const NAV_ITEMS: NavItem[] = [
+const ALL_NAV_ITEMS: NavItem[] = [
   {
     name: "Dashboard",
     href: "/admin",
@@ -72,10 +73,27 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [adminUser, setAdminUser] = useState<{ email: string; role: string; name: string } | null>(null);
+  const [adminUser, setAdminUser] = useState<AdminSession | null>(null);
 
   useEffect(() => {
+    // 1. Fetch current admin session from server action
+    getAdminSessionAction().then((session) => {
+      if (session) {
+        setAdminUser(session);
+        try {
+          localStorage.setItem("exergy_admin_session", JSON.stringify(session));
+        } catch {}
+      }
+    });
+
+    // 2. Synchronous fallback from cookie or localStorage for instant render
     try {
+      const match = document.cookie.match(/exergy_admin_session=([^;]+)/);
+      if (match) {
+        const decoded = decodeURIComponent(match[1]);
+        setAdminUser(JSON.parse(decoded));
+        return;
+      }
       const stored = localStorage.getItem("exergy_admin_session");
       if (stored) {
         setAdminUser(JSON.parse(stored));
@@ -100,6 +118,43 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
     router.replace("/admin/login");
     router.refresh();
   };
+
+  // RBAC Filtering Logic:
+  // - 'founder' or 'admin': Show all links (Dashboard, Leads, Chats, Chatbot, Settings, etc.)
+  // - 'employee': Only show Dashboard, Leads, and Chats. Hide Settings and Chatbot.
+  const userRole = adminUser?.role || "employee";
+  const isEmployee = userRole === "employee";
+
+  const visibleNavItems = ALL_NAV_ITEMS.filter((item) => {
+    if (isEmployee) {
+      return ["/admin", "/admin/leads", "/admin/chats"].includes(item.href);
+    }
+    return true;
+  });
+
+  // Role Badge Styling
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case "founder":
+        return {
+          label: "Founder",
+          classes: "bg-amber-500/20 text-amber-300 border-amber-500/40 ring-amber-500/20",
+        };
+      case "admin":
+        return {
+          label: "Admin",
+          classes: "bg-[#2C7FB8]/25 text-[#7dd3fc] border-[#2C7FB8]/40 ring-[#2C7FB8]/20",
+        };
+      case "employee":
+      default:
+        return {
+          label: "Employee",
+          classes: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 ring-emerald-500/20",
+        };
+    }
+  };
+
+  const roleBadgeInfo = getRoleBadge(userRole);
 
   return (
     <>
@@ -165,9 +220,9 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
           )}
         </div>
 
-        {/* Navigation Items */}
+        {/* Navigation Items (Filtered by RBAC) */}
         <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive =
               item.href === "/admin"
@@ -206,27 +261,35 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
           })}
         </nav>
 
-        {/* User Profile Block */}
+        {/* User Profile Block with RBAC Role Indication */}
         <div className="p-3.5 border-t border-white/[0.08] bg-[#07101d] shrink-0">
-          <div className="flex items-center gap-2.5 mb-3 px-1">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2C7FB8] to-[#0E4A4F] text-white flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/10">
-              {adminUser?.name
-                ? adminUser.name.slice(0, 2).toUpperCase()
-                : adminUser?.email
+          <div className="flex items-start gap-2.5 mb-3 px-1">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2C7FB8] to-[#0E4A4F] text-white flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/10 mt-0.5">
+              {adminUser?.email
                 ? adminUser.email.slice(0, 2).toUpperCase()
                 : "AD"}
             </div>
             <div className="flex-1 min-w-0">
-              <p
-                className="text-xs font-medium text-white truncate"
-                title={adminUser?.name || adminUser?.email || "Administrator"}
-              >
-                {adminUser?.name || adminUser?.email || "Administrator"}
-              </p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold uppercase bg-[#2C7FB8]/20 text-[#60a5fa] border border-[#2C7FB8]/30">
-                  {adminUser?.role === "admin" ? "Admin" : adminUser?.role || "Admin"}
-                </span>
+              {/* User Email with Role Badge e.g. neuralwaves.official@gmail.com [Founder] */}
+              <div className="space-y-1">
+                <p
+                  className="text-xs font-medium text-white truncate leading-snug"
+                  title={adminUser?.email || "Administrator"}
+                >
+                  {adminUser?.email || "admin@exergy.solutions"}
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold border uppercase tracking-wider ${roleBadgeInfo.classes}`}
+                  >
+                    [{roleBadgeInfo.label}]
+                  </span>
+                  {adminUser?.name && (
+                    <span className="text-[10px] text-slate-400 font-mono truncate">
+                      {adminUser.name}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>

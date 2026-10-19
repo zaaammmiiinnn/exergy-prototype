@@ -5,7 +5,7 @@ import { createServiceRoleClient } from "@/lib/supabase/service";
 
 export interface AdminSession {
   email: string;
-  role: "founder" | "admin" | "ops" | "viewer";
+  role: "founder" | "admin" | "employee";
   name: string;
   authenticatedAt: string;
 }
@@ -138,9 +138,13 @@ export async function adminLoginAction(
       console.warn("[ADMIN UPDATE LAST LOGIN]", updateErr);
     }
 
+    const rawRole = (adminUser.role || "").toLowerCase().trim();
+    const role: AdminSession["role"] =
+      rawRole === "founder" ? "founder" : rawRole === "admin" ? "admin" : "employee";
+
     const session: AdminSession = {
       email: adminUser.email,
-      role: (adminUser.role as AdminSession["role"]) || "admin",
+      role,
       name: adminUser.full_name || "Administrator",
       authenticatedAt: new Date().toISOString(),
     };
