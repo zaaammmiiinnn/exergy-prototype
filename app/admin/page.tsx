@@ -673,9 +673,14 @@ export default function AdminDashboardPage() {
                         className="py-4 px-6 text-slate-500 font-mono text-[11px]"
                         title={lead.rawCreatedAt ? new Date(lead.rawCreatedAt).toLocaleString() : lead.createdAt}
                       >
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span className="font-medium text-slate-700">{formatReceivedTime(lead)}</span>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span className="font-semibold text-slate-800">{formatReceivedTime(lead)}</span>
+                          </div>
+                          <span className="text-[10px] text-slate-400 mt-0.5">
+                            {lead.createdAt}
+                          </span>
                         </div>
                       </td>
                       <td className="py-4 px-6 text-right">
@@ -775,7 +780,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="text-slate-500 font-mono text-[11px] flex items-center gap-1.5 mt-1">
                   <Clock className="w-3 h-3 text-slate-400" />
-                  <span>Received: {formatReceivedTime(selectedLead)}</span>
+                  <span>Received: {formatReceivedTime(selectedLead)} ({selectedLead.createdAt})</span>
                 </div>
               </div>
             </div>
