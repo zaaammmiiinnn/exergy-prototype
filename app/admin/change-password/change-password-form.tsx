@@ -236,7 +236,7 @@ export default function AdminChangePasswordForm() {
           {/* Security Assurance */}
           <div className="pt-2 flex items-center justify-center gap-2 text-[11px] text-slate-500 font-mono">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Encrypted WebCrypto PBKDF2 Hashing • Exergy Solutions</span>
+            <span>Secure Role-Based Console • Exergy Solutions Dubai</span>
           </div>
         </div>
       </div>

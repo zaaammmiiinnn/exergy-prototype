@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServiceRoleClient } from "@/lib/supabase/service";
-import { hashPasswordWebCrypto, type AdminSession } from "@/app/actions/admin-auth";
+import { type AdminSession } from "@/app/actions/admin-auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -17,6 +17,8 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    const plainPassword = newPassword.trim();
 
     // Read session cookie
     const cookieStore = cookies();
@@ -45,46 +47,74 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Generate WebCrypto PBKDF2 hash
-    const passwordHash = await hashPasswordWebCrypto(newPassword.trim());
-
-    // 2. Update Supabase
     const supabase = createServiceRoleClient();
-    const fullPayload = {
-      password_hash: passwordHash,
-      temp_password: null,
-      must_change_password: false,
-      updated_at: new Date().toISOString(),
-    };
+    const nowIso = new Date().toISOString();
 
-    const { error: updateErr1 } = await supabase
+    // Update with normal plain-text password
+    let updateSuccess = false;
+    let lastError = "";
+
+    // Attempt A: Try all fields
+    const { error: errA } = await supabase
       .from("admin_users")
-      .update(fullPayload)
+      .update({
+        password: plainPassword,
+        password_hash: plainPassword,
+        temp_password: null,
+        must_change_password: false,
+        updated_at: nowIso,
+      })
       .eq("email", session.email);
 
-    if (updateErr1) {
-      console.warn("[API CHANGE PASSWORD FALLBACK TO MINIMAL]", updateErr1.message);
-      const { error: updateErr2 } = await supabase
+    if (!errA) {
+      updateSuccess = true;
+    } else {
+      console.warn("[API CHANGE PASSWORD ATTEMPT A FAILED]", errA.message);
+      lastError = errA.message;
+
+      // Attempt B: Update password_hash with normal password
+      const { error: errB } = await supabase
         .from("admin_users")
         .update({
-          password_hash: passwordHash,
-          updated_at: new Date().toISOString(),
+          password_hash: plainPassword,
+          updated_at: nowIso,
         })
         .eq("email", session.email);
 
-      if (updateErr2) {
-        return NextResponse.json(
-          { success: false, error: updateErr2.message },
-          { status: 500 }
-        );
+      if (!errB) {
+        updateSuccess = true;
+      } else {
+        lastError = errB.message;
+
+        // Attempt C: Update password column if renamed
+        const { error: errC } = await supabase
+          .from("admin_users")
+          .update({
+            password: plainPassword,
+            updated_at: nowIso,
+          })
+          .eq("email", session.email);
+
+        if (!errC) {
+          updateSuccess = true;
+        } else {
+          lastError = errC.message;
+        }
       }
     }
 
-    // 3. Update session cookie
+    if (!updateSuccess) {
+      return NextResponse.json(
+        { success: false, error: `Failed to update database: ${lastError}` },
+        { status: 500 }
+      );
+    }
+
+    // Update session cookie
     const updatedSession: AdminSession = {
       ...session,
       mustChangePassword: false,
-      authenticatedAt: new Date().toISOString(),
+      authenticatedAt: nowIso,
     };
 
     const response = NextResponse.json({ success: true, session: updatedSession });

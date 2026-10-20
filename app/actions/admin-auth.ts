@@ -137,24 +137,28 @@ export async function adminLoginAction(
     let requiresPasswordChange = false;
     const cleanPassword = password.trim();
 
+    // Check normal password columns: 'password' or 'password_hash'
+    const storedNormal = (adminUser.password || adminUser.password_hash || "").trim();
+
     // Check A: Match against temp_password column if set
-    if (adminUser.temp_password && adminUser.temp_password === cleanPassword) {
+    if (adminUser.temp_password && adminUser.temp_password.trim() === cleanPassword) {
       isValidPassword = true;
       requiresPasswordChange = true;
     }
 
-    // Check B: Match against password_hash column
-    if (!isValidPassword && adminUser.password_hash) {
-      const stored = adminUser.password_hash.trim();
-      // If stored hash is plain text (like '12345678')
-      if (!stored.includes(":")) {
-        if (cleanPassword === stored) {
+    // Check B: Normal direct plain-text password match
+    if (!isValidPassword && storedNormal) {
+      if (!storedNormal.includes(":")) {
+        // Plain text normal password
+        if (cleanPassword === storedNormal) {
           isValidPassword = true;
-          requiresPasswordChange = true;
+          if (cleanPassword === "12345678" || adminUser.must_change_password) {
+            requiresPasswordChange = true;
+          }
         }
       } else {
-        // Standard WebCrypto PBKDF2 hash verification
-        isValidPassword = await verifyPasswordWebCrypto(cleanPassword, stored);
+        // Legacy PBKDF2 hash fallback
+        isValidPassword = await verifyPasswordWebCrypto(cleanPassword, storedNormal);
         if (isValidPassword && adminUser.must_change_password) {
           requiresPasswordChange = true;
         }
@@ -255,7 +259,7 @@ export async function adminLoginAction(
 }
 
 /**
- * Update permanent password for logged in administrator
+ * Update permanent password for logged in administrator (saved in normal plain text)
  */
 export async function changeAdminPasswordAction(
   newPassword: string
@@ -266,46 +270,73 @@ export async function changeAdminPasswordAction(
       return { success: false, error: "Unauthorized session. Please log in first." };
     }
 
-    if (!newPassword || newPassword.trim().length < 8) {
+    const plainPassword = newPassword?.trim();
+    if (!plainPassword || plainPassword.length < 8) {
       return {
         success: false,
         error: "New password must be at least 8 characters long.",
       };
     }
 
-    // 1. Generate secure WebCrypto PBKDF2 hash
-    const passwordHash = await hashPasswordWebCrypto(newPassword.trim());
-
-    // 2. Update Supabase database
     const supabase = createServiceRoleClient();
+    const nowIso = new Date().toISOString();
 
-    // Prepare update payload with passwordHash
-    const fullPayload = {
-      password_hash: passwordHash,
-      temp_password: null,
-      must_change_password: false,
-      updated_at: new Date().toISOString(),
-    };
+    // 1. Try updating all columns: password, password_hash, temp_password, must_change_password
+    let updateSuccess = false;
+    let lastError = "";
 
-    const { error: updateErr1 } = await supabase
+    // Attempt A: All fields
+    const { error: errA } = await supabase
       .from("admin_users")
-      .update(fullPayload)
+      .update({
+        password: plainPassword,
+        password_hash: plainPassword,
+        temp_password: null,
+        must_change_password: false,
+        updated_at: nowIso,
+      })
       .eq("email", session.email);
 
-    if (updateErr1) {
-      console.warn("[FULL UPDATE FAILED, TRYING MINIMAL UPDATE]", updateErr1.message);
-      // Fallback if temp_password or must_change_password columns do not exist yet
-      const { error: updateErr2 } = await supabase
+    if (!errA) {
+      updateSuccess = true;
+    } else {
+      console.warn("[ATTEMPT A (ALL COLUMNS) FAILED]", errA.message);
+      lastError = errA.message;
+
+      // Attempt B: If 'password' or 'temp_password' column doesn't exist, update password_hash only
+      const { error: errB } = await supabase
         .from("admin_users")
         .update({
-          password_hash: passwordHash,
-          updated_at: new Date().toISOString(),
+          password_hash: plainPassword,
+          updated_at: nowIso,
         })
         .eq("email", session.email);
 
-      if (updateErr2) {
-        return { success: false, error: updateErr2.message };
+      if (!errB) {
+        updateSuccess = true;
+      } else {
+        console.warn("[ATTEMPT B (PASSWORD_HASH) FAILED]", errB.message);
+        lastError = errB.message;
+
+        // Attempt C: If column was renamed to 'password'
+        const { error: errC } = await supabase
+          .from("admin_users")
+          .update({
+            password: plainPassword,
+            updated_at: nowIso,
+          })
+          .eq("email", session.email);
+
+        if (!errC) {
+          updateSuccess = true;
+        } else {
+          lastError = errC.message;
+        }
       }
+    }
+
+    if (!updateSuccess) {
+      return { success: false, error: `Failed to update database: ${lastError}` };
     }
 
     // 3. Update active session cookie
