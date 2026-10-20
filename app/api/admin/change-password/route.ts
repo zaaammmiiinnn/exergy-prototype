@@ -104,8 +104,8 @@ export async function POST(request: Request) {
     // Update session cookie
     const updatedSession: AdminSession = {
       email: emailToUpdate,
-      role: session?.role || "employee",
-      name: session?.name || "Administrator",
+      role: (targetRole as any) || session?.role || "admin",
+      name: (targetUser as any)?.full_name || session?.name || "Administrator",
       mustChangePassword: false,
       authenticatedAt: nowIso,
     };
