@@ -6,6 +6,13 @@
 ---
 
 ## What Was Done
+- **Phase 8 (Employee Task Assignment, 100-Staff Roster & Card Badges)**:
+  - **Employee Selection in Task Creation**: Added employee assignment controls to the "Assign Task" modal (`components/admin/assigned-tasks-section.tsx`), allowing administrators to select any engineer from the 100-member engineering roster (e.g. Staff Engineer, Lead Thermodynamicist, Chiller Specialist, Energy Auditor, Pinch Analyst) or specify a custom employee name and email/EMP-ID.
+  - **Card Assignee Badges**: Updated task card rendering to prominently display the assigned employee's initials avatar, full name, and email/ID badge on every task card.
+  - **Assignee Filtering**: Added an Assignee filter dropdown in the header bar allowing administrators to view tasks for "All 100 Employees", filter by a specific engineer, or toggle "Assigned to Me" when logged in as staff.
+  - **Task Reassignment Action**: Added an inline "Reassign" button and modal on task cards allowing administrators/heads to reassign any task to another engineer with instant optimistic updates and Supabase PostgreSQL persistence via `reassignTaskAction`.
+  - **Deployed to Cloudflare Workers**: Rebuilt with `npm run cf-build` and deployed with `npm run cf-deploy` (`https://exergy-solutions.neuralwaves.workers.dev/admin`). Verified in browser.
+
 - **Phase 7 (Supabase Database Connection & Live Admin Lead Pipeline)**:
   - Linked Supabase project `twwdvliikafbtvzsotks` under `neuralwaves.official@gmail.com`.
   - Created and seeded production schema for all tables: `leads`, `services`, `industries`, `chat_sessions`, `chat_messages`, `chat_qa_bank`, `site_settings`.
