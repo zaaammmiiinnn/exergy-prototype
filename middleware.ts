@@ -30,12 +30,6 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
       }
 
-      // If user does not need to change password, prevent access to /admin/change-password
-      if (pathname === "/admin/change-password") {
-        const dashboardUrl = new URL("/admin", request.url);
-        return NextResponse.redirect(dashboardUrl);
-      }
-
       // Rule: Block 'employee' role from accessing /admin/settings or /admin/chatbot
       const isRestrictedPath =
         pathname === "/admin/settings" ||

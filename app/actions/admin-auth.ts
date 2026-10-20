@@ -137,6 +137,25 @@ export async function adminLoginAction(
     let requiresPasswordChange = false;
     const cleanPassword = password.trim();
 
+    // Known temporary passwords that require setting a permanent private password
+    const TEMPORARY_PASSWORDS = [
+      "ExergyEmp1",
+      "ExergySup1",
+      "ExergyAdm1",
+      "ExergyFnd1",
+      "Exergy2026",
+      "Exergy2026!Admin",
+      "Exergy2026!Support",
+      "Exergy2026!Employee",
+      "Exergy2026!Founder",
+      "12345678",
+      "1234567890",
+      "employee",
+      "employee123",
+      "admin",
+      "admin123",
+    ];
+
     // Check normal password columns: 'password' or 'password_hash'
     const storedNormal = (adminUser.password || adminUser.password_hash || "").trim();
 
@@ -152,16 +171,10 @@ export async function adminLoginAction(
         // Plain text normal password
         if (cleanPassword === storedNormal) {
           isValidPassword = true;
-          if (cleanPassword === "12345678" || adminUser.must_change_password) {
-            requiresPasswordChange = true;
-          }
         }
       } else {
         // Legacy PBKDF2 hash fallback
         isValidPassword = await verifyPasswordWebCrypto(cleanPassword, storedNormal);
-        if (isValidPassword && adminUser.must_change_password) {
-          requiresPasswordChange = true;
-        }
       }
     }
 
@@ -182,28 +195,19 @@ export async function adminLoginAction(
 
     // Check D: Fallback check for initial bootstrap passwords
     if (!isValidPassword) {
-      const allowedBootstrap = [
-        "Exergy2026",
-        "ExergyEmp1",
-        "ExergySup1",
-        "ExergyAdm1",
-        "ExergyFnd1",
-        "Exergy2026!Admin",
-        "Exergy2026!Support",
-        "Exergy2026!Employee",
-        "Exergy2026!Founder",
-        "1234567890",
-        "employee",
-        "employee123",
-        "admin",
-        "admin123",
-        "12345678",
-      ];
-      if (allowedBootstrap.includes(cleanPassword)) {
+      if (TEMPORARY_PASSWORDS.includes(cleanPassword)) {
         isValidPassword = true;
-        if (cleanPassword === "12345678" || cleanPassword === "employee" || cleanPassword === "employee123") {
-          requiresPasswordChange = true;
-        }
+      }
+    }
+
+    // If valid password and matched any temporary/initial password or must_change_password flag
+    if (isValidPassword) {
+      if (
+        TEMPORARY_PASSWORDS.includes(cleanPassword) ||
+        Boolean(adminUser.must_change_password) ||
+        Boolean(adminUser.temp_password)
+      ) {
+        requiresPasswordChange = true;
       }
     }
 
@@ -270,10 +274,10 @@ export async function adminLoginAction(
 export async function changeAdminPasswordAction(
   newPassword: string,
   providedEmail?: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; session?: AdminSession; error?: string }> {
   try {
     const session = await getAdminSessionAction();
-    const emailToUpdate = session?.email || providedEmail?.toLowerCase().trim();
+    const emailToUpdate = (providedEmail || session?.email)?.toLowerCase().trim();
     if (!emailToUpdate) {
       return { success: false, error: "Unauthorized session. Please log in first." };
     }
@@ -289,57 +293,37 @@ export async function changeAdminPasswordAction(
     const supabase = createServiceRoleClient();
     const nowIso = new Date().toISOString();
 
-    // 1. Try updating all columns: password, password_hash, temp_password, must_change_password
+    // 1. Directly update password_hash on admin_users table
     let updateSuccess = false;
     let lastError = "";
 
-    // Attempt A: All fields
     const { error: errA } = await supabase
       .from("admin_users")
       .update({
-        password: plainPassword,
         password_hash: plainPassword,
-        temp_password: null,
-        must_change_password: false,
         updated_at: nowIso,
       })
-      .eq("email", emailToUpdate);
+      .ilike("email", emailToUpdate);
 
     if (!errA) {
       updateSuccess = true;
     } else {
-      console.warn("[ATTEMPT A (ALL COLUMNS) FAILED]", errA.message);
+      console.warn("[CHANGE PASSWORD UPDATE FAILED, TRYING FALLBACK]", errA.message);
       lastError = errA.message;
 
-      // Attempt B: If 'password' or 'temp_password' column doesn't exist, update password_hash only
+      // Fallback: Try with 'password' column if applicable
       const { error: errB } = await supabase
         .from("admin_users")
         .update({
-          password_hash: plainPassword,
+          password: plainPassword,
           updated_at: nowIso,
         })
-        .eq("email", emailToUpdate);
+        .ilike("email", emailToUpdate);
 
       if (!errB) {
         updateSuccess = true;
       } else {
-        console.warn("[ATTEMPT B (PASSWORD_HASH) FAILED]", errB.message);
         lastError = errB.message;
-
-        // Attempt C: If column was renamed to 'password'
-        const { error: errC } = await supabase
-          .from("admin_users")
-          .update({
-            password: plainPassword,
-            updated_at: nowIso,
-          })
-          .eq("email", emailToUpdate);
-
-        if (!errC) {
-          updateSuccess = true;
-        } else {
-          lastError = errC.message;
-        }
       }
     }
 
@@ -347,11 +331,21 @@ export async function changeAdminPasswordAction(
       return { success: false, error: `Failed to update database: ${lastError}` };
     }
 
-    // 3. Update active session cookie
+    // 2. Fetch full user to preserve name and role
+    const { data: userRow } = await supabase
+      .from("admin_users")
+      .select("role, full_name")
+      .ilike("email", emailToUpdate)
+      .maybeSingle();
+
+    const rawRole = (userRow?.role || session?.role || "employee").toLowerCase().trim();
+    const role: AdminSession["role"] =
+      rawRole === "founder" ? "founder" : rawRole === "admin" ? "admin" : "employee";
+
     const updatedSession: AdminSession = {
       email: emailToUpdate,
-      role: session?.role || "employee",
-      name: session?.name || "Administrator",
+      role,
+      name: userRow?.full_name || session?.name || "Administrator",
       mustChangePassword: false,
       authenticatedAt: new Date().toISOString(),
     };
@@ -369,7 +363,7 @@ export async function changeAdminPasswordAction(
       console.warn("[ADMIN COOKIE UPDATE]", cookieErr);
     }
 
-    return { success: true };
+    return { success: true, session: updatedSession };
   } catch (err: any) {
     console.warn("[CHANGE PASSWORD ERROR]", err);
     return { success: false, error: err?.message || "Failed to update password." };

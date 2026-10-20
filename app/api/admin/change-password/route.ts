@@ -41,56 +41,36 @@ export async function POST(request: Request) {
     const supabase = createServiceRoleClient();
     const nowIso = new Date().toISOString();
 
-    // Update with normal plain-text password
+    // Directly update password_hash on admin_users table
     let updateSuccess = false;
     let lastError = "";
 
-    // Attempt A: Try all fields
     const { error: errA } = await supabase
       .from("admin_users")
       .update({
-        password: plainPassword,
         password_hash: plainPassword,
-        temp_password: null,
-        must_change_password: false,
         updated_at: nowIso,
       })
-      .eq("email", emailToUpdate);
+      .ilike("email", emailToUpdate);
 
     if (!errA) {
       updateSuccess = true;
     } else {
-      console.warn("[API CHANGE PASSWORD ATTEMPT A FAILED]", errA.message);
+      console.warn("[API CHANGE PASSWORD FAILED, TRYING FALLBACK]", errA.message);
       lastError = errA.message;
 
-      // Attempt B: Update password_hash with normal password
       const { error: errB } = await supabase
         .from("admin_users")
         .update({
-          password_hash: plainPassword,
+          password: plainPassword,
           updated_at: nowIso,
         })
-        .eq("email", emailToUpdate);
+        .ilike("email", emailToUpdate);
 
       if (!errB) {
         updateSuccess = true;
       } else {
         lastError = errB.message;
-
-        // Attempt C: Update password column if renamed
-        const { error: errC } = await supabase
-          .from("admin_users")
-          .update({
-            password: plainPassword,
-            updated_at: nowIso,
-          })
-          .eq("email", emailToUpdate);
-
-        if (!errC) {
-          updateSuccess = true;
-        } else {
-          lastError = errC.message;
-        }
       }
     }
 

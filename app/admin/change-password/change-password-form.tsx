@@ -17,6 +17,7 @@ import {
 import { changeAdminPasswordAction } from "@/app/actions/admin-auth";
 
 export default function AdminChangePasswordForm() {
+  const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +25,34 @@ export default function AdminChangePasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  // Initialize email from active cookie or localStorage
+  React.useEffect(() => {
+    try {
+      const match = document.cookie.match(/exergy_admin_session=([^;]+)/);
+      if (match) {
+        const parsed = JSON.parse(decodeURIComponent(match[1]));
+        if (parsed?.email) {
+          setEmail(parsed.email);
+          return;
+        }
+      }
+      const stored = localStorage.getItem("exergy_admin_session");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.email) setEmail(parsed.email);
+      }
+    } catch {}
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const targetEmail = email.trim().toLowerCase();
+    if (!targetEmail) {
+      setError("Please provide your account email address.");
+      return;
+    }
 
     if (newPassword.length < 8) {
       setError("Your new password must be at least 8 characters long.");
@@ -41,19 +67,10 @@ export default function AdminChangePasswordForm() {
     setIsLoading(true);
 
     try {
-      let email = "";
-      try {
-        const stored = localStorage.getItem("exergy_admin_session");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          email = parsed.email || "";
-        }
-      } catch {}
-
       // 1. Try Server Action first
-      let res: { success: boolean; error?: string } | null = null;
+      let res: { success: boolean; session?: any; error?: string } | null = null;
       try {
-        res = await changeAdminPasswordAction(newPassword, email);
+        res = await changeAdminPasswordAction(newPassword, targetEmail);
       } catch (actionErr) {
         console.warn("[CHANGE PASSWORD ACTION FAILED, TRYING API FALLBACK]", actionErr);
       }
@@ -63,26 +80,36 @@ export default function AdminChangePasswordForm() {
         const apiRes = await fetch("/api/admin/change-password", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ newPassword, email }),
+          body: JSON.stringify({ newPassword, email: targetEmail }),
         });
         res = await apiRes.json();
       }
 
       if (res && res.success) {
         setSuccess(true);
-        // Clear mustChangePassword in localStorage session if present
+        
+        // Synchronize updated session immediately to both cookie and localStorage
+        const storedRaw = localStorage.getItem("exergy_admin_session");
+        const existingSession = storedRaw ? JSON.parse(storedRaw) : {};
+        const finalSession = res.session || {
+          ...existingSession,
+          email: targetEmail,
+          mustChangePassword: false,
+          role: existingSession.role || "employee",
+          name: existingSession.name || "Administrator",
+          authenticatedAt: new Date().toISOString(),
+        };
+
         try {
-          const stored = localStorage.getItem("exergy_admin_session");
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            parsed.mustChangePassword = false;
-            localStorage.setItem("exergy_admin_session", JSON.stringify(parsed));
-          }
+          localStorage.setItem("exergy_admin_session", JSON.stringify(finalSession));
+          document.cookie = `exergy_admin_session=${encodeURIComponent(
+            JSON.stringify(finalSession)
+          )}; path=/; max-age=604800; SameSite=Lax`;
         } catch {}
 
         setTimeout(() => {
           window.location.href = "/admin";
-        }, 500);
+        }, 400);
       } else {
         setError(res?.error || "Failed to update password. Please try again.");
       }
@@ -172,6 +199,27 @@ export default function AdminChangePasswordForm() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {email ? (
+              <div className="flex items-center justify-between text-xs font-mono bg-slate-50 px-3.5 py-2.5 rounded-xl border border-slate-200">
+                <span className="text-slate-500">Account Email:</span>
+                <span className="font-bold text-[#0c758d]">{email}</span>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
+                  Account Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. employee@exergy.com"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3.5 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
+                />
+              </div>
+            )}
+
             <div>
               <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
                 Create New Password

@@ -16,6 +16,7 @@ import {
   RefreshCw,
   ShieldCheck,
   CheckSquare,
+  KeyRound,
 } from "lucide-react";
 import { adminSignOutAction, getAdminSessionAction, type AdminSession } from "@/app/actions/admin-auth";
 
@@ -301,19 +302,30 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleSignOut}
-            disabled={isSigningOut}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer disabled:opacity-50"
-          >
-            {isSigningOut ? (
-              <RefreshCw className="w-3.5 h-3.5 text-slate-400 animate-spin" />
-            ) : (
-              <LogOut className="w-3.5 h-3.5 text-slate-400 group-hover:text-white" />
-            )}
-            <span>{isSigningOut ? "Signing Out..." : "Sign Out"}</span>
-          </button>
+          <div className="space-y-1.5">
+            <Link
+              href="/admin/change-password"
+              onClick={onClose}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer"
+            >
+              <KeyRound className="w-3.5 h-3.5 text-teal-400" />
+              <span>Update Password</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer disabled:opacity-50"
+            >
+              {isSigningOut ? (
+                <RefreshCw className="w-3.5 h-3.5 text-slate-400 animate-spin" />
+              ) : (
+                <LogOut className="w-3.5 h-3.5 text-slate-400 group-hover:text-white" />
+              )}
+              <span>{isSigningOut ? "Signing Out..." : "Sign Out"}</span>
+            </button>
+          </div>
         </div>
       </aside>
     </>
