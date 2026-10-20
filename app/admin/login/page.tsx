@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Shield, Lock, Mail, ArrowRight, ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
+import { Lock, Mail, ArrowRight, ArrowLeft, AlertCircle, CheckCircle2, ShieldCheck, KeyRound } from "lucide-react";
 import { adminLoginAction } from "@/app/actions/admin-auth";
 
 export default function AdminLoginPage() {
@@ -23,7 +24,7 @@ export default function AdminLoginPage() {
       const res = await adminLoginAction(email, password);
       if (res.success && res.session) {
         setSuccess(true);
-        // Persist to localStorage for client-side persistence
+        // Persist to localStorage for immediate client-side checks
         try {
           localStorage.setItem("exergy_admin_session", JSON.stringify(res.session));
         } catch {}
@@ -33,7 +34,7 @@ export default function AdminLoginPage() {
           router.refresh();
         }, 300);
       } else {
-        setError(res.error || "Authentication failed.");
+        setError(res.error || "Authentication failed. Please verify your credentials.");
       }
     } catch {
       setError("An unexpected network error occurred. Please try again.");
@@ -43,58 +44,72 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#06101E] text-slate-100 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-sans">
-      {/* Background ambient gradient glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[#2C7FB8]/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[400px] h-[300px] bg-[#0E4A4F]/20 blur-[100px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-sans">
+      {/* Background ambient lighting matching main site */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#0c758d]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#30a66a]/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Login Card */}
+      {/* Login Container */}
       <div className="max-w-md w-full relative z-10 space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2C7FB8] to-[#0E4A4F] p-2.5 shadow-lg shadow-[#2C7FB8]/20 ring-1 ring-white/20 mb-1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo.png"
-              alt="Exergy Solutions"
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                (e.currentTarget as HTMLElement).style.display = "none";
-              }}
-            />
-            <Shield className="w-7 h-7 text-white" />
+          <Link href="/" className="inline-flex items-center gap-3 group focus:outline-none justify-center">
+            <div className="relative h-11 w-[60px] shrink-0">
+              <Image
+                src="https://horizons-cdn.hostinger.com/7ad3b21d-4954-4ffa-80db-3f8b05d3a164/19a079c855d5710fe1ed0f1611a8efd2.png"
+                alt="Exergy Solutions logo"
+                fill
+                priority
+                className="object-contain"
+                sizes="60px"
+              />
+            </div>
+            <div className="flex flex-col text-left justify-center">
+              <div className="flex items-center gap-1 leading-none">
+                <span className="font-heading text-xl font-bold tracking-tight text-slate-900">
+                  Exergy Solutions<span className="text-[#0c758d]">.</span>
+                </span>
+              </div>
+              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500 leading-tight mt-1">
+                ENERGY & WATER ENGINEERING
+              </span>
+            </div>
+          </Link>
+
+          <div className="pt-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/80 font-mono text-[10px] uppercase font-bold tracking-widest shadow-2xs">
+              <KeyRound className="w-3 h-3 text-[#0c758d]" />
+              <span>Administrative Console</span>
+            </span>
           </div>
 
-          <h1 className="text-2xl font-heading font-extrabold text-white tracking-tight">
-            Exergy Solutions
-          </h1>
-          <p className="text-xs font-mono uppercase tracking-widest text-[#2C7FB8] font-semibold">
-            Administrative Console
-          </p>
-          <p className="text-xs text-slate-400 max-w-xs mx-auto">
-            Authorized operations only. Authenticate to manage facility assessment leads and dispatch audits.
+          <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
+            Role-Based Management Console. Sign in with your administrator, founder, or staff credentials to access operations.
           </p>
         </div>
 
-        {/* Main Form Box */}
-        <div className="bg-[#0A1628]/90 border border-white/10 rounded-2xl p-7 shadow-2xl backdrop-blur-md space-y-5">
+        {/* Main Card */}
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-7 sm:p-9 shadow-xl shadow-slate-200/60 relative overflow-hidden space-y-5">
+          {/* Top Accent Gradient Bar */}
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#0c758d] via-[#30a66a] to-[#0c758d]" />
+
           {error && (
-            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
-              <span>{error}</span>
+            <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs animate-in fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
+              <span className="leading-relaxed">{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-              <span>Authentication approved. Redirecting to console...</span>
+            <div className="flex items-center gap-2.5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+              <span>Authentication approved. Launching admin console...</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-300 mb-1.5 font-semibold">
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
                 Administrator Email
               </label>
               <div className="relative">
@@ -104,14 +119,14 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@exergy.solutions"
-                  className="w-full bg-[#050C17] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2C7FB8] focus:border-transparent transition-all font-mono"
+                  placeholder="employee@exergy.com or admin@exergy.solutions"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-300 mb-1.5 font-semibold">
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
                 Secure Key / Password
               </label>
               <div className="relative">
@@ -121,8 +136,8 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full bg-[#050C17] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2C7FB8] focus:border-transparent transition-all font-mono"
+                  placeholder="Enter password or paste database key"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
                 />
               </div>
             </div>
@@ -130,19 +145,25 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading || success}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-heading font-semibold text-xs text-white bg-gradient-to-r from-[#2C7FB8] to-[#0E4A4F] hover:from-[#358dcc] hover:to-[#125c62] shadow-md shadow-[#2C7FB8]/20 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-full font-heading font-bold text-xs uppercase tracking-wider text-white bg-[#0c758d] hover:bg-[#095f73] shadow-md shadow-[#0c758d]/20 transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50"
             >
               <span>{isLoading ? "Authenticating Session..." : "Sign In to Admin Console"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
+
+          {/* Security Assurance */}
+          <div className="pt-2 flex items-center justify-center gap-2 text-[11px] text-slate-500 font-mono">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Encrypted Session • Exergy Solutions Dubai</span>
+          </div>
         </div>
 
         {/* Back to Public Site */}
         <div className="text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#0c758d] font-mono transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Return to Public Website</span>
