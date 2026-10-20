@@ -18,6 +18,7 @@ import { changeAdminPasswordAction } from "@/app/actions/admin-auth";
 
 export default function AdminChangePasswordForm() {
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState<string>("admin");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,21 +26,21 @@ export default function AdminChangePasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Initialize email from active cookie or localStorage
+  // Initialize email & role from active cookie or localStorage
   React.useEffect(() => {
     try {
       const match = document.cookie.match(/exergy_admin_session=([^;]+)/);
       if (match) {
         const parsed = JSON.parse(decodeURIComponent(match[1]));
-        if (parsed?.email) {
-          setEmail(parsed.email);
-          return;
-        }
+        if (parsed?.email) setEmail(parsed.email);
+        if (parsed?.role) setRole(parsed.role.toLowerCase().trim());
+        return;
       }
       const stored = localStorage.getItem("exergy_admin_session");
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed?.email) setEmail(parsed.email);
+        if (parsed?.role) setRole(parsed.role.toLowerCase().trim());
       }
     } catch {}
   }, []);
@@ -169,131 +170,183 @@ export default function AdminChangePasswordForm() {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-7 sm:p-9 shadow-xl shadow-slate-200/60 relative overflow-hidden space-y-5">
-          {/* Top Accent Gradient Bar */}
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-[#0c758d] to-[#30a66a]" />
+        {role === "employee" ? (
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-7 sm:p-9 shadow-xl shadow-slate-200/60 relative overflow-hidden space-y-6">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 to-red-500" />
 
-          {/* Temporary Password Notice Banner */}
-          <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-amber-900 flex items-start gap-3">
-            <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="space-y-1 text-xs">
-              <h4 className="font-bold text-amber-950">Temporary Password In Use</h4>
-              <p className="text-amber-800/90 leading-relaxed font-sans">
-                Please set a secure permanent password below. Your database record will be updated immediately.
+            <div className="flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <h3 className="font-heading font-bold text-lg text-slate-900">
+                Contact Administrator for Password Reset
+              </h3>
+              <p className="text-xs text-slate-600 max-w-sm leading-relaxed font-sans">
+                Password updates are accessible only to the administrator. When you need to reset or update your password, please contact the administrator.
               </p>
             </div>
-          </div>
 
-          {error && (
-            <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs animate-in fade-in">
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
-              <span className="leading-relaxed">{error}</span>
-            </div>
-          )}
-
-          {success && (
-            <div className="flex items-center gap-2.5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-              <span>Password successfully updated in database! Redirecting to dashboard...</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {email ? (
-              <div className="flex items-center justify-between text-xs font-mono bg-slate-50 px-3.5 py-2.5 rounded-xl border border-slate-200">
-                <span className="text-slate-500">Account Email:</span>
-                <span className="font-bold text-[#0c758d]">{email}</span>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5 text-xs font-mono">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Your Account:</span>
+                <span className="font-bold text-slate-800">{email || "employee@exergy.com"}</span>
               </div>
-            ) : (
-              <div>
-                <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
-                  Account Email
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. employee@exergy.com"
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3.5 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
-                />
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Role:</span>
+                <span className="text-amber-800 font-bold bg-amber-100 px-2 py-0.5 rounded border border-amber-200 uppercase text-[10px]">
+                  Employee (Restricted)
+                </span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-slate-200/60">
+                <span className="text-slate-500">System Administrator:</span>
+                <a href="mailto:admin@exergy.solutions?subject=Password%20Reset%20Request%20-%20Employee" className="text-[#0c758d] font-bold hover:underline">
+                  admin@exergy.solutions
+                </a>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a
+                href="mailto:admin@exergy.solutions?subject=Password%20Reset%20Request%20-%20Employee"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 px-5 rounded-full font-heading font-bold text-xs uppercase tracking-wider text-white bg-[#0c758d] hover:bg-[#095f73] transition-all text-center"
+              >
+                <span>Contact Administrator</span>
+              </a>
+              <Link
+                href="/admin"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 px-5 rounded-full font-heading font-bold text-xs uppercase tracking-wider text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all text-center"
+              >
+                <span>Return to Console</span>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-7 sm:p-9 shadow-xl shadow-slate-200/60 relative overflow-hidden space-y-5">
+            {/* Top Accent Gradient Bar */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-[#0c758d] to-[#30a66a]" />
+
+            {/* Temporary Password Notice Banner */}
+            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-amber-900 flex items-start gap-3">
+              <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="space-y-1 text-xs">
+                <h4 className="font-bold text-amber-950">Administrator Security Console</h4>
+                <p className="text-amber-800/90 leading-relaxed font-sans">
+                  Set a secure permanent password below. Your database record will be updated immediately.
+                </p>
+              </div>
+            </div>
+
+            {error && (
+              <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs animate-in fade-in">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
+                <span className="leading-relaxed">{error}</span>
               </div>
             )}
 
-            <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
-                Create New Password
-              </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-10 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            {success && (
+              <div className="flex items-center gap-2.5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                <span>Password successfully updated in database! Redirecting to dashboard...</span>
               </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {email ? (
+                <div className="flex items-center justify-between text-xs font-mono bg-slate-50 px-3.5 py-2.5 rounded-xl border border-slate-200">
+                  <span className="text-slate-500">Account Email:</span>
+                  <span className="font-bold text-[#0c758d]">{email}</span>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
+                    Account Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="e.g. admin@exergy.solutions"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3.5 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
+                  Create New Password
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="At least 8 characters"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-10 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
+                  Confirm New Password
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Re-type your new password"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Validation Feedback */}
+              <div className="space-y-1.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] font-mono">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${isMinLength ? "bg-emerald-500" : "bg-slate-300"}`} />
+                  <span className={isMinLength ? "text-emerald-700 font-semibold" : "text-slate-500"}>
+                    Minimum 8 characters
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${isMatch ? "bg-emerald-500" : "bg-slate-300"}`} />
+                  <span className={isMatch ? "text-emerald-700 font-semibold" : "text-slate-500"}>
+                    Passwords match
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading || success || !isMinLength || !isMatch}
+                className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-full font-heading font-bold text-xs uppercase tracking-wider text-white bg-[#0c758d] hover:bg-[#095f73] shadow-md shadow-[#0c758d]/20 transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50"
+              >
+                <span>{isLoading ? "Saving New Password..." : "Save Password & Enter Console"}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+
+            {/* Security Assurance */}
+            <div className="pt-2 flex items-center justify-center gap-2 text-[11px] text-slate-500 font-mono">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>Secure Role-Based Console • Exergy Solutions Dubai</span>
             </div>
-
-            <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-1.5 font-bold">
-                Confirm New Password
-              </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-type your new password"
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 text-xs placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:border-[#0c758d] transition-all font-mono"
-                />
-              </div>
-            </div>
-
-            {/* Validation Feedback */}
-            <div className="space-y-1.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] font-mono">
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isMinLength ? "bg-emerald-500" : "bg-slate-300"}`} />
-                <span className={isMinLength ? "text-emerald-700 font-semibold" : "text-slate-500"}>
-                  Minimum 8 characters
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isMatch ? "bg-emerald-500" : "bg-slate-300"}`} />
-                <span className={isMatch ? "text-emerald-700 font-semibold" : "text-slate-500"}>
-                  Passwords match
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || success || !isMinLength || !isMatch}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-full font-heading font-bold text-xs uppercase tracking-wider text-white bg-[#0c758d] hover:bg-[#095f73] shadow-md shadow-[#0c758d]/20 transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50"
-            >
-              <span>{isLoading ? "Saving New Password..." : "Save Password & Enter Console"}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
-
-          {/* Security Assurance */}
-          <div className="pt-2 flex items-center justify-center gap-2 text-[11px] text-slate-500 font-mono">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Secure Role-Based Console • Exergy Solutions Dubai</span>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

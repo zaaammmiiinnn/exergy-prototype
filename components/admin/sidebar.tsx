@@ -17,6 +17,8 @@ import {
   ShieldCheck,
   CheckSquare,
   KeyRound,
+  ShieldAlert,
+  Mail,
 } from "lucide-react";
 import { adminSignOutAction, getAdminSessionAction, type AdminSession } from "@/app/actions/admin-auth";
 
@@ -82,6 +84,7 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [adminUser, setAdminUser] = useState<AdminSession | null>(null);
+  const [showEmployeeContactModal, setShowEmployeeContactModal] = useState(false);
 
   useEffect(() => {
     // 1. Fetch current admin session from server action
@@ -303,14 +306,22 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Link
-              href="/admin/change-password"
-              onClick={onClose}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                if (isEmployee) {
+                  setShowEmployeeContactModal(true);
+                } else {
+                  if (onClose) onClose();
+                  router.push("/admin/change-password");
+                }
+              }}
               className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer"
             >
               <KeyRound className="w-3.5 h-3.5 text-teal-400" />
               <span>Update Password</span>
-            </Link>
+            </button>
 
             <button
               type="button"
@@ -328,6 +339,68 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
           </div>
         </div>
       </aside>
+
+      {/* Employee Contact Administrator Modal */}
+      {showEmployeeContactModal && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-[#0b1728] border border-slate-700/90 rounded-2xl p-6 max-w-sm w-full shadow-2xl relative space-y-4 text-slate-200 font-sans">
+            <button
+              onClick={() => setShowEmployeeContactModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+              aria-label="Close dialog"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-heading font-bold text-sm text-white">
+                  Contact Administrator
+                </h3>
+                <p className="text-[11px] font-mono text-amber-400">
+                  Password Reset Restricted
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-white/5 rounded-xl border border-white/10 space-y-2.5 text-xs leading-relaxed text-slate-300">
+              <p>
+                Password updates are accessible only to the administrator. As an employee, please contact your system administrator to reset or update your password.
+              </p>
+              <div className="pt-2 border-t border-white/10 flex flex-col gap-1 text-[11px] font-mono">
+                <span className="text-slate-400">System Administrator:</span>
+                <a
+                  href="mailto:admin@exergy.solutions?subject=Password%20Reset%20Request%20-%20Employee"
+                  className="text-teal-400 hover:underline font-bold flex items-center gap-1.5"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>admin@exergy.solutions</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <a
+                href="mailto:admin@exergy.solutions?subject=Password%20Reset%20Request%20-%20Employee"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold text-white bg-[#0c758d] hover:bg-[#095f73] transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Contact Administrator</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowEmployeeContactModal(false)}
+                className="py-2.5 px-4 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

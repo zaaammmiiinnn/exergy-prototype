@@ -291,6 +291,23 @@ export async function changeAdminPasswordAction(
     }
 
     const supabase = createServiceRoleClient();
+
+    // Verify role: Employees cannot update passwords directly; they must contact the administrator
+    const { data: targetUser } = await supabase
+      .from("admin_users")
+      .select("role")
+      .ilike("email", emailToUpdate)
+      .maybeSingle();
+
+    const targetRole = (targetUser?.role || session?.role || "employee").toLowerCase().trim();
+    if (targetRole === "employee") {
+      return {
+        success: false,
+        error:
+          "Password updates for employee accounts are restricted. Please contact your system administrator (admin@exergy.solutions) for a password reset.",
+      };
+    }
+
     const nowIso = new Date().toISOString();
 
     // 1. Directly update password_hash on admin_users table
