@@ -34,6 +34,7 @@ import {
 } from "@/app/actions/admin-leads";
 import { useRouter } from "next/navigation";
 import { adminSignOutAction } from "@/app/actions/admin-auth";
+import { AssignedTasksSection } from "@/components/admin/assigned-tasks-section";
 
 interface MockLead {
   id: string;
@@ -146,6 +147,28 @@ export default function AdminDashboardPage() {
   const [statusSaveFeedback, setStatusSaveFeedback] = useState<string | null>(null);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [currentSession, setCurrentSession] = useState<{ role: string; email: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const match = document.cookie.match(/exergy_admin_session=([^;]+)/);
+      if (match) {
+        setCurrentSession(JSON.parse(decodeURIComponent(match[1])));
+        return;
+      }
+      const stored = localStorage.getItem("exergy_admin_session");
+      if (stored) {
+        setCurrentSession(JSON.parse(stored));
+      }
+    } catch {}
+  }, []);
+
+  const handleSelectLeadFromTask = (leadId: string) => {
+    const found = leads.find((l) => l.id === leadId);
+    if (found) {
+      setSelectedLead(found);
+    }
+  };
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -489,6 +512,13 @@ export default function AdminDashboardPage() {
             </p>
           </div>
         </div>
+
+        {/* Assigned Engineering Tasks Section */}
+        <AssignedTasksSection
+          currentUserRole={currentSession?.role || "employee"}
+          currentUserEmail={currentSession?.email || "employee@exergy.com"}
+          onSelectLeadId={handleSelectLeadFromTask}
+        />
 
         {/* Pipeline Table */}
         <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">

@@ -15,6 +15,7 @@ import {
   X,
   RefreshCw,
   ShieldCheck,
+  CheckSquare,
 } from "lucide-react";
 import { adminSignOutAction, getAdminSessionAction, type AdminSession } from "@/app/actions/admin-auth";
 
@@ -30,6 +31,12 @@ const ALL_NAV_ITEMS: NavItem[] = [
     name: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    name: "Assigned Tasks",
+    href: "/admin#assigned-tasks",
+    icon: CheckSquare,
+    badge: 2,
   },
   {
     name: "Leads",
@@ -127,7 +134,7 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
 
   const visibleNavItems = ALL_NAV_ITEMS.filter((item) => {
     if (isEmployee) {
-      return ["/admin", "/admin/leads", "/admin/chats"].includes(item.href);
+      return ["/admin", "/admin#assigned-tasks", "/admin/leads", "/admin/chats"].includes(item.href);
     }
     return true;
   });
