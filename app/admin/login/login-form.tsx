@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Lock, Mail, ArrowRight, ArrowLeft, AlertCircle, CheckCircle2, ShieldCheck, KeyRound } from "lucide-react";
 import { adminLoginAction } from "@/app/actions/admin-auth";
 
 export default function AdminLoginForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -57,13 +55,12 @@ export default function AdminLoginForm() {
         } catch {}
 
         setTimeout(() => {
-          if (res.requiresPasswordChange || res.session.mustChangePassword) {
-            router.replace("/admin/change-password");
-          } else {
-            router.replace("/admin");
-          }
-          router.refresh();
-        }, 300);
+          const targetUrl =
+            res.requiresPasswordChange || res.session?.mustChangePassword
+              ? "/admin/change-password"
+              : "/admin";
+          window.location.href = targetUrl;
+        }, 150);
       } else {
         setError(res?.error || "Invalid administrator credentials. Please try again.");
       }

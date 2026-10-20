@@ -279,26 +279,33 @@ export async function changeAdminPasswordAction(
     // 2. Update Supabase database
     const supabase = createServiceRoleClient();
 
-    // Prepare update payload
-    const updatePayload: Record<string, any> = {
+    // Prepare update payload with passwordHash
+    const fullPayload = {
       password_hash: passwordHash,
+      temp_password: null,
+      must_change_password: false,
       updated_at: new Date().toISOString(),
     };
 
-    // Try clearing temp_password and must_change_password
-    try {
-      updatePayload.temp_password = null;
-      updatePayload.must_change_password = false;
-      await supabase.from("admin_users").update(updatePayload).eq("email", session.email);
-    } catch {
-      // If columns don't exist yet, update only password_hash
-      await supabase
+    const { error: updateErr1 } = await supabase
+      .from("admin_users")
+      .update(fullPayload)
+      .eq("email", session.email);
+
+    if (updateErr1) {
+      console.warn("[FULL UPDATE FAILED, TRYING MINIMAL UPDATE]", updateErr1.message);
+      // Fallback if temp_password or must_change_password columns do not exist yet
+      const { error: updateErr2 } = await supabase
         .from("admin_users")
         .update({
           password_hash: passwordHash,
           updated_at: new Date().toISOString(),
         })
         .eq("email", session.email);
+
+      if (updateErr2) {
+        return { success: false, error: updateErr2.message };
+      }
     }
 
     // 3. Update active session cookie

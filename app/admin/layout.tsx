@@ -41,7 +41,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
 
   // Session verification and route protection
   useEffect(() => {
-    if (pathname === "/admin/login") {
+    if (pathname === "/admin/login" || pathname === "/admin/change-password") {
       setIsAuthChecking(false);
       return;
     }
