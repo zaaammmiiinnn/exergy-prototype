@@ -16,6 +16,9 @@ import {
   Sparkles,
   ExternalLink,
   RotateCcw,
+  Lock,
+  ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
 
 export interface EmployeeTask {
@@ -31,6 +34,8 @@ export interface EmployeeTask {
   dueDate: string;
   assigneeName: string;
   assigneeEmail: string;
+  assignedBy: string;
+  lockedDirective: boolean;
   createdAt: string;
 }
 
@@ -49,6 +54,8 @@ const DEFAULT_TASKS: EmployeeTask[] = [
     dueDate: "Today, 5:00 PM",
     assigneeName: "Staff Engineer",
     assigneeEmail: "employee@exergy.com",
+    assignedBy: "Head of Engineering",
+    lockedDirective: true,
     createdAt: "2026-10-20T08:30:00Z",
   },
   {
@@ -65,6 +72,8 @@ const DEFAULT_TASKS: EmployeeTask[] = [
     dueDate: "Tomorrow, 12:00 PM",
     assigneeName: "Staff Engineer",
     assigneeEmail: "employee@exergy.com",
+    assignedBy: "Head of Engineering",
+    lockedDirective: true,
     createdAt: "2026-10-19T14:15:00Z",
   },
   {
@@ -81,6 +90,8 @@ const DEFAULT_TASKS: EmployeeTask[] = [
     dueDate: "Oct 24, 2026",
     assigneeName: "Staff Engineer",
     assigneeEmail: "employee@exergy.com",
+    assignedBy: "Head of Engineering",
+    lockedDirective: true,
     createdAt: "2026-10-20T10:00:00Z",
   },
   {
@@ -97,11 +108,13 @@ const DEFAULT_TASKS: EmployeeTask[] = [
     dueDate: "Completed Oct 19",
     assigneeName: "Staff Engineer",
     assigneeEmail: "employee@exergy.com",
+    assignedBy: "Head of Engineering",
+    lockedDirective: true,
     createdAt: "2026-10-18T09:00:00Z",
   },
 ];
 
-const STORAGE_KEY = "exergy_employee_tasks_v1";
+const STORAGE_KEY = "exergy_employee_tasks_v2";
 
 interface AssignedTasksSectionProps {
   onSelectLeadId?: (leadId: string) => void;
@@ -114,6 +127,7 @@ export function AssignedTasksSection({
   currentUserRole = "employee",
   currentUserEmail = "employee@exergy.com",
 }: AssignedTasksSectionProps) {
+  const isHead = currentUserRole === "founder" || currentUserRole === "admin";
   const [tasks, setTasks] = useState<EmployeeTask[]>([]);
   const [activeFilter, setActiveFilter] = useState<"all" | "in_progress" | "pending" | "completed">("all");
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
@@ -150,22 +164,25 @@ export function AssignedTasksSection({
   };
 
   const handleStatusChange = (taskId: string, newStatus: EmployeeTask["status"]) => {
+    if (!isHead) return; // Employee cannot modify status
     const updated = tasks.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t));
     saveTasks(updated);
   };
 
   const handleDeleteTask = (taskId: string) => {
+    if (!isHead) return; // Employee cannot delete directives
     const updated = tasks.filter((t) => t.id !== taskId);
     saveTasks(updated);
   };
 
   const handleResetDefaults = () => {
+    if (!isHead) return;
     saveTasks(DEFAULT_TASKS);
   };
 
   const handleCreateTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle.trim()) return;
+    if (!isHead || !newTitle.trim()) return;
 
     const newTask: EmployeeTask = {
       id: `TASK-${Math.floor(100 + Math.random() * 900)}`,
@@ -179,7 +196,9 @@ export function AssignedTasksSection({
       status: "in_progress",
       dueDate: newDueDate.trim() || "This week",
       assigneeName: "Staff Engineer",
-      assigneeEmail: currentUserEmail,
+      assigneeEmail: "employee@exergy.com",
+      assignedBy: currentUserRole === "founder" ? "Founder" : "Head of Engineering",
+      lockedDirective: true,
       createdAt: new Date().toISOString(),
     };
 
@@ -213,31 +232,42 @@ export function AssignedTasksSection({
               Assigned Engineering Tasks
             </h3>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[11px] font-mono font-bold uppercase tracking-wider">
-              {currentUserRole === "employee" ? "Your Queue" : "Staff Engineer"}
+              {!isHead ? "Your Directives" : "Staff Engineer Queue"}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1 max-w-xl">
-            Active thermodynamic reviews, pinch analysis workflows, and client follow-up assignments assigned to you.
+            {!isHead
+              ? "Official thermodynamic workflows, pinch analysis calculations, and client follow-up assignments designated by the Head. These directives are locked and cannot be altered until instructed."
+              : "Review and assign thermodynamic audit directives, pinch analysis workflows, and facility assessment tasks to engineering staff."}
           </p>
         </div>
 
         {/* Action Controls */}
         <div className="flex items-center gap-2.5 self-start sm:self-center">
-          <button
-            onClick={() => setIsNewTaskModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-heading font-bold shadow-xs transition-all cursor-pointer active:scale-98"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add Task</span>
-          </button>
+          {isHead ? (
+            <>
+              <button
+                onClick={() => setIsNewTaskModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-heading font-bold shadow-xs transition-all cursor-pointer active:scale-98"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Assign Task</span>
+              </button>
 
-          <button
-            onClick={handleResetDefaults}
-            title="Reset default engineering tasks"
-            className="p-2 rounded-full border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
+              <button
+                onClick={handleResetDefaults}
+                title="Reset default engineering tasks"
+                className="p-2 rounded-full border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+            </>
+          ) : (
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-slate-600 text-xs font-mono">
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
+              <span className="font-semibold">Assigned by Head • Locked</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -345,6 +375,11 @@ export function AssignedTasksSection({
                       {task.priority}
                     </span>
 
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-slate-600 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200/80">
+                      <ShieldCheck className="w-3 h-3 text-[#0c758d]" />
+                      <span>{task.assignedBy || "Head of Engineering"}</span>
+                    </span>
+
                     {task.leadId && (
                       <span className="text-[10px] font-mono font-semibold text-slate-500 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200/70">
                         {task.leadId}
@@ -356,14 +391,16 @@ export function AssignedTasksSection({
                     </span>
                   </div>
 
-                  {/* Delete Task Button */}
-                  <button
-                    onClick={() => handleDeleteTask(task.id)}
-                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 transition-opacity p-1 cursor-pointer"
-                    title="Remove task"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {/* Delete Task Button (Head Only) */}
+                  {isHead && (
+                    <button
+                      onClick={() => handleDeleteTask(task.id)}
+                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 transition-opacity p-1 cursor-pointer"
+                      title="Remove task"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
 
                 {/* Title */}
@@ -393,48 +430,74 @@ export function AssignedTasksSection({
                   </div>
                 </div>
 
-                {/* Interactive Status Switcher */}
+                {/* Status Indicator & Lead Action */}
                 <div className="mt-4 pt-3 border-t border-slate-100/80 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => handleStatusChange(task.id, "in_progress")}
-                      className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
-                        isInProgress
-                          ? "bg-amber-100 text-amber-800 border border-amber-300"
-                          : "text-slate-500 hover:bg-slate-100"
-                      }`}
-                    >
-                      In Progress
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleStatusChange(task.id, "pending")}
-                      className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
-                        task.status === "pending"
-                          ? "bg-sky-100 text-sky-800 border border-sky-300"
-                          : "text-slate-500 hover:bg-slate-100"
-                      }`}
-                    >
-                      Pending
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleStatusChange(task.id, "completed")}
-                      className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
-                        isCompleted
-                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                          : "text-slate-500 hover:bg-slate-100"
-                      }`}
-                    >
-                      ✓ Completed
-                    </button>
-                  </div>
+                  {isHead ? (
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(task.id, "in_progress")}
+                        className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
+                          isInProgress
+                            ? "bg-amber-100 text-amber-800 border border-amber-300"
+                            : "text-slate-500 hover:bg-slate-100"
+                        }`}
+                      >
+                        In Progress
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(task.id, "pending")}
+                        className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
+                          task.status === "pending"
+                            ? "bg-sky-100 text-sky-800 border border-sky-300"
+                            : "text-slate-500 hover:bg-slate-100"
+                        }`}
+                      >
+                        Pending
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(task.id, "completed")}
+                        className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
+                          isCompleted
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                            : "text-slate-500 hover:bg-slate-100"
+                        }`}
+                      >
+                        ✓ Completed
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold border ${
+                          isInProgress
+                            ? "bg-amber-50 text-amber-800 border-amber-300/80"
+                            : isCompleted
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-300/80"
+                            : "bg-sky-50 text-sky-800 border-sky-300/80"
+                        }`}
+                      >
+                        <Lock className="w-3 h-3 text-slate-400" />
+                        <span>
+                          {isInProgress
+                            ? "In Progress (Head Directive)"
+                            : isCompleted
+                            ? "✓ Completed"
+                            : "Pending Directive"}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400 hidden sm:inline">
+                        • Locked
+                      </span>
+                    </div>
+                  )}
 
                   {task.leadId && onSelectLeadId && (
                     <button
                       onClick={() => onSelectLeadId(task.leadId!)}
-                      className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-[#0c758d] hover:text-[#095f73] transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-[#0c758d] hover:text-[#095f73] transition-colors cursor-pointer ml-auto"
                     >
                       <span>View Lead</span>
                       <ExternalLink className="w-3 h-3" />

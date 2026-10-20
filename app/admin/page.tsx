@@ -25,6 +25,7 @@ import {
   Database,
   Trash2,
   Inbox,
+  Lock,
 } from "lucide-react";
 import {
   fetchAdminLeads,
@@ -686,14 +687,16 @@ export default function AdminDashboardPage() {
                             <span>Review</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
-                          <button
-                            onClick={() => requestDeleteLead(lead.id, lead.name)}
-                            disabled={isDeletingId === lead.id}
-                            title="Permanently delete this lead"
-                            className="p-1.5 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer disabled:opacity-40"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          {currentSession?.role !== "employee" && (
+                            <button
+                              onClick={() => requestDeleteLead(lead.id, lead.name)}
+                              disabled={isDeletingId === lead.id}
+                              title="Permanently delete this lead"
+                              className="p-1.5 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer disabled:opacity-40"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -827,32 +830,39 @@ export default function AdminDashboardPage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap justify-end">
-                {(["new", "contacted", "qualified", "proposal", "won"] as const).map((st) => (
-                  <button
-                    key={st}
-                    onClick={() => updateLeadStatus(selectedLead.id, st)}
-                    disabled={isUpdatingStatus !== null}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-mono capitalize transition-all cursor-pointer disabled:opacity-50 ${
-                      selectedLead.status === st
-                        ? "bg-[#0c758d] text-white font-bold shadow-xs ring-2 ring-[#0c758d]/30"
-                        : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200 border border-slate-200"
-                    }`}
-                  >
-                    {st}
-                  </button>
-                ))}
+              {currentSession?.role === "employee" ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/90 text-xs font-mono text-slate-600">
+                  <Lock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Lead Stage managed by Head of Engineering (Read-only for Staff)</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 flex-wrap justify-end">
+                  {(["new", "contacted", "qualified", "proposal", "won"] as const).map((st) => (
+                    <button
+                      key={st}
+                      onClick={() => updateLeadStatus(selectedLead.id, st)}
+                      disabled={isUpdatingStatus !== null}
+                      className={`px-3 py-1.5 rounded-full text-[11px] font-mono capitalize transition-all cursor-pointer disabled:opacity-50 ${
+                        selectedLead.status === st
+                          ? "bg-[#0c758d] text-white font-bold shadow-xs ring-2 ring-[#0c758d]/30"
+                          : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200 border border-slate-200"
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  ))}
 
-                <button
-                  onClick={() => requestDeleteLead(selectedLead.id, selectedLead.name)}
-                  disabled={isDeletingId === selectedLead.id}
-                  title="Permanently delete this lead from Supabase"
-                  className="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono font-semibold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <Trash2 className="w-3 h-3" />
-                  <span>Delete</span>
-                </button>
-              </div>
+                  <button
+                    onClick={() => requestDeleteLead(selectedLead.id, selectedLead.name)}
+                    disabled={isDeletingId === selectedLead.id}
+                    title="Permanently delete this lead from Supabase"
+                    className="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono font-semibold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
