@@ -41,24 +41,31 @@ export default function AdminChangePasswordForm() {
     setIsLoading(true);
 
     try {
+      let email = "";
+      try {
+        const stored = localStorage.getItem("exergy_admin_session");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          email = parsed.email || "";
+        }
+      } catch {}
+
       // 1. Try Server Action first
       let res: { success: boolean; error?: string } | null = null;
       try {
-        res = await changeAdminPasswordAction(newPassword);
+        res = await changeAdminPasswordAction(newPassword, email);
       } catch (actionErr) {
         console.warn("[CHANGE PASSWORD ACTION FAILED, TRYING API FALLBACK]", actionErr);
       }
 
-      // 2. Fallback to API route if needed
+      // 2. Fallback to API route if action was not successful
       if (!res || !res.success) {
-        if (!res) {
-          const apiRes = await fetch("/api/admin/change-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ newPassword }),
-          });
-          res = await apiRes.json();
-        }
+        const apiRes = await fetch("/api/admin/change-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newPassword, email }),
+        });
+        res = await apiRes.json();
       }
 
       if (res && res.success) {

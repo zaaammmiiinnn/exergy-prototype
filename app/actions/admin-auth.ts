@@ -262,11 +262,13 @@ export async function adminLoginAction(
  * Update permanent password for logged in administrator (saved in normal plain text)
  */
 export async function changeAdminPasswordAction(
-  newPassword: string
+  newPassword: string,
+  providedEmail?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const session = await getAdminSessionAction();
-    if (!session || !session.email) {
+    const emailToUpdate = session?.email || providedEmail?.toLowerCase().trim();
+    if (!emailToUpdate) {
       return { success: false, error: "Unauthorized session. Please log in first." };
     }
 
@@ -295,7 +297,7 @@ export async function changeAdminPasswordAction(
         must_change_password: false,
         updated_at: nowIso,
       })
-      .eq("email", session.email);
+      .eq("email", emailToUpdate);
 
     if (!errA) {
       updateSuccess = true;
@@ -310,7 +312,7 @@ export async function changeAdminPasswordAction(
           password_hash: plainPassword,
           updated_at: nowIso,
         })
-        .eq("email", session.email);
+        .eq("email", emailToUpdate);
 
       if (!errB) {
         updateSuccess = true;
@@ -325,7 +327,7 @@ export async function changeAdminPasswordAction(
             password: plainPassword,
             updated_at: nowIso,
           })
-          .eq("email", session.email);
+          .eq("email", emailToUpdate);
 
         if (!errC) {
           updateSuccess = true;
@@ -341,7 +343,9 @@ export async function changeAdminPasswordAction(
 
     // 3. Update active session cookie
     const updatedSession: AdminSession = {
-      ...session,
+      email: emailToUpdate,
+      role: session?.role || "employee",
+      name: session?.name || "Administrator",
       mustChangePassword: false,
       authenticatedAt: new Date().toISOString(),
     };

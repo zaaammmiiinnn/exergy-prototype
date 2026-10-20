@@ -9,7 +9,7 @@ export const revalidate = 0;
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { newPassword } = body || {};
+    const { newPassword, email: bodyEmail } = body || {};
 
     if (!newPassword || typeof newPassword !== "string" || newPassword.trim().length < 8) {
       return NextResponse.json(
@@ -23,26 +23,17 @@ export async function POST(request: Request) {
     // Read session cookie
     const cookieStore = cookies();
     const sessionCookie = cookieStore.get("exergy_admin_session")?.value;
-    if (!sessionCookie) {
+    let session: AdminSession | null = null;
+    if (sessionCookie) {
+      try {
+        session = JSON.parse(decodeURIComponent(sessionCookie));
+      } catch {}
+    }
+
+    const emailToUpdate = (session?.email || bodyEmail)?.toLowerCase().trim();
+    if (!emailToUpdate) {
       return NextResponse.json(
         { success: false, error: "Session expired or unauthorized. Please log in again." },
-        { status: 401 }
-      );
-    }
-
-    let session: AdminSession;
-    try {
-      session = JSON.parse(decodeURIComponent(sessionCookie));
-    } catch {
-      return NextResponse.json(
-        { success: false, error: "Invalid session cookie." },
-        { status: 401 }
-      );
-    }
-
-    if (!session.email) {
-      return NextResponse.json(
-        { success: false, error: "No email associated with session." },
         { status: 401 }
       );
     }
@@ -64,7 +55,7 @@ export async function POST(request: Request) {
         must_change_password: false,
         updated_at: nowIso,
       })
-      .eq("email", session.email);
+      .eq("email", emailToUpdate);
 
     if (!errA) {
       updateSuccess = true;
@@ -79,7 +70,7 @@ export async function POST(request: Request) {
           password_hash: plainPassword,
           updated_at: nowIso,
         })
-        .eq("email", session.email);
+        .eq("email", emailToUpdate);
 
       if (!errB) {
         updateSuccess = true;
@@ -93,7 +84,7 @@ export async function POST(request: Request) {
             password: plainPassword,
             updated_at: nowIso,
           })
-          .eq("email", session.email);
+          .eq("email", emailToUpdate);
 
         if (!errC) {
           updateSuccess = true;
@@ -112,7 +103,9 @@ export async function POST(request: Request) {
 
     // Update session cookie
     const updatedSession: AdminSession = {
-      ...session,
+      email: emailToUpdate,
+      role: session?.role || "employee",
+      name: session?.name || "Administrator",
       mustChangePassword: false,
       authenticatedAt: nowIso,
     };
