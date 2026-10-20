@@ -22,7 +22,12 @@ export default function AdminLoginForm() {
 
     try {
       // 1. Try Server Action first
-      let res: { success: boolean; session?: any; error?: string } | null = null;
+      let res: {
+        success: boolean;
+        requiresPasswordChange?: boolean;
+        session?: any;
+        error?: string;
+      } | null = null;
       try {
         res = await adminLoginAction(email, password);
       } catch (actionErr) {
@@ -52,7 +57,11 @@ export default function AdminLoginForm() {
         } catch {}
 
         setTimeout(() => {
-          router.replace("/admin");
+          if (res.requiresPasswordChange || res.session.mustChangePassword) {
+            router.replace("/admin/change-password");
+          } else {
+            router.replace("/admin");
+          }
           router.refresh();
         }, 300);
       } else {

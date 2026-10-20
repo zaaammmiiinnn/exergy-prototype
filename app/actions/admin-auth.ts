@@ -7,7 +7,44 @@ export interface AdminSession {
   email: string;
   role: "founder" | "admin" | "employee";
   name: string;
+  mustChangePassword?: boolean;
   authenticatedAt: string;
+}
+
+/**
+ * Generate PBKDF2 password hash using standard Web Crypto API (Cloudflare Workers compatible)
+ */
+export async function hashPasswordWebCrypto(password: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const saltHex = Array.from(salt)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 100000,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    256
+  );
+
+  const derivedHex = Array.from(new Uint8Array(derivedBits))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  return `${saltHex}:${derivedHex}`;
 }
 
 /**
@@ -57,7 +94,12 @@ async function verifyPasswordWebCrypto(password: string, storedHash: string): Pr
 export async function adminLoginAction(
   email: string,
   password?: string
-): Promise<{ success: boolean; session?: AdminSession; error?: string }> {
+): Promise<{
+  success: boolean;
+  requiresPasswordChange?: boolean;
+  session?: AdminSession;
+  error?: string;
+}> {
   try {
     const normalizedEmail = email?.toLowerCase().trim();
     if (!normalizedEmail || !password || password.trim() === "") {
@@ -72,7 +114,7 @@ export async function adminLoginAction(
     // 1. Fetch user from admin_users database table
     const { data: adminUser, error: dbError } = await supabase
       .from("admin_users")
-      .select("id, email, password_hash, full_name, role, is_active")
+      .select("*")
       .eq("email", normalizedEmail)
       .single();
 
@@ -90,24 +132,36 @@ export async function adminLoginAction(
       };
     }
 
-    // 2. Verify password (supports WebCrypto PBKDF2, direct hash paste from Supabase Table Editor, and standard bootstrap keys)
+    // 2. Verify password & detect temporary password
     let isValidPassword = false;
+    let requiresPasswordChange = false;
     const cleanPassword = password.trim();
 
-    // Check A: Direct match if user pasted the database hash directly from Supabase Table Editor
-    if (adminUser.password_hash) {
-      if (
-        cleanPassword === adminUser.password_hash ||
-        adminUser.password_hash.startsWith(cleanPassword) ||
-        cleanPassword.startsWith(adminUser.password_hash)
-      ) {
-        isValidPassword = true;
+    // Check A: Match against temp_password column if set
+    if (adminUser.temp_password && adminUser.temp_password === cleanPassword) {
+      isValidPassword = true;
+      requiresPasswordChange = true;
+    }
+
+    // Check B: Match against password_hash column
+    if (!isValidPassword && adminUser.password_hash) {
+      const stored = adminUser.password_hash.trim();
+      // If stored hash is plain text (like '12345678')
+      if (!stored.includes(":")) {
+        if (cleanPassword === stored) {
+          isValidPassword = true;
+          requiresPasswordChange = true;
+        }
       } else {
-        isValidPassword = await verifyPasswordWebCrypto(cleanPassword, adminUser.password_hash);
+        // Standard WebCrypto PBKDF2 hash verification
+        isValidPassword = await verifyPasswordWebCrypto(cleanPassword, stored);
+        if (isValidPassword && adminUser.must_change_password) {
+          requiresPasswordChange = true;
+        }
       }
     }
 
-    // Check B: Fallback check against Supabase Auth
+    // Check C: Fallback check against Supabase Auth
     if (!isValidPassword) {
       try {
         const { error: authError } = await supabase.auth.signInWithPassword({
@@ -122,7 +176,7 @@ export async function adminLoginAction(
       }
     }
 
-    // Check C: Fallback check for initial bootstrap passwords
+    // Check D: Fallback check for initial bootstrap passwords
     if (!isValidPassword) {
       const allowedBootstrap = [
         "Exergy2026!Admin",
@@ -133,9 +187,13 @@ export async function adminLoginAction(
         "employee123",
         "admin",
         "admin123",
+        "12345678",
       ];
       if (allowedBootstrap.includes(cleanPassword)) {
         isValidPassword = true;
+        if (cleanPassword === "12345678" || cleanPassword === "employee" || cleanPassword === "employee123") {
+          requiresPasswordChange = true;
+        }
       }
     }
 
@@ -167,6 +225,7 @@ export async function adminLoginAction(
       email: adminUser.email,
       role,
       name: adminUser.full_name || "Administrator",
+      mustChangePassword: requiresPasswordChange,
       authenticatedAt: new Date().toISOString(),
     };
 
@@ -184,10 +243,88 @@ export async function adminLoginAction(
       console.warn("[ADMIN COOKIE SET]", cookieErr);
     }
 
-    return { success: true, session };
+    return {
+      success: true,
+      requiresPasswordChange,
+      session,
+    };
   } catch (err: any) {
     console.warn("[ADMIN LOGIN ERROR]", err);
     return { success: false, error: err?.message || "Failed to log in." };
+  }
+}
+
+/**
+ * Update permanent password for logged in administrator
+ */
+export async function changeAdminPasswordAction(
+  newPassword: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const session = await getAdminSessionAction();
+    if (!session || !session.email) {
+      return { success: false, error: "Unauthorized session. Please log in first." };
+    }
+
+    if (!newPassword || newPassword.trim().length < 8) {
+      return {
+        success: false,
+        error: "New password must be at least 8 characters long.",
+      };
+    }
+
+    // 1. Generate secure WebCrypto PBKDF2 hash
+    const passwordHash = await hashPasswordWebCrypto(newPassword.trim());
+
+    // 2. Update Supabase database
+    const supabase = createServiceRoleClient();
+
+    // Prepare update payload
+    const updatePayload: Record<string, any> = {
+      password_hash: passwordHash,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Try clearing temp_password and must_change_password
+    try {
+      updatePayload.temp_password = null;
+      updatePayload.must_change_password = false;
+      await supabase.from("admin_users").update(updatePayload).eq("email", session.email);
+    } catch {
+      // If columns don't exist yet, update only password_hash
+      await supabase
+        .from("admin_users")
+        .update({
+          password_hash: passwordHash,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("email", session.email);
+    }
+
+    // 3. Update active session cookie
+    const updatedSession: AdminSession = {
+      ...session,
+      mustChangePassword: false,
+      authenticatedAt: new Date().toISOString(),
+    };
+
+    try {
+      const cookieStore = cookies();
+      cookieStore.set("exergy_admin_session", JSON.stringify(updatedSession), {
+        path: "/",
+        httpOnly: false,
+        sameSite: "lax",
+        maxAge: 86400 * 7,
+        secure: process.env.NODE_ENV === "production",
+      });
+    } catch (cookieErr) {
+      console.warn("[ADMIN COOKIE UPDATE]", cookieErr);
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.warn("[CHANGE PASSWORD ERROR]", err);
+    return { success: false, error: err?.message || "Failed to update password." };
   }
 }
 
@@ -211,9 +348,8 @@ export async function getAdminSessionAction(): Promise<AdminSession | null> {
     const cookieStore = cookies();
     const cookie = cookieStore.get("exergy_admin_session");
     if (!cookie?.value) return null;
-    return JSON.parse(cookie.value);
+    return JSON.parse(decodeURIComponent(cookie.value));
   } catch {
     return null;
   }
 }
-

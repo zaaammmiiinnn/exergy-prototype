@@ -77,6 +77,11 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   }, [pathname, router]);
 
   const checkRoutePermission = (session: AdminSession, path: string) => {
+    if (session.mustChangePassword && path !== "/admin/change-password") {
+      router.replace("/admin/change-password");
+      return;
+    }
+
     const isEmployee = session.role === "employee";
     const isRestricted =
       path === "/admin/settings" ||
@@ -89,8 +94,8 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // For /admin/login, render standalone without sidebar
-  if (pathname === "/admin/login") {
+  // For /admin/login and /admin/change-password, render standalone without sidebar
+  if (pathname === "/admin/login" || pathname === "/admin/change-password") {
     return <>{children}</>;
   }
 

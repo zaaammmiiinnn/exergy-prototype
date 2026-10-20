@@ -24,7 +24,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = NextResponse.json({ success: true, session: res.session });
+    const response = NextResponse.json({
+      success: true,
+      requiresPasswordChange: res.requiresPasswordChange,
+      session: res.session,
+    });
     
     // Explicitly set cookie on response
     if (res.session) {

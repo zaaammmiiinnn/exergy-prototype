@@ -19,6 +19,22 @@ export function middleware(request: NextRequest) {
     try {
       const session = JSON.parse(decodeURIComponent(sessionCookie));
       const role = (session.role || "employee").toLowerCase().trim();
+      const mustChangePassword = Boolean(session.mustChangePassword);
+
+      // If user has a temporary password, force them to /admin/change-password
+      if (mustChangePassword) {
+        if (pathname !== "/admin/change-password") {
+          const changePassUrl = new URL("/admin/change-password", request.url);
+          return NextResponse.redirect(changePassUrl);
+        }
+        return NextResponse.next();
+      }
+
+      // If user does not need to change password, prevent access to /admin/change-password
+      if (pathname === "/admin/change-password") {
+        const dashboardUrl = new URL("/admin", request.url);
+        return NextResponse.redirect(dashboardUrl);
+      }
 
       // Rule: Block 'employee' role from accessing /admin/settings or /admin/chatbot
       const isRestrictedPath =
