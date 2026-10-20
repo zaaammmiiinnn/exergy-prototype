@@ -23,6 +23,7 @@ import {
 import {
   fetchAdminTasksAction,
   syncAdminTasksAction,
+  updateTaskStatusAction,
   type DatabaseTask,
 } from "@/app/actions/admin-tasks";
 import { formatDynamicTime } from "@/lib/time-utils";
@@ -45,6 +46,7 @@ export function AssignedTasksSection({
   const isHead = currentUserRole === "founder" || currentUserRole === "admin";
   const [tasks, setTasks] = useState<EmployeeTask[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
   const [isDatabaseConnected, setIsDatabaseConnected] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"all" | "in_progress" | "pending" | "completed">("all");
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
@@ -106,10 +108,31 @@ export function AssignedTasksSection({
     }
   };
 
-  const handleStatusChange = (taskId: string, newStatus: EmployeeTask["status"]) => {
-    if (!isHead) return; // Employee cannot modify status
+  const handleStatusChange = async (taskId: string, newStatus: EmployeeTask["status"]) => {
+    // 1. Optimistic update immediately
     const updated = tasks.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t));
-    saveTasks(updated);
+    setTasks(updated);
+    setUpdatingTaskId(taskId);
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch {}
+
+    // 2. Persist directly to Supabase PostgreSQL
+    try {
+      const res = await updateTaskStatusAction(taskId, newStatus);
+      if (res.success && res.tasks) {
+        setTasks(res.tasks);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(res.tasks));
+        } catch {}
+      }
+      setIsDatabaseConnected(true);
+    } catch (e) {
+      console.warn("Failed to update status in Supabase:", e);
+    } finally {
+      setUpdatingTaskId(null);
+    }
   };
 
   const handleDeleteTask = (taskId: string) => {
@@ -411,68 +434,54 @@ export function AssignedTasksSection({
                 </div>
 
                 {/* Status Indicator & Lead Action */}
-                <div className="mt-4 pt-3 border-t border-slate-100/80 flex items-center justify-between gap-2">
-                  {isHead ? (
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleStatusChange(task.id, "in_progress")}
-                        className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
-                          isInProgress
-                            ? "bg-amber-100 text-amber-800 border border-amber-300"
-                            : "text-slate-500 hover:bg-slate-100"
-                        }`}
-                      >
-                        In Progress
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleStatusChange(task.id, "pending")}
-                        className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
-                          task.status === "pending"
-                            ? "bg-sky-100 text-sky-800 border border-sky-300"
-                            : "text-slate-500 hover:bg-slate-100"
-                        }`}
-                      >
-                        Pending
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleStatusChange(task.id, "completed")}
-                        className={`text-[10px] font-mono font-bold px-2 py-1 rounded-md transition-all cursor-pointer ${
-                          isCompleted
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                            : "text-slate-500 hover:bg-slate-100"
-                        }`}
-                      >
-                        ✓ Completed
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold border ${
-                          isInProgress
-                            ? "bg-amber-50 text-amber-800 border-amber-300/80"
-                            : isCompleted
-                            ? "bg-emerald-50 text-emerald-800 border-emerald-300/80"
-                            : "bg-sky-50 text-sky-800 border-sky-300/80"
-                        }`}
-                      >
-                        <Lock className="w-3 h-3 text-slate-400" />
-                        <span>
-                          {isInProgress
-                            ? "In Progress (Head Directive)"
-                            : isCompleted
-                            ? "✓ Completed"
-                            : "Pending Directive"}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono text-slate-400 hidden sm:inline">
-                        • Locked
+                <div className="mt-4 pt-3 border-t border-slate-100/80 flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      disabled={updatingTaskId === task.id}
+                      onClick={() => handleStatusChange(task.id, "in_progress")}
+                      className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                        isInProgress
+                          ? "bg-amber-100 text-amber-900 border border-amber-300 ring-2 ring-amber-400/30 shadow-2xs"
+                          : "text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/60"
+                      }`}
+                    >
+                      {isInProgress && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
+                      <span>In Progress</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={updatingTaskId === task.id}
+                      onClick={() => handleStatusChange(task.id, "pending")}
+                      className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                        task.status === "pending"
+                          ? "bg-sky-100 text-sky-900 border border-sky-300 ring-2 ring-sky-400/30 shadow-2xs"
+                          : "text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/60"
+                      }`}
+                    >
+                      {task.status === "pending" && <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />}
+                      <span>Pending</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={updatingTaskId === task.id}
+                      onClick={() => handleStatusChange(task.id, "completed")}
+                      className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                        isCompleted
+                          ? "bg-emerald-100 text-emerald-900 border border-emerald-300 ring-2 ring-emerald-400/30 shadow-2xs"
+                          : "text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/60"
+                      }`}
+                    >
+                      {isCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+                      <span>✓ Completed</span>
+                    </button>
+
+                    {updatingTaskId === task.id && (
+                      <span className="text-[10px] font-mono text-teal-700 flex items-center gap-1 ml-1 animate-pulse">
+                        <RefreshCw className="w-2.5 h-2.5 animate-spin" /> Saving to PostgreSQL...
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   {task.leadId && onSelectLeadId && (
                     <button

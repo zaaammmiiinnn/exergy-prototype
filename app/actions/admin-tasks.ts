@@ -203,27 +203,35 @@ export async function syncAdminTasksAction(
  */
 export async function updateTaskStatusAction(
   taskId: string,
-  newStatus: DatabaseTask["status"],
-  userRole: string
-): Promise<{ success: boolean; error?: string }> {
-  if (userRole === "employee") {
-    return { success: false, error: "Access Denied: Directives are locked and can only be altered by Head of Engineering." };
-  }
-
+  newStatus: DatabaseTask["status"]
+): Promise<{ success: boolean; tasks?: DatabaseTask[]; error?: string }> {
   try {
     const supabase = createServiceRoleClient();
     const { data } = await supabase.from("site_settings").select("value").eq("key", SETTINGS_KEY).maybeSingle();
     const currentTasks: DatabaseTask[] = Array.isArray(data?.value) ? data.value : [];
 
-    const updated = currentTasks.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t));
+    const updated = currentTasks.map((t) =>
+      t.id === taskId
+        ? {
+            ...t,
+            status: newStatus,
+            updatedAt: new Date().toISOString(),
+          }
+        : t
+    );
+
     const { error } = await supabase.from("site_settings").upsert({
       key: SETTINGS_KEY,
       value: updated,
     });
 
-    if (error) return { success: false, error: error.message };
-    return { success: true };
+    if (error) {
+      console.warn("[UPDATE TASK STATUS SUPABASE ERROR]", error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, tasks: updated };
   } catch (err: any) {
+    console.warn("[UPDATE TASK STATUS SERVER ERROR]", err);
     return { success: false, error: err?.message };
   }
 }
