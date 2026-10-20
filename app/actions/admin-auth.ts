@@ -183,10 +183,16 @@ export async function adminLoginAction(
     // Check D: Fallback check for initial bootstrap passwords
     if (!isValidPassword) {
       const allowedBootstrap = [
+        "Exergy2026",
+        "ExergyEmp1",
+        "ExergySup1",
+        "ExergyAdm1",
+        "ExergyFnd1",
         "Exergy2026!Admin",
         "Exergy2026!Support",
         "Exergy2026!Employee",
         "Exergy2026!Founder",
+        "1234567890",
         "employee",
         "employee123",
         "admin",
