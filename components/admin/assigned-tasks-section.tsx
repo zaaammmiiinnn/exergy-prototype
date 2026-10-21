@@ -94,6 +94,9 @@ export function AssignedTasksSection({
   const [reassignCustomName, setReassignCustomName] = useState("");
   const [reassignCustomEmail, setReassignCustomEmail] = useState("");
 
+  // Detailed Task Inspection Modal State
+  const [viewingTask, setViewingTask] = useState<EmployeeTask | null>(null);
+
   // Load team roster
   const loadTeamMembers = useCallback(async () => {
     try {
@@ -481,12 +484,13 @@ export function AssignedTasksSection({
             return (
               <div
                 key={task.id}
-                className={`group relative rounded-2xl p-5 border transition-all ${
+                onClick={() => setViewingTask(task)}
+                className={`group relative rounded-2xl p-5 border transition-all cursor-pointer ${
                   isCompleted
-                    ? "bg-emerald-50/30 border-emerald-200/80"
+                    ? "bg-emerald-50/30 border-emerald-200/80 hover:border-emerald-300 hover:shadow-xs"
                     : isInProgress
-                    ? "bg-white border-teal-200/90 shadow-sm hover:shadow-md"
-                    : "bg-white border-slate-200/80 hover:border-slate-300"
+                    ? "bg-white border-teal-200/90 shadow-sm hover:shadow-md hover:border-teal-400"
+                    : "bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs"
                 }`}
               >
                 {/* Status Bar Accent */}
@@ -536,7 +540,10 @@ export function AssignedTasksSection({
                   {/* Delete Task Button (Head Only) */}
                   {isHead && (
                     <button
-                      onClick={() => handleDeleteTask(task.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTask(task.id);
+                      }}
                       className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 transition-opacity p-1 cursor-pointer"
                       title="Remove task"
                     >
@@ -548,7 +555,7 @@ export function AssignedTasksSection({
                 {/* Title */}
                 <h4
                   className={`font-heading font-bold text-sm mt-3 ${
-                    isCompleted ? "text-slate-500 line-through" : "text-slate-900"
+                    isCompleted ? "text-slate-500 line-through" : "text-slate-900 group-hover:text-[#0c758d] transition-colors"
                   }`}
                 >
                   {task.title}
@@ -584,7 +591,8 @@ export function AssignedTasksSection({
                   {isHead && (
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setReassigningTask(task);
                         setReassignTargetEmail(task.assigneeEmail || "employee@exergy.com");
                         setReassignCustomName(task.assigneeName || "");
@@ -637,7 +645,10 @@ export function AssignedTasksSection({
                     <button
                       type="button"
                       disabled={updatingTaskId === task.id}
-                      onClick={() => handleStatusChange(task.id, "in_progress")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStatusChange(task.id, "in_progress");
+                      }}
                       className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
                         isInProgress
                           ? "bg-amber-100 text-amber-900 border border-amber-300 ring-2 ring-amber-400/30 shadow-2xs"
@@ -650,7 +661,10 @@ export function AssignedTasksSection({
                     <button
                       type="button"
                       disabled={updatingTaskId === task.id}
-                      onClick={() => handleStatusChange(task.id, "pending")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStatusChange(task.id, "pending");
+                      }}
                       className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
                         task.status === "pending"
                           ? "bg-sky-100 text-sky-900 border border-sky-300 ring-2 ring-sky-400/30 shadow-2xs"
@@ -663,7 +677,10 @@ export function AssignedTasksSection({
                     <button
                       type="button"
                       disabled={updatingTaskId === task.id}
-                      onClick={() => handleStatusChange(task.id, "completed")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStatusChange(task.id, "completed");
+                      }}
                       className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
                         isCompleted
                           ? "bg-emerald-100 text-emerald-900 border border-emerald-300 ring-2 ring-emerald-400/30 shadow-2xs"
@@ -683,7 +700,10 @@ export function AssignedTasksSection({
 
                   {task.leadId && onSelectLeadId && (
                     <button
-                      onClick={() => onSelectLeadId(task.leadId!)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectLeadId(task.leadId!);
+                      }}
                       className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-[#0c758d] hover:text-[#095f73] transition-colors cursor-pointer ml-auto"
                     >
                       <span>View Lead</span>
@@ -1023,6 +1043,208 @@ export function AssignedTasksSection({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Task Details / Directive Inspection Modal */}
+      {viewingTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between pb-3 border-b border-slate-100 gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                    {viewingTask.id}
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full border ${
+                      viewingTask.priority === "urgent"
+                        ? "bg-red-50 text-red-700 border-red-200"
+                        : viewingTask.priority === "high"
+                        ? "bg-amber-50 text-amber-700 border-amber-200"
+                        : viewingTask.priority === "medium"
+                        ? "bg-sky-50 text-sky-700 border-sky-200"
+                        : "bg-slate-100 text-slate-600 border-slate-200"
+                    }`}
+                  >
+                    {viewingTask.priority}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-slate-600 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200/80">
+                    <ShieldCheck className="w-3 h-3 text-[#0c758d]" />
+                    <span>{viewingTask.assignedBy || "Head of Engineering"}</span>
+                  </span>
+                </div>
+                <h3 className="font-heading font-extrabold text-lg text-slate-900 leading-snug pt-1">
+                  {viewingTask.title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setViewingTask(null)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scope / Description */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-1.5">
+              <span className="text-[10px] font-mono font-bold uppercase text-slate-500 tracking-wider">
+                Engineering Scope & Directives
+              </span>
+              <p className="text-xs text-slate-700 leading-relaxed font-sans">
+                {viewingTask.description}
+              </p>
+            </div>
+
+            {/* Assigned Employee Profile */}
+            <div className="p-3.5 rounded-2xl bg-teal-50/50 border border-teal-100 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0c758d] to-[#30a66a] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                  {getInitials(viewingTask.assigneeName || "SE")}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-900 truncate">
+                      {viewingTask.assigneeName || "Staff Engineer"}
+                    </span>
+                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-teal-200 text-teal-900">
+                      Assigned Specialist
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-mono text-slate-600 truncate">
+                    {viewingTask.assigneeEmail || "employee@exergy.com"}
+                  </div>
+                </div>
+              </div>
+
+              {isHead && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const t = viewingTask;
+                    setViewingTask(null);
+                    setReassigningTask(t);
+                    setReassignTargetEmail(t.assigneeEmail || "employee@exergy.com");
+                    setReassignCustomName(t.assigneeName || "");
+                    setReassignCustomEmail(t.assigneeEmail || "");
+                    setReassignMode("preset");
+                  }}
+                  className="text-xs font-mono font-semibold text-teal-800 hover:text-teal-900 bg-white hover:bg-teal-100/60 border border-teal-200 px-3 py-1.5 rounded-xl cursor-pointer transition-colors shrink-0 shadow-2xs"
+                >
+                  Reassign
+                </button>
+              )}
+            </div>
+
+            {/* Facility & Metadata Grid */}
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                <span className="text-[10px] font-mono text-slate-400 block mb-0.5">Facility / Client</span>
+                <span className="font-semibold text-slate-800 flex items-center gap-1.5 truncate">
+                  <Building className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span className="truncate">{viewingTask.company}</span>
+                </span>
+                <span className="text-[10px] text-slate-500 block mt-1">{viewingTask.sector}</span>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                <span className="text-[10px] font-mono text-slate-400 block mb-0.5">Deadline Target</span>
+                <span className="font-semibold text-slate-800 flex items-center gap-1.5 truncate">
+                  <Clock className="w-3.5 h-3.5 text-[#0c758d] shrink-0" />
+                  <span className="truncate">{viewingTask.dueDateDisplay || "Pending"}</span>
+                </span>
+                <span className="text-[10px] text-slate-500 block mt-1">
+                  Assigned: {viewingTask.createdAt ? formatDynamicTime(viewingTask.createdAt).relative : "Recently"}
+                </span>
+              </div>
+            </div>
+
+            {/* Status Modification Controls */}
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono font-bold uppercase text-slate-700">
+                  Directive Status
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">
+                  Changes sync immediately to PostgreSQL
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleStatusChange(viewingTask.id, "in_progress");
+                    setViewingTask((prev) => prev ? { ...prev, status: "in_progress" } : null);
+                  }}
+                  className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    viewingTask.status === "in_progress"
+                      ? "bg-amber-100 text-amber-900 border border-amber-300 ring-2 ring-amber-400/30"
+                      : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span>In Progress</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleStatusChange(viewingTask.id, "pending");
+                    setViewingTask((prev) => prev ? { ...prev, status: "pending" } : null);
+                  }}
+                  className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    viewingTask.status === "pending"
+                      ? "bg-sky-100 text-sky-900 border border-sky-300 ring-2 ring-sky-400/30"
+                      : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-sky-500" />
+                  <span>Pending</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleStatusChange(viewingTask.id, "completed");
+                    setViewingTask((prev) => prev ? { ...prev, status: "completed" } : null);
+                  }}
+                  className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    viewingTask.status === "completed"
+                      ? "bg-emerald-100 text-emerald-900 border border-emerald-300 ring-2 ring-emerald-400/30"
+                      : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>Completed</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
+              {viewingTask.leadId && onSelectLeadId ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSelectLeadId(viewingTask.leadId!);
+                    setViewingTask(null);
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#0c758d] hover:text-[#095f73] transition-colors cursor-pointer"
+                >
+                  <span>Open Client Lead ({viewingTask.leadId})</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </button>
+              ) : <div />}
+
+              <button
+                type="button"
+                onClick={() => setViewingTask(null)}
+                className="px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs cursor-pointer"
+              >
+                Close Directive
+              </button>
+            </div>
           </div>
         </div>
       )}

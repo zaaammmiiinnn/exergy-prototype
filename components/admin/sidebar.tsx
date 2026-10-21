@@ -37,7 +37,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   },
   {
     name: "Assigned Tasks",
-    href: "/admin#assigned-tasks",
+    href: "/admin/tasks",
     icon: CheckSquare,
     badge: 2,
   },

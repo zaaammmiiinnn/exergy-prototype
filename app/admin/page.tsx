@@ -162,6 +162,13 @@ export default function AdminDashboardPage() {
         setCurrentSession(JSON.parse(stored));
       }
     } catch {}
+
+    // Scroll to #assigned-tasks if hash is present
+    if (typeof window !== "undefined" && window.location.hash === "#assigned-tasks") {
+      setTimeout(() => {
+        document.getElementById("assigned-tasks")?.scrollIntoView({ behavior: "smooth" });
+      }, 150);
+    }
   }, []);
 
   const handleSelectLeadFromTask = (leadId: string) => {
