@@ -34,6 +34,7 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Initialize or restore session ID and chat state safely
@@ -137,7 +138,12 @@ export function ChatWidget() {
       ]);
       setSessionState(initial.nextState);
     }
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, [isOpen, messages]);
 
   // Focus input when opened
@@ -291,7 +297,7 @@ export function ChatWidget() {
       {isOpen && (
         <div className="w-[calc(100vw-2.5rem)] sm:w-[400px] h-[520px] max-h-[82vh] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
           {/* Header */}
-          <div className="bg-slate-50/95 border-b border-slate-200 p-3.5 sm:p-4 flex items-center justify-between">
+          <div className="bg-slate-50/95 border-b border-slate-200 p-3.5 sm:p-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200 flex items-center justify-center shrink-0">
                 <Bot className="w-4 h-4" />
@@ -329,7 +335,7 @@ export function ChatWidget() {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-3.5 text-xs bg-slate-50/50">
+          <div ref={messagesContainerRef} className="flex-1 min-h-0 p-3.5 sm:p-4 overflow-y-auto overscroll-contain space-y-3.5 text-xs bg-slate-50/50">
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -382,7 +388,7 @@ export function ChatWidget() {
           {/* Input Bar */}
           <form
             onSubmit={handleFormSubmit}
-            className="p-3 border-t border-slate-200 bg-white flex items-center gap-2"
+            className="p-3 border-t border-slate-200 bg-white flex items-center gap-2 shrink-0"
           >
             <input
               ref={inputRef}

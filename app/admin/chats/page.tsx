@@ -17,6 +17,7 @@ import {
   Filter,
   CheckSquare,
   ArrowLeft,
+  ArrowDown,
   Sparkles,
   RefreshCw,
   UserCheck,
@@ -201,7 +202,28 @@ export default function AdminChatsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [replyText, setReplyText] = useState("");
   const [isMobileListHidden, setIsMobileListHidden] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const userScrolledUpRef = useRef(false);
+
+  const scrollToBottom = (smooth = true) => {
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: smooth ? "smooth" : "instant",
+    });
+  };
+
+  const handleMessagesScroll = () => {
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    // Show jump-to-bottom if scrolled up more than 80px
+    const isUp = scrollHeight - scrollTop - clientHeight > 80;
+    userScrolledUpRef.current = isUp;
+    setShowScrollBottom(isUp);
+  };
 
   // Load chat sessions from localStorage or default
   useEffect(() => {
@@ -230,9 +252,25 @@ export default function AdminChatsPage() {
 
   const selectedSession = sessions.find((s) => s.id === selectedSessionId) || sessions[0];
 
+  // When switching conversation sessions, reset scroll position to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [selectedSession?.messages]);
+    userScrolledUpRef.current = false;
+    setShowScrollBottom(false);
+    const timer = setTimeout(() => {
+      scrollToBottom(false);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [selectedSessionId]);
+
+  // When a message is added, smooth scroll to bottom if user hasn't scrolled up to read earlier history
+  useEffect(() => {
+    if (!userScrolledUpRef.current) {
+      const timer = setTimeout(() => {
+        scrollToBottom(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedSession?.messages?.length]);
 
   const handleSendReply = (e: React.FormEvent) => {
     e.preventDefault();
@@ -324,15 +362,15 @@ export default function AdminChatsPage() {
       </div>
 
       {/* Main Two-Pane Chat Container */}
-      <div className="bg-white border border-slate-200/90 rounded-3xl shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[640px] max-h-[720px]">
+      <div className="bg-white border border-slate-200/90 rounded-3xl shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12 h-[calc(100vh-210px)] min-h-[580px] max-h-[850px]">
         {/* Left Pane: Conversation List (4 columns) */}
         <div
-          className={`md:col-span-4 border-r border-slate-200/80 flex flex-col h-full bg-slate-50/50 ${
+          className={`md:col-span-4 border-r border-slate-200/80 flex flex-col h-full min-h-0 overflow-hidden bg-slate-50/50 ${
             isMobileListHidden ? "hidden md:flex" : "flex"
           }`}
         >
           {/* Search & Filter Header */}
-          <div className="p-4 border-b border-slate-200/80 space-y-3 bg-white">
+          <div className="p-4 border-b border-slate-200/80 space-y-3 bg-white shrink-0">
             <div className="relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -380,7 +418,7 @@ export default function AdminChatsPage() {
           </div>
 
           {/* Session Cards List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+          <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 overscroll-contain">
             {filteredSessions.length === 0 ? (
               <div className="p-8 text-center text-slate-400 text-xs font-mono">
                 No matching chat inquiries.
@@ -454,14 +492,14 @@ export default function AdminChatsPage() {
 
         {/* Right Pane: Active Conversation & Reply View (8 columns) */}
         <div
-          className={`md:col-span-8 flex flex-col h-full bg-white ${
+          className={`md:col-span-8 flex flex-col h-full min-h-0 overflow-hidden bg-white relative ${
             !isMobileListHidden ? "hidden md:flex" : "flex"
           }`}
         >
           {selectedSession ? (
             <>
               {/* Conversation Header */}
-              <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between gap-3 bg-slate-50/40">
+              <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between gap-3 bg-slate-50/40 shrink-0">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setIsMobileListHidden(false)}
@@ -510,7 +548,11 @@ export default function AdminChatsPage() {
               </div>
 
               {/* Message Transcript Stream */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50/20">
+              <div
+                ref={messagesContainerRef}
+                onScroll={handleMessagesScroll}
+                className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50/20 overscroll-contain"
+              >
                 {selectedSession.messages.map((msg) => {
                   if (msg.sender === "system") {
                     return (
@@ -571,11 +613,26 @@ export default function AdminChatsPage() {
                     </div>
                   );
                 })}
-                <div ref={messagesEndRef} />
               </div>
 
+              {/* Scroll to Bottom Floating Pill */}
+              {showScrollBottom && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    userScrolledUpRef.current = false;
+                    setShowScrollBottom(false);
+                    scrollToBottom(true);
+                  }}
+                  className="absolute bottom-28 right-6 z-20 px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white text-[11px] font-mono font-medium shadow-xl flex items-center gap-1.5 backdrop-blur-sm transition-all cursor-pointer animate-in fade-in"
+                >
+                  <ArrowDown className="w-3.5 h-3.5 text-teal-400" />
+                  <span>Scroll to latest</span>
+                </button>
+              )}
+
               {/* Quick Response Suggestion Chips */}
-              <div className="p-2.5 px-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px] font-mono">
+              <div className="p-2.5 px-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px] font-mono shrink-0">
                 <span className="text-slate-400 shrink-0">Quick reply:</span>
                 <button
                   type="button"
@@ -615,7 +672,7 @@ export default function AdminChatsPage() {
               {/* Reply Input Box */}
               <form
                 onSubmit={handleSendReply}
-                className="p-4 border-t border-slate-200 bg-white flex items-center gap-3"
+                className="p-4 border-t border-slate-200 bg-white flex items-center gap-3 shrink-0"
               >
                 <input
                   type="text"
