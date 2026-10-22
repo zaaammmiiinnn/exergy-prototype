@@ -5,7 +5,13 @@
 
 ---
 
-## What Was Done
+- **Phase 9 (Pull Request #1 Review, Test Validation & Final Cloudflare Deployment)**:
+  - **Pull Request #1 Merged**: Integrated `BELALANSARI07/feature/chatbot-and-security-hardening` (`c945e52` & `e60fbe3`).
+  - **Deterministic Chatbot & Lead Capture**: Enhanced `lib/chatbot/engine.ts` and `components/chat/chat-widget.tsx` with conversational greetings, multi-step lead capture wizard, cancellation flows, and `/api/chat` route handler with Supabase lead scoring dispatch.
+  - **Cryptographic Security Hardening**: Added Web Crypto HMAC-SHA256 session signing in `lib/auth/session.ts` and `assertAdminAuthorized` server action guards across all tasks and leads actions. Added HTTP security headers (`nosniff`, `DENY`, `HSTS`, `Permissions-Policy`) in `next.config.mjs`.
+  - **Full Test Verification**: Executed test suite (`npm test`) — 17 unit tests passed across RBAC Matrix (3/3), Session Cryptography (4/4), and Chatbot Engine (10/10). Zero TypeScript errors (`npx tsc --noEmit`).
+  - **Cloudflare Workers Final Deployment**: Built OpenNext bundle (`npm run cf-build`) and deployed live with Wrangler (`npm run cf-deploy`) to `https://exergy-solutions.neuralwaves.workers.dev` (Current Version ID: `e37da8ea-040f-498d-a7da-8011135c8954`). Verified live `/healthz` and `/api/chat` endpoints.
+
 - **Phase 8 (Employee Task Assignment, 100-Staff Roster & Card Badges)**:
   - **Employee Selection in Task Creation**: Added employee assignment controls to the "Assign Task" modal (`components/admin/assigned-tasks-section.tsx`), allowing administrators to select any engineer from the 100-member engineering roster (e.g. Staff Engineer, Lead Thermodynamicist, Chiller Specialist, Energy Auditor, Pinch Analyst) or specify a custom employee name and email/EMP-ID.
   - **Card Assignee Badges**: Updated task card rendering to prominently display the assigned employee's initials avatar, full name, and email/ID badge on every task card.
