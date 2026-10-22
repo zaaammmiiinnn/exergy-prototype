@@ -41,9 +41,9 @@ export interface TrackedRequestResult {
 // Fallback / Demonstration Leads for instant testability
 const DEMO_LEADS: Record<string, Partial<TrackedRequestResult>> = {
   "EX-2026-6253": {
-    name: "NeuralWaves Ai",
-    company: "NeuralWaves Ai",
-    email: "neuralwaves.official@gmail.com",
+    name: "Sarfraz",
+    company: "Exergy Solutions Desk",
+    email: "sarfraz@exergy-solutions.com",
     sector: "processing",
     facilityType: "Continuous Processing & Chilling Plant",
     services: ["Cooling Optimization", "Pinch Analysis", "Waste Heat Recovery"],
@@ -56,9 +56,9 @@ const DEMO_LEADS: Record<string, Partial<TrackedRequestResult>> = {
     updatedAt: new Date().toISOString(),
   },
   "EX-2026-1055": {
-    name: "Neural Waves Engineering",
-    company: "Neural Waves Industrial AI",
-    email: "neuralwaves.official@gmail.com",
+    name: "Exergy Solutions Engineering",
+    company: "Exergy Solutions Dubai",
+    email: "sarfraz@exergy-solutions.com",
     sector: "processing",
     facilityType: "4.2 MW Batch Reactor Line",
     services: ["Cooling Optimization", "Waste Heat Recovery", "Pinch Analysis"],
@@ -71,9 +71,9 @@ const DEMO_LEADS: Record<string, Partial<TrackedRequestResult>> = {
     updatedAt: new Date(Date.now() - 3600 * 1000).toISOString(),
   },
   "EX-2026-1054": {
-    name: "Neural Waves Support & Ops",
-    company: "Neural Waves Facilities Operations",
-    email: "support@neuralwaves.in",
+    name: "Exergy Support & Ops",
+    company: "Exergy Solutions Facilities Operations",
+    email: "info@exergy-solutions.com",
     sector: "cooling",
     facilityType: "Regional GCC Data Center Facility",
     services: ["Cooling Systems", "Water & Effluent Reduction"],

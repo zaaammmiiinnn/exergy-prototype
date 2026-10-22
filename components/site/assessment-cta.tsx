@@ -192,12 +192,12 @@ export function AssessmentCTA() {
                 DIRECT ENGINEERING DESK
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-xs">
-                <a href="mailto:neuralwaves.official@gmail.com" className="text-[#0c758d] hover:underline font-medium">
-                  neuralwaves.official@gmail.com
+                <a href="mailto:sarfraz@exergy-solutions.com" className="text-[#0c758d] hover:underline font-medium">
+                  sarfraz@exergy-solutions.com
                 </a>
                 <span className="hidden sm:inline text-slate-300">|</span>
-                <a href="mailto:support@neuralwaves.in" className="text-[#0c758d] hover:underline font-medium">
-                  support@neuralwaves.in
+                <a href="mailto:info@exergy-solutions.com" className="text-[#0c758d] hover:underline font-medium">
+                  info@exergy-solutions.com
                 </a>
               </div>
             </div>

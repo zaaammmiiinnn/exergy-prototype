@@ -18,9 +18,9 @@ export async function sendAssessmentNotificationEmails(
   payload: SendAssessmentEmailsPayload
 ): Promise<{ adminNotified: boolean; visitorReplied: boolean }> {
   const gmailPass = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASSWORD;
-  const gmailUser = process.env.GMAIL_USER || "neuralwaves.official@gmail.com";
+  const gmailUser = process.env.GMAIL_USER || "sarfraz@exergy-solutions.com";
   const apiKey = process.env.RESEND_API_KEY;
-  const adminNotifyRaw = process.env.ADMIN_NOTIFY_EMAILS || "neuralwaves.official@gmail.com, support@neuralwaves.in";
+  const adminNotifyRaw = process.env.ADMIN_NOTIFY_EMAILS || "sarfraz@exergy-solutions.com, info@exergy-solutions.com";
   const adminRecipients = adminNotifyRaw.split(",").map((s) => s.trim()).filter(Boolean);
 
   let adminNotified = false;
@@ -30,7 +30,7 @@ export async function sendAssessmentNotificationEmails(
   const adminBody = `New Assessment Lead Received!\n\nReference: ${payload.shortId}\nName: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone || "N/A"}\nCompany: ${payload.company}\nSector: ${payload.sector}\nStreams: ${payload.services.join(", ")}\nTimeline: ${payload.timeline}\nScore: ${payload.score} (${payload.priority.toUpperCase()})\n\nChallenge Notes:\n${payload.mainChallenge || "None provided"}\n\nReview in Admin Portal: https://exergy-solutions.neuralwaves.workers.dev/admin`;
 
   const visitorSubject = `Your Exergy Solutions Assessment Request [${payload.shortId}]`;
-  const visitorBody = `Dear ${payload.name},\n\nThank you for requesting an industrial assessment with Exergy Solutions.\n\nYour Reference ID: ${payload.shortId}\nFacility: ${payload.company}\nSelected Services: ${payload.services.join(", ")}\n\nWhat happens next:\n1. Our thermodynamic engineering team will review your facility profile.\n2. We will contact you within one business day to align on preliminary baseline data.\n\nIf you have immediate questions, you can reach us directly at support@neuralwaves.in or reply to this message.\n\nBest regards,\nExergy Solutions Engineering Team\nDubai, UAE`;
+  const visitorBody = `Dear ${payload.name},\n\nThank you for requesting an industrial assessment with Exergy Solutions.\n\nYour Reference ID: ${payload.shortId}\nFacility: ${payload.company}\nSelected Services: ${payload.services.join(", ")}\n\nWhat happens next:\n1. Our thermodynamic engineering team will review your facility profile.\n2. We will contact you within one business day to align on preliminary baseline data.\n\nIf you have immediate questions, you can reach us directly at info@exergy-solutions.com or reply to this message.\n\nBest regards,\nExergy Solutions Engineering Team\nDubai, UAE`;
 
   // 1. Send via Gmail SMTP if GMAIL_APP_PASSWORD is set
   if (gmailPass && !gmailPass.startsWith("your_")) {
@@ -106,14 +106,14 @@ export async function sendAssessmentNotificationEmails(
             },
             body: JSON.stringify({
               from: fromEmail,
-              to: ["neuralwaves.official@gmail.com"],
+              to: ["sarfraz@exergy-solutions.com"],
               subject: adminSubject,
               text: adminBody,
             }),
           });
           if (retryRes.ok) {
             adminNotified = true;
-            console.log("[RESEND RETRY SUCCESS] Admin alert dispatched to neuralwaves.official@gmail.com");
+            console.log("[RESEND RETRY SUCCESS] Admin alert dispatched to sarfraz@exergy-solutions.com");
           }
         }
       }

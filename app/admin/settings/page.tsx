@@ -33,13 +33,13 @@ export default function AdminSettingsPage() {
           </div>
           <div className="space-y-2 text-xs font-mono">
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
-              <span>neuralwaves.official@gmail.com</span>
+              <span>sarfraz@exergy-solutions.com</span>
               <span className="text-[10px] font-bold text-[#0c758d] bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-                Admin (Primary)
+                Founder (Primary)
               </span>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
-              <span>support@neuralwaves.in</span>
+              <span>info@exergy-solutions.com</span>
               <span className="text-[10px] font-bold text-[#0c758d] bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
                 Admin (Operations)
               </span>

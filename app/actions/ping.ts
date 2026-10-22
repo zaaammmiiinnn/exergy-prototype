@@ -9,6 +9,6 @@ export async function pingAction(payload?: string) {
     actionId: id,
     message: payload ? `Echo: ${payload}` : "Pong from Exergy Server Action",
     timestamp,
-    notified: "neuralwaves.official@gmail.com",
+    notified: "sarfraz@exergy-solutions.com",
   };
 }

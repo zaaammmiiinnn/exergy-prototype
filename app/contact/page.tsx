@@ -79,11 +79,11 @@ export default function ContactPage() {
                   <Mail className="w-5 h-5 text-teal-600 shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <span className="text-xs font-mono text-slate-500 uppercase block font-semibold">Direct Email & Support</span>
-                    <a href="mailto:neuralwaves.official@gmail.com" className="text-teal-700 hover:text-teal-800 transition-colors block text-sm font-medium">
-                      neuralwaves.official@gmail.com
+                    <a href="mailto:sarfraz@exergy-solutions.com" className="text-teal-700 hover:text-teal-800 transition-colors block text-sm font-medium">
+                      sarfraz@exergy-solutions.com
                     </a>
-                    <a href="mailto:support@neuralwaves.in" className="text-slate-600 hover:text-teal-800 transition-colors block text-xs">
-                      support@neuralwaves.in
+                    <a href="mailto:info@exergy-solutions.com" className="text-slate-600 hover:text-teal-800 transition-colors block text-xs">
+                      info@exergy-solutions.com
                     </a>
                   </div>
                 </div>

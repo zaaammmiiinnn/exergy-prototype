@@ -5,7 +5,7 @@ export async function GET() {
     status: "healthy",
     service: "exergy-solutions",
     timestamp: new Date().toISOString(),
-    admin_contact: "neuralwaves.official@gmail.com",
+    admin_contact: "sarfraz@exergy-solutions.com",
     runtime: "cloudflare-workers",
   });
 }

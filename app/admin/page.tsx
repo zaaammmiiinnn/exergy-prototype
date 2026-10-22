@@ -73,9 +73,9 @@ const MOCK_LEADS: MockLead[] = [
   },
   {
     id: "EX-2026-1054",
-    name: "Neural Waves Support & Ops",
-    email: "support@neuralwaves.in",
-    company: "Neural Waves Facilities Operations",
+    name: "Exergy Operations Support",
+    email: "info@exergy-solutions.com",
+    company: "Exergy Solutions Operations",
     sector: "cooling",
     score: 82,
     priority: "hot",
@@ -555,7 +555,7 @@ export default function AdminDashboardPage() {
               <button
                 onClick={() =>
                   alert(
-                    "CSV Export dispatched for administrative record: neuralwaves.official@gmail.com & support@neuralwaves.in"
+                    "CSV Export dispatched for administrative record: sarfraz@exergy-solutions.com & info@exergy-solutions.com"
                   )
                 }
                 className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-2xs"

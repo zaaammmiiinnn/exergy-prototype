@@ -176,11 +176,11 @@ export function Footer() {
               <div className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-[#0c758d] shrink-0 mt-0.5" />
                 <div className="space-y-1 font-mono text-[11px]">
-                  <a href="mailto:neuralwaves.official@gmail.com" className="hover:text-white transition-colors block text-[#0c758d]">
-                    neuralwaves.official@gmail.com
+                  <a href="mailto:sarfraz@exergy-solutions.com" className="hover:text-white transition-colors block text-[#0c758d]">
+                    sarfraz@exergy-solutions.com
                   </a>
-                  <a href="mailto:support@neuralwaves.in" className="hover:text-white transition-colors block">
-                    support@neuralwaves.in
+                  <a href="mailto:info@exergy-solutions.com" className="hover:text-white transition-colors block">
+                    info@exergy-solutions.com
                   </a>
                 </div>
               </div>

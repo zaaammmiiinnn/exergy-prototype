@@ -102,19 +102,19 @@ function getStageDetails(status: string): {
  * Known demonstration accounts for instant 1-click testing
  */
 const KNOWN_CUSTOMER_ACCOUNTS: Record<string, CustomerSession> = {
-  "neuralwaves.official@gmail.com": {
-    email: "neuralwaves.official@gmail.com",
-    name: "NeuralWaves Ai Lead",
-    company: "NeuralWaves Ai",
+  "sarfraz@exergy-solutions.com": {
+    email: "sarfraz@exergy-solutions.com",
+    name: "Sarfraz",
+    company: "Exergy Solutions Founder Desk",
     phone: "+971 50 123 4567",
     sector: "processing",
     authenticatedAt: new Date().toISOString(),
   },
-  "support@neuralwaves.in": {
-    email: "support@neuralwaves.in",
+  "info@exergy-solutions.com": {
+    email: "info@exergy-solutions.com",
     name: "Operations Lead",
-    company: "Neural Waves Facilities Operations",
-    phone: "+91 98765 43210",
+    company: "Exergy Solutions Operations",
+    phone: "+971 50 123 4567",
     sector: "cooling",
     authenticatedAt: new Date().toISOString(),
   },

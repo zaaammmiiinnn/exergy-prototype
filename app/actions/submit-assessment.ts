@@ -104,6 +104,6 @@ export async function submitAssessment(values: AssessmentFormValues) {
     shortId,
     score,
     priority,
-    notified: "neuralwaves.official@gmail.com",
+    notified: "sarfraz@exergy-solutions.com",
   };
 }
