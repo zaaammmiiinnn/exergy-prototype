@@ -1,6 +1,7 @@
 "use server";
 
 import { createServiceRoleClient } from "@/lib/supabase/service";
+import { assertAdminAuthorized } from "@/app/actions/admin-auth";
 
 export interface AdminLeadItem {
   id: string;
@@ -26,6 +27,9 @@ export async function fetchAdminLeads(): Promise<{
   error?: string;
 }> {
   try {
+    // Enforce administrative authorization
+    await assertAdminAuthorized(["founder", "admin", "employee"]);
+
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase
       .from("leads")
@@ -70,6 +74,9 @@ export async function fetchAdminLeads(): Promise<{
 
 export async function deleteLeadAction(id: string): Promise<{ success: boolean; error?: string }> {
   try {
+    // Only Founders and Admins can delete leads (Employees forbidden)
+    await assertAdminAuthorized(["founder", "admin"]);
+
     const supabase = createServiceRoleClient();
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
@@ -85,9 +92,9 @@ export async function deleteLeadAction(id: string): Promise<{ success: boolean; 
     }
 
     return { success: true };
-  } catch (err) {
+  } catch (err: any) {
     console.warn("[DELETE LEAD CLIENT ERROR]", err);
-    return { success: false, error: "Network or runtime error" };
+    return { success: false, error: err?.message || "Unauthorized or network error" };
   }
 }
 
@@ -108,6 +115,9 @@ export async function updateLeadStatusAction(
   }
 ) {
   try {
+    // Enforce administrative authorization
+    await assertAdminAuthorized(["founder", "admin", "employee"]);
+
     const supabase = createServiceRoleClient();
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
@@ -131,7 +141,7 @@ export async function updateLeadStatusAction(
       return { success: false, error: error.message };
     }
 
-    // 2. If record was not in Supabase yet (e.g. mock lead from initial list), insert it!
+    // 2. If record was not in Supabase yet, insert it
     if (!updatedRows || updatedRows.length === 0) {
       const now = new Date().toISOString();
       const { data: inserted, error: insertError } = await supabase
@@ -163,8 +173,8 @@ export async function updateLeadStatusAction(
     }
 
     return { success: true, lead: updatedRows?.[0] };
-  } catch (err) {
+  } catch (err: any) {
     console.warn("[UPDATE LEAD STATUS CLIENT ERROR]", err);
-    return { success: false, error: "Network or runtime error" };
+    return { success: false, error: err?.message || "Unauthorized or network error" };
   }
 }
