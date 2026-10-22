@@ -98,7 +98,22 @@ const DEMO_LEADS: Record<string, Partial<TrackedRequestResult>> = {
     timeline: "q2_2027",
     mainChallenge: "Drying cylinder hood exhaust heat unrecovered, high steam pressure drops.",
     createdAt: new Date(Date.now() - 86400 * 1000 * 5).toISOString(),
-    updatedAt: new Date(Date.now() - 86400 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 86400 * 1000 * 2).toISOString(),
+  },
+  "EX-2026-1038": {
+    name: "Dr. Hamad Al-Qasimi",
+    company: "Crescent Chemical Technologies",
+    email: "dr.hamad@crescentchem.ae",
+    sector: "chemical",
+    facilityType: "Chemical Distillation Columns",
+    services: ["Process Integration", "Pinch Analysis", "Waste Heat Recovery"],
+    status: "won",
+    score: 98,
+    priority: "hot",
+    timeline: "immediate",
+    mainChallenge: "Whole-plant pinch integration across reboiler loops with contractual performance guarantee.",
+    createdAt: new Date(Date.now() - 86400 * 1000 * 14).toISOString(),
+    updatedAt: new Date(Date.now() - 86400 * 1000 * 3).toISOString(),
   },
 };
 
@@ -112,19 +127,19 @@ function getStageDetails(status: string): {
       return {
         stageIndex: 4,
         stageTitle: "Turnkey Implementation & Commissioning",
-        stageDescription: "Turnkey engineering active. Equipment integration and baseline measurement underway with guaranteed savings.",
+        stageDescription: "Implementation is active. Equipment installation and baseline measurement underway with contractual performance guarantee.",
       };
     case "proposal":
       return {
         stageIndex: 3,
-        stageTitle: "Engineering Proposal & Guarantee Finalized",
-        stageDescription: "Thermodynamic modeling complete. Commercial scope, equipment specs, and contractual performance guarantee ready.",
+        stageTitle: "Guaranteed Turnkey Proposal Ready",
+        stageDescription: "Thermodynamic modeling complete. Commercial scope, equipment specs, and performance guarantee delivered.",
       };
     case "qualified":
       return {
         stageIndex: 2,
-        stageTitle: "Thermodynamic Analysis in Progress",
-        stageDescription: "Exergy and pinch simulation active. Engineering team is calculating irreversibilities and exact reduction potentials.",
+        stageTitle: "Thermodynamic Exergy Analysis in Progress",
+        stageDescription: "Pinch simulation and 2nd-Law exergy modeling underway to calculate irreversibilities and exact reduction potentials.",
       };
     case "contacted":
       return {
@@ -204,18 +219,28 @@ export async function trackRequestAction(queryInput: string): Promise<{
     return { success: false, error: "Please enter your Reference ID (e.g. EX-2026-6253) or email address." };
   }
 
+  const isReferenceId = /^EX-\d{4}-\d{4}$/i.test(query);
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(query);
+
+  if (!isReferenceId && !isEmail) {
+    return {
+      success: false,
+      error: "Please enter an exact Reference ID (e.g. EX-2026-6253) or registered work email address.",
+    };
+  }
+
   const cleanQuery = query.toUpperCase();
   const cleanEmail = query.toLowerCase();
 
-  // 1. Check Supabase Database (Single source of truth)
+  // 1. Check Supabase Database (Single source of truth) using strict parameterized match
   try {
     const supabase = createServiceRoleClient();
-    
-    // Query leads by short_id, id, or email
-    const { data: lead, error } = await supabase
-      .from("leads")
-      .select("*")
-      .or(`short_id.ilike.%${cleanQuery}%,email.ilike.%${cleanEmail}%`)
+    const baseQuery = supabase.from("leads").select("*");
+
+    const { data: lead, error } = await (isReferenceId
+      ? baseQuery.eq("short_id", cleanQuery)
+      : baseQuery.eq("email", cleanEmail)
+    )
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -282,7 +307,7 @@ export async function trackRequestAction(queryInput: string): Promise<{
     console.warn("[TRACK REQUEST SUPABASE QUERY WARNING]", err);
   }
 
-  // 2. Check Demo / Pre-seeded IDs fallback
+  // 2. Check Demo / Pre-seeded IDs fallback (exact match only)
   const demoKey = Object.keys(DEMO_LEADS).find(
     (k) => k === cleanQuery || DEMO_LEADS[k].email?.toLowerCase() === cleanEmail
   );
@@ -340,7 +365,7 @@ export async function trackRequestAction(queryInput: string): Promise<{
     };
   }
 
-  // 3. Synthetic Instant Match for any newly generated EX-YYYY-NNNN format
+  // 3. Synthetic Instant Match for newly generated exact EX-YYYY-NNNN format
   if (/^EX-\d{4}-\d{4}$/i.test(cleanQuery)) {
     const status: TrackedRequestResult["status"] = "new";
     const { stageIndex, stageTitle, stageDescription } = getStageDetails(status);

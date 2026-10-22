@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { verifySession } from "@/lib/auth/session";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Protect /admin routes (except login)
@@ -17,7 +18,17 @@ export function middleware(request: NextRequest) {
     }
 
     try {
-      const session = JSON.parse(decodeURIComponent(sessionCookie));
+      // Cryptographically verify HMAC-SHA256 signature
+      const session = await verifySession<any>(sessionCookie);
+      if (!session) {
+        // Tampered, expired, or unsigned cookie -> force re-login
+        const loginUrl = new URL("/admin/login", request.url);
+        loginUrl.searchParams.set("error", "session_invalid");
+        const res = NextResponse.redirect(loginUrl);
+        res.cookies.delete("exergy_admin_session");
+        return res;
+      }
+
       const role = (session.role || "employee").toLowerCase().trim();
       const mustChangePassword = Boolean(session.mustChangePassword);
 

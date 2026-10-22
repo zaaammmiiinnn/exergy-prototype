@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminLoginAction } from "@/app/actions/admin-auth";
+import { signSession } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -29,12 +30,13 @@ export async function POST(request: Request) {
       requiresPasswordChange: res.requiresPasswordChange,
       session: res.session,
     });
-    
-    // Explicitly set cookie on response
+
+    // Explicitly set signed, HttpOnly cookie on response
     if (res.session) {
-      response.cookies.set("exergy_admin_session", JSON.stringify(res.session), {
+      const signedToken = await signSession(res.session);
+      response.cookies.set("exergy_admin_session", signedToken, {
         path: "/",
-        httpOnly: false,
+        httpOnly: true,
         sameSite: "lax",
         maxAge: 86400 * 7,
         secure: process.env.NODE_ENV === "production",

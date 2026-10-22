@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { createServiceRoleClient } from "@/lib/supabase/service";
+import { signSession, verifySession } from "@/lib/auth/session";
 
 export interface AdminSession {
   email: string;
@@ -50,7 +51,7 @@ export async function hashPasswordWebCrypto(password: string): Promise<string> {
 /**
  * Verify PBKDF2 password hash using standard Web Crypto API (Cloudflare Workers compatible)
  */
-async function verifyPasswordWebCrypto(password: string, storedHash: string): Promise<boolean> {
+export async function verifyPasswordWebCrypto(password: string, storedHash: string): Promise<boolean> {
   try {
     const parts = storedHash.split(":");
     if (parts.length !== 2) return false;
@@ -137,44 +138,31 @@ export async function adminLoginAction(
     let requiresPasswordChange = false;
     const cleanPassword = password.trim();
 
-    // Known temporary passwords that require setting a permanent private password
-    const TEMPORARY_PASSWORDS = [
-      "ExergyEmp1",
-      "ExergySup1",
-      "ExergyAdm1",
-      "ExergyFnd1",
-      "Exergy2026",
-      "Exergy2026!Admin",
-      "Exergy2026!Support",
-      "Exergy2026!Employee",
-      "Exergy2026!Founder",
-      "12345678",
-      "1234567890",
-      "employee",
-      "employee123",
-      "admin",
-      "admin123",
-    ];
-
-    // Check normal password columns: 'password' or 'password_hash'
-    const storedNormal = (adminUser.password || adminUser.password_hash || "").trim();
-
     // Check A: Match against temp_password column if set
     if (adminUser.temp_password && adminUser.temp_password.trim() === cleanPassword) {
       isValidPassword = true;
       requiresPasswordChange = true;
     }
 
-    // Check B: Normal direct plain-text password match
+    // Check B: Normal hashed or migrated password match
+    const storedNormal = (adminUser.password_hash || adminUser.password || "").trim();
     if (!isValidPassword && storedNormal) {
-      if (!storedNormal.includes(":")) {
-        // Plain text normal password
+      if (storedNormal.includes(":")) {
+        isValidPassword = await verifyPasswordWebCrypto(cleanPassword, storedNormal);
+      } else {
+        // Upgrade legacy plain-text password to PBKDF2 hash on successful login
         if (cleanPassword === storedNormal) {
           isValidPassword = true;
+          try {
+            const upgradedHash = await hashPasswordWebCrypto(cleanPassword);
+            await supabase
+              .from("admin_users")
+              .update({ password_hash: upgradedHash })
+              .eq("id", adminUser.id);
+          } catch (upgradeErr) {
+            console.warn("[PASSWORD HASH UPGRADE ERROR]", upgradeErr);
+          }
         }
-      } else {
-        // Legacy PBKDF2 hash fallback
-        isValidPassword = await verifyPasswordWebCrypto(cleanPassword, storedNormal);
       }
     }
 
@@ -193,20 +181,9 @@ export async function adminLoginAction(
       }
     }
 
-    // Check D: Fallback check for initial bootstrap passwords
-    if (!isValidPassword) {
-      if (TEMPORARY_PASSWORDS.includes(cleanPassword)) {
-        isValidPassword = true;
-      }
-    }
-
-    // If valid password and matched any temporary/initial password or must_change_password flag
+    // Enforce must_change_password flag
     if (isValidPassword) {
-      if (
-        TEMPORARY_PASSWORDS.includes(cleanPassword) ||
-        Boolean(adminUser.must_change_password) ||
-        Boolean(adminUser.temp_password)
-      ) {
+      if (Boolean(adminUser.must_change_password) || Boolean(adminUser.temp_password)) {
         requiresPasswordChange = true;
       }
     }
@@ -243,12 +220,13 @@ export async function adminLoginAction(
       authenticatedAt: new Date().toISOString(),
     };
 
-    // 4. Store in secure cookie
+    // 4. Store in tamper-proof signed HttpOnly cookie
     try {
+      const signedToken = await signSession(session);
       const cookieStore = cookies();
-      cookieStore.set("exergy_admin_session", JSON.stringify(session), {
+      cookieStore.set("exergy_admin_session", signedToken, {
         path: "/",
-        httpOnly: false,
+        httpOnly: true,
         sameSite: "lax",
         maxAge: 86400 * 7, // 7 days
         secure: process.env.NODE_ENV === "production",
@@ -269,16 +247,15 @@ export async function adminLoginAction(
 }
 
 /**
- * Update permanent password for logged in administrator (saved in normal plain text)
+ * Update permanent password for logged in administrator (hashed with PBKDF2)
  */
 export async function changeAdminPasswordAction(
   newPassword: string,
-  providedEmail?: string
+  currentPassword?: string
 ): Promise<{ success: boolean; session?: AdminSession; error?: string }> {
   try {
     const session = await getAdminSessionAction();
-    const emailToUpdate = (providedEmail || session?.email)?.toLowerCase().trim();
-    if (!emailToUpdate) {
+    if (!session || !session.email) {
       return { success: false, error: "Unauthorized session. Please log in first." };
     }
 
@@ -295,83 +272,61 @@ export async function changeAdminPasswordAction(
     // Verify role: Employees cannot update passwords directly; they must contact the administrator
     const { data: targetUser } = await supabase
       .from("admin_users")
-      .select("role")
-      .ilike("email", emailToUpdate)
+      .select("role, password_hash, temp_password")
+      .ilike("email", session.email)
       .maybeSingle();
 
-    const targetRole = (targetUser?.role || session?.role || "employee").toLowerCase().trim();
+    const targetRole = (targetUser?.role || session.role || "employee").toLowerCase().trim();
     if (targetRole === "employee") {
       return {
         success: false,
         error:
-          "Password updates for employee accounts are restricted. Please contact your system administrator (admin@exergy.solutions) for a password reset.",
+          "Password updates for employee accounts are restricted. Please contact your system administrator for a password reset.",
       };
     }
 
-    const nowIso = new Date().toISOString();
+    // Verify current password if user is not in forced password change mode
+    if (!session.mustChangePassword && currentPassword) {
+      const stored = targetUser?.password_hash || "";
+      if (stored.includes(":")) {
+        const isValid = await verifyPasswordWebCrypto(currentPassword, stored);
+        if (!isValid) {
+          return { success: false, error: "Current password is incorrect." };
+        }
+      }
+    }
 
-    // 1. Directly update password_hash on admin_users table
-    let updateSuccess = false;
-    let lastError = "";
+    // Hash the new password securely using PBKDF2
+    const hashedPassword = await hashPasswordWebCrypto(plainPassword);
+    const nowIso = new Date().toISOString();
 
     const { error: errA } = await supabase
       .from("admin_users")
       .update({
-        password_hash: plainPassword,
+        password_hash: hashedPassword,
+        temp_password: null,
+        must_change_password: false,
         updated_at: nowIso,
       })
-      .ilike("email", emailToUpdate);
+      .ilike("email", session.email);
 
-    if (!errA) {
-      updateSuccess = true;
-    } else {
-      console.warn("[CHANGE PASSWORD UPDATE FAILED, TRYING FALLBACK]", errA.message);
-      lastError = errA.message;
-
-      // Fallback: Try with 'password' column if applicable
-      const { error: errB } = await supabase
-        .from("admin_users")
-        .update({
-          password: plainPassword,
-          updated_at: nowIso,
-        })
-        .ilike("email", emailToUpdate);
-
-      if (!errB) {
-        updateSuccess = true;
-      } else {
-        lastError = errB.message;
-      }
+    if (errA) {
+      console.warn("[CHANGE PASSWORD UPDATE FAILED]", errA.message);
+      return { success: false, error: `Failed to update database: ${errA.message}` };
     }
-
-    if (!updateSuccess) {
-      return { success: false, error: `Failed to update database: ${lastError}` };
-    }
-
-    // 2. Fetch full user to preserve name and role
-    const { data: userRow } = await supabase
-      .from("admin_users")
-      .select("role, full_name")
-      .ilike("email", emailToUpdate)
-      .maybeSingle();
-
-    const rawRole = (userRow?.role || session?.role || "employee").toLowerCase().trim();
-    const role: AdminSession["role"] =
-      rawRole === "founder" ? "founder" : rawRole === "admin" ? "admin" : "employee";
 
     const updatedSession: AdminSession = {
-      email: emailToUpdate,
-      role,
-      name: userRow?.full_name || session?.name || "Administrator",
+      ...session,
       mustChangePassword: false,
       authenticatedAt: new Date().toISOString(),
     };
 
     try {
+      const signedToken = await signSession(updatedSession);
       const cookieStore = cookies();
-      cookieStore.set("exergy_admin_session", JSON.stringify(updatedSession), {
+      cookieStore.set("exergy_admin_session", signedToken, {
         path: "/",
-        httpOnly: false,
+        httpOnly: true,
         sameSite: "lax",
         maxAge: 86400 * 7,
         secure: process.env.NODE_ENV === "production",
@@ -407,8 +362,25 @@ export async function getAdminSessionAction(): Promise<AdminSession | null> {
     const cookieStore = cookies();
     const cookie = cookieStore.get("exergy_admin_session");
     if (!cookie?.value) return null;
-    return JSON.parse(decodeURIComponent(cookie.value));
+    return await verifySession<AdminSession>(cookie.value);
   } catch {
     return null;
   }
+}
+
+/**
+ * Enforces admin authorization for Server Actions.
+ * Throws an Error if unauthenticated or if the role does not have permission.
+ */
+export async function assertAdminAuthorized(
+  allowedRoles: ("founder" | "admin" | "employee")[] = ["founder", "admin", "employee"]
+): Promise<AdminSession> {
+  const session = await getAdminSessionAction();
+  if (!session || !session.email) {
+    throw new Error("Unauthorized. Please log in as an administrator.");
+  }
+  if (!allowedRoles.includes(session.role)) {
+    throw new Error(`Forbidden. Role '${session.role}' is not authorized for this operation.`);
+  }
+  return session;
 }

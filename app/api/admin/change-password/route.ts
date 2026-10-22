@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServiceRoleClient } from "@/lib/supabase/service";
-import { type AdminSession } from "@/app/actions/admin-auth";
+import {
+  type AdminSession,
+  hashPasswordWebCrypto,
+  verifyPasswordWebCrypto,
+} from "@/app/actions/admin-auth";
+import { signSession, verifySession } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -9,7 +14,7 @@ export const revalidate = 0;
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { newPassword, email: bodyEmail } = body || {};
+    const { newPassword, currentPassword } = body || {};
 
     if (!newPassword || typeof newPassword !== "string" || newPassword.trim().length < 8) {
       return NextResponse.json(
@@ -20,30 +25,25 @@ export async function POST(request: Request) {
 
     const plainPassword = newPassword.trim();
 
-    // Read session cookie
+    // Authenticate via cryptographically signed session cookie ONLY (never trust unauthenticated bodyEmail)
     const cookieStore = cookies();
     const sessionCookie = cookieStore.get("exergy_admin_session")?.value;
-    let session: AdminSession | null = null;
-    if (sessionCookie) {
-      try {
-        session = JSON.parse(decodeURIComponent(sessionCookie));
-      } catch {}
-    }
+    const session = sessionCookie ? await verifySession<AdminSession>(sessionCookie) : null;
 
-    const emailToUpdate = (session?.email || bodyEmail)?.toLowerCase().trim();
-    if (!emailToUpdate) {
+    if (!session || !session.email) {
       return NextResponse.json(
-        { success: false, error: "Session expired or unauthorized. Please log in again." },
+        { success: false, error: "Unauthorized session. Please log in first." },
         { status: 401 }
       );
     }
 
+    const emailToUpdate = session.email.toLowerCase().trim();
     const supabase = createServiceRoleClient();
 
-    // Verify role: Employees cannot update passwords directly; they must contact the administrator
+    // Fetch user from database
     const { data: targetUser } = await supabase
       .from("admin_users")
-      .select("role")
+      .select("role, password_hash, temp_password, must_change_password")
       .ilike("email", emailToUpdate)
       .maybeSingle();
 
@@ -53,67 +53,63 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
-            "Password updates for employee accounts are restricted. Please contact your system administrator (admin@exergy.solutions) for a password reset.",
+            "Password updates for employee accounts are restricted. Please contact your system administrator for a password reset.",
         },
         { status: 403 }
       );
     }
 
+    // If not in forced temporary password mode, verify current password
+    if (!session.mustChangePassword && currentPassword) {
+      const stored = targetUser?.password_hash || "";
+      if (stored.includes(":")) {
+        const isValid = await verifyPasswordWebCrypto(currentPassword, stored);
+        if (!isValid) {
+          return NextResponse.json(
+            { success: false, error: "Current password verification failed." },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
+    // Cryptographically hash the new password using PBKDF2
+    const hashedPassword = await hashPasswordWebCrypto(plainPassword);
     const nowIso = new Date().toISOString();
 
-    // Directly update password_hash on admin_users table
-    let updateSuccess = false;
-    let lastError = "";
-
-    const { error: errA } = await supabase
+    const { error: updateError } = await supabase
       .from("admin_users")
       .update({
-        password_hash: plainPassword,
+        password_hash: hashedPassword,
+        temp_password: null,
+        must_change_password: false,
         updated_at: nowIso,
       })
       .ilike("email", emailToUpdate);
 
-    if (!errA) {
-      updateSuccess = true;
-    } else {
-      console.warn("[API CHANGE PASSWORD FAILED, TRYING FALLBACK]", errA.message);
-      lastError = errA.message;
-
-      const { error: errB } = await supabase
-        .from("admin_users")
-        .update({
-          password: plainPassword,
-          updated_at: nowIso,
-        })
-        .ilike("email", emailToUpdate);
-
-      if (!errB) {
-        updateSuccess = true;
-      } else {
-        lastError = errB.message;
-      }
-    }
-
-    if (!updateSuccess) {
+    if (updateError) {
+      console.warn("[API CHANGE PASSWORD DB ERROR]", updateError.message);
       return NextResponse.json(
-        { success: false, error: `Failed to update database: ${lastError}` },
+        { success: false, error: "Failed to update password in database." },
         { status: 500 }
       );
     }
 
-    // Update session cookie
     const updatedSession: AdminSession = {
-      email: emailToUpdate,
-      role: (targetRole as any) || session?.role || "admin",
-      name: (targetUser as any)?.full_name || session?.name || "Administrator",
+      ...session,
       mustChangePassword: false,
-      authenticatedAt: nowIso,
+      authenticatedAt: new Date().toISOString(),
     };
 
-    const response = NextResponse.json({ success: true, session: updatedSession });
-    response.cookies.set("exergy_admin_session", JSON.stringify(updatedSession), {
+    const signedToken = await signSession(updatedSession);
+    const response = NextResponse.json({
+      success: true,
+      session: updatedSession,
+    });
+
+    response.cookies.set("exergy_admin_session", signedToken, {
       path: "/",
-      httpOnly: false,
+      httpOnly: true,
       sameSite: "lax",
       maxAge: 86400 * 7,
       secure: process.env.NODE_ENV === "production",
@@ -121,7 +117,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err: any) {
-    console.error("[API CHANGE PASSWORD ERROR]", err);
+    console.error("[API CHANGE PASSWORD UNHANDLED ERROR]", err);
     return NextResponse.json(
       { success: false, error: err?.message || "Internal server error." },
       { status: 500 }

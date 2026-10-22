@@ -16,7 +16,7 @@ if (fs.existsSync(envLocalPath)) {
   }
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://twwdvliikafbtvzsotks.supabase.co";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://dummy-exergy.supabase.co";
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 const supabase = createClient(supabaseUrl, serviceKey);

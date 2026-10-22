@@ -134,4 +134,63 @@ describe("Deterministic Chatbot Engine", () => {
     const rLong = handleChatMessage(state, longString);
     assert.ok(rLong.reply.length > 0);
   });
+
+  test("8. Conversational greetings respond with friendly welcome without fallback", () => {
+    const state = createInitialState();
+    const greetings = ["hi", "hello", "hey", "good morning", "good evening", "marhaba"];
+
+    for (const g of greetings) {
+      const res = handleChatMessage(state, g);
+      assert.strictEqual(res.nextState.fallbackCount, 0);
+      assert.strictEqual(res.nextState.currentNode, "main");
+      assert.ok(res.reply.includes("Welcome to Exergy Solutions"));
+      assert.ok(res.quickReplies.length > 0);
+    }
+  });
+
+  test("9. Interactive multi-step lead capture flow executes correctly", () => {
+    const state = createInitialState();
+
+    // Trigger human handoff
+    const s1 = handleChatMessage(state, "talk to engineer");
+    assert.strictEqual(s1.nextState.currentNode, "handoff");
+    assert.strictEqual(s1.nextState.mode, "capture_name");
+
+    // Step 1: Provide Name
+    const s2 = handleChatMessage(s1.nextState, "Tariq Mansoor");
+    assert.strictEqual(s2.nextState.mode, "capture_email");
+    assert.strictEqual(s2.nextState.visitorName, "Tariq Mansoor");
+    assert.ok(s2.reply.includes("Tariq Mansoor"));
+
+    // Step 2: Invalid Email rejection
+    const s3Invalid = handleChatMessage(s2.nextState, "invalid-email");
+    assert.strictEqual(s3Invalid.nextState.mode, "capture_email");
+    assert.ok(s3Invalid.reply.includes("valid work email"));
+
+    // Step 2: Valid Email
+    const s3Valid = handleChatMessage(s2.nextState, "tariq@gulfpaper.ae");
+    assert.strictEqual(s3Valid.nextState.mode, "capture_company");
+    assert.strictEqual(s3Valid.nextState.visitorEmail, "tariq@gulfpaper.ae");
+
+    // Step 3: Company & Challenge
+    const s4 = handleChatMessage(s3Valid.nextState, "Gulf Paper Mills, reducing dryer steam consumption");
+    assert.strictEqual(s4.intent, "lead_captured");
+    assert.strictEqual(s4.nextState.mode, "menu");
+    assert.strictEqual(s4.leadPayload?.name, "Tariq Mansoor");
+    assert.strictEqual(s4.leadPayload?.email, "tariq@gulfpaper.ae");
+    assert.ok(s4.leadPayload?.company.includes("Gulf Paper Mills"));
+    assert.ok(s4.reply.includes("Tariq Mansoor"));
+    assert.ok(s4.reply.includes("tariq@gulfpaper.ae"));
+  });
+
+  test("10. Multi-step lead capture cancellation resets cleanly to main menu", () => {
+    const state = createInitialState();
+    const handoff = handleChatMessage(state, "human");
+    assert.strictEqual(handoff.nextState.mode, "capture_name");
+
+    const cancelled = handleChatMessage(handoff.nextState, "cancel");
+    assert.strictEqual(cancelled.nextState.mode, "menu");
+    assert.strictEqual(cancelled.nextState.currentNode, "main");
+    assert.ok(cancelled.reply.includes("Conversation reset"));
+  });
 });

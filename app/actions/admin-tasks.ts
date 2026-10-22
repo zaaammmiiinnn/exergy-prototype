@@ -2,6 +2,7 @@
 
 import { createServiceRoleClient } from "@/lib/supabase/service";
 import { formatDynamicTime } from "@/lib/time-utils";
+import { assertAdminAuthorized } from "@/app/actions/admin-auth";
 
 export interface DatabaseTask {
   id: string;
@@ -78,49 +79,49 @@ async function generateInitialTasks(supabase: any): Promise<DatabaseTask[]> {
       status: "in_progress",
       dueAt: tomorrowNoon.toISOString(),
       dueDateDisplay: "Tomorrow, 12:00 PM",
-      assigneeName: "Staff Engineer",
-      assigneeEmail: "employee@exergy.com",
-      assignedBy: "Head of Engineering",
-      lockedDirective: true,
-      createdAt: new Date(Date.now() - 86400000).toISOString(),
+      assigneeName: "Rashid Al-Falasi (Lead Thermodynamicist)",
+      assigneeEmail: "r.falasi@exergy.solutions",
+      assignedBy: "Operations Desk",
+      lockedDirective: false,
+      createdAt: new Date(now.getTime() - 86400 * 1000 * 2).toISOString(),
     },
     {
       id: "TASK-103",
-      title: "Generate Executive Exergy Assessment Report",
+      title: "P&ID Mass & Energy Balance Verification",
       description:
-        "Compile preliminary thermodynamic audit document with estimated 25-30% operating expenditure savings and turnkey ROI payback timeline.",
-      leadId,
-      clientName,
-      company,
-      sector,
-      priority: "medium",
-      status: "pending",
-      dueAt: inThreeDays.toISOString(),
-      dueDateDisplay: "Oct 24, 2026, 4:00 PM",
-      assigneeName: "Staff Engineer",
-      assigneeEmail: "employee@exergy.com",
-      assignedBy: "Head of Engineering",
-      lockedDirective: true,
-      createdAt: new Date(Date.now() - 43200000).toISOString(),
-    },
-    {
-      id: "TASK-104",
-      title: "Initial Intake Verification & Bill Validation",
-      description:
-        "Validated utility bills, monthly natural gas consumption, and flow meter calibrations against baseline engineering data.",
+        "Cross-reference plant telemetry P&ID data sheets with ultrasonic flow meter logs for accurate 2nd-Law irreversibility accounting.",
       leadId: "EX-2026-1042",
       clientName: "Tariq Mansoor",
       company: "Gulf Paper Mills FZCO",
-      sector: "Paper & Pulp Mills",
-      priority: "low",
+      sector: "Paper & Packaging",
+      priority: "medium",
       status: "completed",
       dueAt: yesterday.toISOString(),
-      dueDateDisplay: "Completed Oct 19, 6:00 PM",
-      assigneeName: "Staff Engineer",
-      assigneeEmail: "employee@exergy.com",
-      assignedBy: "Head of Engineering",
+      dueDateDisplay: "Completed Yesterday",
+      assigneeName: "Sara Mansoor (Chiller & HVAC Specialist)",
+      assigneeEmail: "s.mansoor@exergy.solutions",
+      assignedBy: "Audit Team",
+      lockedDirective: false,
+      createdAt: new Date(now.getTime() - 86400 * 1000 * 5).toISOString(),
+    },
+    {
+      id: "TASK-104",
+      title: "Submit Commercial Energy Saving Guarantee Document",
+      description:
+        "Draft turnkey EPC agreement guaranteeing a minimum 25% electricity reduction on the client's continuous dewatering line.",
+      leadId: "EX-2026-1038",
+      clientName: "Dr. Hamad Al-Qasimi",
+      company: "Crescent Chemical Technologies",
+      sector: "Chemical Refining",
+      priority: "high",
+      status: "pending",
+      dueAt: inThreeDays.toISOString(),
+      dueDateDisplay: "In 3 days",
+      assigneeName: "Elena Rostov (Pinch Specialist)",
+      assigneeEmail: "e.rostov@exergy.solutions",
+      assignedBy: "Founder Desk",
       lockedDirective: true,
-      createdAt: new Date(Date.now() - 172800000).toISOString(),
+      createdAt: new Date(now.getTime() - 86400 * 1000 * 7).toISOString(),
     },
   ];
 }
@@ -135,6 +136,8 @@ export async function fetchAdminTasksAction(): Promise<{
   error?: string;
 }> {
   try {
+    await assertAdminAuthorized(["founder", "admin", "employee"]);
+
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase
       .from("site_settings")
@@ -180,6 +183,8 @@ export async function syncAdminTasksAction(
   tasks: DatabaseTask[]
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    await assertAdminAuthorized(["founder", "admin", "employee"]);
+
     const supabase = createServiceRoleClient();
     const { error } = await supabase.from("site_settings").upsert({
       key: SETTINGS_KEY,
@@ -206,6 +211,8 @@ export async function updateTaskStatusAction(
   newStatus: DatabaseTask["status"]
 ): Promise<{ success: boolean; tasks?: DatabaseTask[]; error?: string }> {
   try {
+    await assertAdminAuthorized(["founder", "admin", "employee"]);
+
     const supabase = createServiceRoleClient();
     const { data } = await supabase.from("site_settings").select("value").eq("key", SETTINGS_KEY).maybeSingle();
     const currentTasks: DatabaseTask[] = Array.isArray(data?.value) ? data.value : [];
@@ -252,6 +259,8 @@ export async function fetchTeamMembersAction(): Promise<{
   members: TeamMember[];
 }> {
   try {
+    await assertAdminAuthorized(["founder", "admin", "employee"]);
+
     const supabase = createServiceRoleClient();
     const { data } = await supabase
       .from("admin_users")
@@ -311,6 +320,8 @@ export async function reassignTaskAction(
   newAssigneeEmail: string
 ): Promise<{ success: boolean; tasks?: DatabaseTask[]; error?: string }> {
   try {
+    await assertAdminAuthorized(["founder", "admin"]);
+
     const supabase = createServiceRoleClient();
     const { data } = await supabase.from("site_settings").select("value").eq("key", SETTINGS_KEY).maybeSingle();
     const currentTasks: DatabaseTask[] = Array.isArray(data?.value) ? data.value : [];
@@ -341,4 +352,3 @@ export async function reassignTaskAction(
     return { success: false, error: err?.message };
   }
 }
-
