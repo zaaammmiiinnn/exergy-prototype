@@ -34,7 +34,7 @@ function CustomerLoginContent() {
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
-  const [sector, setSector] = useState("Processing");
+  const [sector, setSector] = useState("Select");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,6 +67,10 @@ function CustomerLoginContent() {
     e.preventDefault();
     if (!email || !name || !company) {
       setError("Please fill in all required fields (Name, Company, Email).");
+      return;
+    }
+    if (!sector || sector === "Select") {
+      setError("Please select your industrial sector.");
       return;
     }
 
@@ -306,13 +310,14 @@ function CustomerLoginContent() {
 
               <div>
                 <label className="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Industrial Sector
+                  Industrial Sector *
                 </label>
                 <select
                   value={sector}
                   onChange={(e) => setSector(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c758d] focus:bg-white"
                 >
+                  <option value="Select">Select</option>
                   <option value="Processing">Continuous Processing (Food & Chemical)</option>
                   <option value="Paper">Paper & Pulp Mills</option>
                   <option value="Cooling">Regional Cooling & HVAC</option>

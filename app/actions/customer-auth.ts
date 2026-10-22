@@ -243,7 +243,10 @@ export async function customerRegisterAction(data: {
       name: data.name.trim(),
       company: data.company.trim(),
       phone: data.phone?.trim() || undefined,
-      sector: data.sector?.trim() || "Industrial Processing",
+      sector:
+        data.sector && data.sector !== "Select"
+          ? data.sector.trim()
+          : "Industrial Operations",
       authenticatedAt: new Date().toISOString(),
     };
 
