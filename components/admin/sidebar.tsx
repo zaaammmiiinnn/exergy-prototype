@@ -50,7 +50,6 @@ const ALL_NAV_ITEMS: NavItem[] = [
     name: "Chat Inbox",
     href: "/admin/chats",
     icon: MessageSquare,
-    badge: 3,
   },
   {
     name: "Chatbot Editor",
@@ -85,6 +84,40 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [adminUser, setAdminUser] = useState<AdminSession | null>(null);
   const [showEmployeeContactModal, setShowEmployeeContactModal] = useState(false);
+  const [activeChatCount, setActiveChatCount] = useState<number>(0);
+
+  // Sync active chat inquiries count dynamically (only counting unresolved/active chats)
+  useEffect(() => {
+    const computeActiveChats = () => {
+      try {
+        const raw = localStorage.getItem("exergy_admin_chats_v2");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            // Count only chats requiring attention or active staff conversation
+            // Exclude "bot_resolved" and "closed"
+            const count = parsed.filter(
+              (s: any) => s.status === "needs_human" || s.status === "staff_active"
+            ).length;
+            setActiveChatCount(count);
+            return;
+          }
+        }
+      } catch {}
+    };
+
+    computeActiveChats();
+
+    window.addEventListener("storage", computeActiveChats);
+    window.addEventListener("exergy-chats-updated", computeActiveChats);
+    const interval = setInterval(computeActiveChats, 3000);
+
+    return () => {
+      window.removeEventListener("storage", computeActiveChats);
+      window.removeEventListener("exergy-chats-updated", computeActiveChats);
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     // 1. Fetch current admin session from server action
@@ -141,6 +174,14 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
       return ["/admin", "/admin#assigned-tasks", "/admin/leads", "/admin/chats"].includes(item.href);
     }
     return true;
+  }).map((item) => {
+    if (item.href === "/admin/chats") {
+      return {
+        ...item,
+        badge: activeChatCount > 0 ? activeChatCount : undefined,
+      };
+    }
+    return item;
   });
 
   // Role Badge Styling

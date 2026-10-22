@@ -22,6 +22,9 @@ import {
   RefreshCw,
   UserCheck,
   XCircle,
+  Archive,
+  RotateCcw,
+  Check,
 } from "lucide-react";
 
 interface ChatMessageItem {
@@ -198,7 +201,7 @@ const STORAGE_KEY = "exergy_admin_chats_v2";
 export default function AdminChatsPage() {
   const [sessions, setSessions] = useState<ChatSessionItem[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string>("CHAT-2026-081");
-  const [activeFilter, setActiveFilter] = useState<"all" | "needs_human" | "staff_active" | "bot_resolved">("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "needs_human" | "staff_active" | "bot_resolved" | "closed">("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [replyText, setReplyText] = useState("");
   const [isMobileListHidden, setIsMobileListHidden] = useState(false);
@@ -234,19 +237,31 @@ export default function AdminChatsPage() {
         if (Array.isArray(parsed) && parsed.length > 0) {
           setSessions(parsed);
           setSelectedSessionId(parsed[0].id);
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("exergy-chats-updated"));
+          }
           return;
         }
       }
     } catch {}
     setSessions(INITIAL_SESSIONS);
     setSelectedSessionId(INITIAL_SESSIONS[0].id);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SESSIONS));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("exergy-chats-updated"));
+      }
+    } catch {}
   }, []);
 
-  // Save sessions to localStorage
+  // Save sessions to localStorage and notify sidebar
   const saveSessions = (updated: ChatSessionItem[]) => {
     setSessions(updated);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("exergy-chats-updated"));
+      }
     } catch {}
   };
 
@@ -306,12 +321,63 @@ export default function AdminChatsPage() {
 
   const handleMarkResolved = () => {
     if (!selectedSession) return;
+    const systemMsg: ChatMessageItem = {
+      id: `sys-${Date.now()}`,
+      sender: "system",
+      text: "Inquiry marked as resolved by Staff Engineer",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
     const updatedSessions = sessions.map((session) => {
       if (session.id === selectedSession.id) {
         return {
           ...session,
           status: "bot_resolved" as const,
           unread: false,
+          messages: [...session.messages, systemMsg],
+        };
+      }
+      return session;
+    });
+    saveSessions(updatedSessions);
+  };
+
+  const handleCloseChat = () => {
+    if (!selectedSession) return;
+    const systemMsg: ChatMessageItem = {
+      id: `sys-${Date.now()}`,
+      sender: "system",
+      text: "Conversation closed and archived by Staff Engineer",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    const updatedSessions = sessions.map((session) => {
+      if (session.id === selectedSession.id) {
+        return {
+          ...session,
+          status: "closed" as const,
+          unread: false,
+          messages: [...session.messages, systemMsg],
+        };
+      }
+      return session;
+    });
+    saveSessions(updatedSessions);
+  };
+
+  const handleReopenChat = () => {
+    if (!selectedSession) return;
+    const systemMsg: ChatMessageItem = {
+      id: `sys-${Date.now()}`,
+      sender: "system",
+      text: "Conversation reopened by Staff Engineer",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    const updatedSessions = sessions.map((session) => {
+      if (session.id === selectedSession.id) {
+        return {
+          ...session,
+          status: "staff_active" as const,
+          unread: false,
+          messages: [...session.messages, systemMsg],
         };
       }
       return session;
@@ -331,6 +397,8 @@ export default function AdminChatsPage() {
 
   const countNeedsHuman = sessions.filter((s) => s.status === "needs_human").length;
   const countStaffActive = sessions.filter((s) => s.status === "staff_active").length;
+  const countResolved = sessions.filter((s) => s.status === "bot_resolved").length;
+  const countClosed = sessions.filter((s) => s.status === "closed").length;
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6">
@@ -414,6 +482,26 @@ export default function AdminChatsPage() {
               >
                 Active ({countStaffActive})
               </button>
+              <button
+                onClick={() => setActiveFilter("bot_resolved")}
+                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0 ${
+                  activeFilter === "bot_resolved"
+                    ? "bg-emerald-700 text-white font-bold"
+                    : "bg-emerald-50 text-emerald-800 border border-emerald-200/80 hover:bg-emerald-100"
+                }`}
+              >
+                Resolved ({countResolved})
+              </button>
+              <button
+                onClick={() => setActiveFilter("closed")}
+                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0 ${
+                  activeFilter === "closed"
+                    ? "bg-slate-700 text-white font-bold"
+                    : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200"
+                }`}
+              >
+                Closed ({countClosed})
+              </button>
             </div>
           </div>
 
@@ -469,14 +557,18 @@ export default function AdminChatsPage() {
                             ? "bg-amber-50 text-amber-800 border-amber-200"
                             : session.status === "staff_active"
                             ? "bg-teal-50 text-teal-800 border-teal-200"
-                            : "bg-emerald-50 text-emerald-800 border-emerald-200"
+                            : session.status === "bot_resolved"
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                            : "bg-slate-100 text-slate-700 border-slate-300"
                         }`}
                       >
                         {session.status === "needs_human"
                           ? "Needs Review"
                           : session.status === "staff_active"
                           ? "Staff Active"
-                          : "Bot Resolved"}
+                          : session.status === "bot_resolved"
+                          ? "Resolved"
+                          : "Closed"}
                       </span>
 
                       <span className="text-[11px] text-[#0c758d] font-bold font-mono">
@@ -537,13 +629,68 @@ export default function AdminChatsPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleMarkResolved}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-mono font-bold transition-colors cursor-pointer"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Resolve</span>
-                  </button>
+                  {selectedSession.status === "bot_resolved" && (
+                    <>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-mono font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Resolved</span>
+                      </span>
+                      <button
+                        onClick={handleCloseChat}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-mono font-semibold transition-colors cursor-pointer shadow-2xs"
+                        title="Close and archive conversation"
+                      >
+                        <Archive className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Close Chat</span>
+                      </button>
+                      <button
+                        onClick={handleReopenChat}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-teal-200 bg-teal-50 hover:bg-teal-100 text-[#0c758d] text-xs font-mono font-semibold transition-colors cursor-pointer"
+                        title="Reopen conversation for active replies"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5 text-[#0c758d]" />
+                        <span>Reopen</span>
+                      </button>
+                    </>
+                  )}
+
+                  {selectedSession.status === "closed" && (
+                    <>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-slate-300 bg-slate-100 text-slate-700 text-xs font-mono font-semibold">
+                        <XCircle className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Closed</span>
+                      </span>
+                      <button
+                        onClick={handleReopenChat}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-teal-200 bg-teal-50 hover:bg-teal-100 text-[#0c758d] text-xs font-mono font-bold transition-colors cursor-pointer"
+                        title="Reopen conversation for active replies"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5 text-[#0c758d]" />
+                        <span>Reopen Chat</span>
+                      </button>
+                    </>
+                  )}
+
+                  {(selectedSession.status === "needs_human" || selectedSession.status === "staff_active") && (
+                    <>
+                      <button
+                        onClick={handleMarkResolved}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-mono font-bold transition-colors cursor-pointer shadow-2xs"
+                        title="Mark this inquiry as resolved"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Mark Resolved</span>
+                      </button>
+                      <button
+                        onClick={handleCloseChat}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-mono font-bold transition-colors cursor-pointer shadow-2xs"
+                        title="Close and archive conversation"
+                      >
+                        <XCircle className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Close Chat</span>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -631,67 +778,87 @@ export default function AdminChatsPage() {
                 </button>
               )}
 
-              {/* Quick Response Suggestion Chips */}
-              <div className="p-2.5 px-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px] font-mono shrink-0">
-                <span className="text-slate-400 shrink-0">Quick reply:</span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleQuickReply(
-                      "Hi, this is Staff Engineer from Exergy Solutions. I have reviewed your plant inquiry and would be glad to assist. Could you share your current evaporator operating temperatures?"
-                    )
-                  }
-                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  Request Operating Temps
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleQuickReply(
-                      "We can schedule an engineer on-site next week to conduct temperature baseline measurements across your headers. Does Tuesday 10:00 AM work for your team?"
-                    )
-                  }
-                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  Propose Site Visit
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleQuickReply(
-                      "Please upload your recent utility bills and P&ID diagrams at /portal so we can calculate your estimated thermal exergy savings."
-                    )
-                  }
-                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  Request Utility Bills
-                </button>
-              </div>
+              {/* Reply or Closed State */}
+              {selectedSession.status === "closed" ? (
+                <div className="p-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-2 text-xs font-mono text-slate-600">
+                    <XCircle className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>This conversation is closed and archived. Reopen to send further engineering responses.</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleReopenChat}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer shadow-xs shrink-0"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reopen Chat</span>
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {/* Quick Response Suggestion Chips */}
+                  <div className="p-2.5 px-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px] font-mono shrink-0">
+                    <span className="text-slate-400 shrink-0">Quick reply:</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleQuickReply(
+                          "Hi, this is Staff Engineer from Exergy Solutions. I have reviewed your plant inquiry and would be glad to assist. Could you share your current evaporator operating temperatures?"
+                        )
+                      }
+                      className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
+                    >
+                      Request Operating Temps
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleQuickReply(
+                          "We can schedule an engineer on-site next week to conduct temperature baseline measurements across your headers. Does Tuesday 10:00 AM work for your team?"
+                        )
+                      }
+                      className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
+                    >
+                      Propose Site Visit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleQuickReply(
+                          "Please upload your recent utility bills and P&ID diagrams at /portal so we can calculate your estimated thermal exergy savings."
+                        )
+                      }
+                      className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
+                    >
+                      Request Utility Bills
+                    </button>
+                  </div>
 
-              {/* Reply Input Box */}
-              <form
-                onSubmit={handleSendReply}
-                className="p-4 border-t border-slate-200 bg-white flex items-center gap-3 shrink-0"
-              >
-                <input
-                  type="text"
-                  required
-                  placeholder="Type engineering response to client as Staff Engineer..."
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:bg-white"
-                />
+                  {/* Reply Input Box */}
+                  <form
+                    onSubmit={handleSendReply}
+                    className="p-4 border-t border-slate-200 bg-white flex items-center gap-3 shrink-0"
+                  >
+                    <input
+                      type="text"
+                      required
+                      placeholder="Type engineering response to client as Staff Engineer..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:bg-white"
+                    />
 
-                <button
-                  type="submit"
-                  disabled={!replyText.trim()}
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white font-heading font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer shadow-xs active:scale-98"
-                >
-                  <span>Send</span>
-                  <Send className="w-3.5 h-3.5" />
-                </button>
-              </form>
+                    <button
+                      type="submit"
+                      disabled={!replyText.trim()}
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white font-heading font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer shadow-xs active:scale-98"
+                    >
+                      <span>Send</span>
+                      <Send className="w-3.5 h-3.5" />
+                    </button>
+                  </form>
+                </>
+              )}
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-400 text-xs font-mono p-8">

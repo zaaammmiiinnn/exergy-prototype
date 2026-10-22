@@ -118,6 +118,9 @@ export function ChatWidget() {
         }
 
         localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(adminSessions.slice(0, 20)));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("exergy-chats-updated"));
+        }
       } catch {
         // storage blocked
       }
