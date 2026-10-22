@@ -57,9 +57,9 @@ interface MockLead {
 const MOCK_LEADS: MockLead[] = [
   {
     id: "EX-2026-1055",
-    name: "Neural Waves Engineering",
-    email: "neuralwaves.official@gmail.com",
-    company: "Neural Waves Industrial AI",
+    name: "Exergy Solutions Founder Desk",
+    email: "sarfraz@exergy-solutions.com",
+    company: "Exergy Solutions Engineering",
     sector: "processing",
     score: 95,
     priority: "hot",

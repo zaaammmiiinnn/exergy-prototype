@@ -48,8 +48,8 @@ export default function TermsPage() {
             <h2 className="text-xl font-bold text-slate-900">4. Contact & Inquiries</h2>
             <p>
               For legal inquiries regarding these terms, reach our corporate administration at{" "}
-              <a href="mailto:neuralwaves.official@gmail.com" className="text-teal-700 underline font-medium">
-                neuralwaves.official@gmail.com
+              <a href="mailto:sarfraz@exergy-solutions.com" className="text-teal-700 underline font-medium">
+                sarfraz@exergy-solutions.com
               </a>{" "}
               or {siteSettingsSeed.address}.
             </p>

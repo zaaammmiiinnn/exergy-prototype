@@ -375,7 +375,7 @@ export async function getCustomerDashboardAction(): Promise<{
       console.warn("[CUSTOMER DASHBOARD SUPABASE FETCH WARNING]", err);
     }
 
-    // 2. If no leads in DB yet (e.g. testing with neuralwaves.official@gmail.com), provide demo lead
+    // 2. If no leads in DB yet (e.g. testing with sarfraz@exergy-solutions.com), provide demo lead
     if (requests.length === 0) {
       const now = new Date().toISOString();
       const status: CustomerRequestItem["status"] = "new";

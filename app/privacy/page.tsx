@@ -59,8 +59,8 @@ export default function PrivacyPage() {
             </p>
             <p>
               To exercise these rights, contact our Data Protection Administrator at{" "}
-              <a href="mailto:neuralwaves.official@gmail.com" className="text-teal-700 underline font-medium">
-                neuralwaves.official@gmail.com
+              <a href="mailto:sarfraz@exergy-solutions.com" className="text-teal-700 underline font-medium">
+                sarfraz@exergy-solutions.com
               </a>{" "}
               or{" "}
               <a href={`mailto:${siteSettingsSeed.email}`} className="text-teal-700 underline font-medium">
