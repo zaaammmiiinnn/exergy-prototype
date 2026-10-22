@@ -119,6 +119,9 @@ export function AssignedTasksSection({
         setIsDatabaseConnected(res.isDatabaseConnected);
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(res.tasks));
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("exergy-tasks-updated"));
+          }
         } catch {}
         return;
       }
@@ -135,6 +138,9 @@ export function AssignedTasksSection({
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setTasks(parsed);
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("exergy-tasks-updated"));
+          }
         }
       }
     } catch {}
@@ -150,6 +156,9 @@ export function AssignedTasksSection({
     setTasks(updated);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("exergy-tasks-updated"));
+      }
     } catch {}
     try {
       await syncAdminTasksAction(updated);
@@ -166,6 +175,9 @@ export function AssignedTasksSection({
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("exergy-tasks-updated"));
+      }
     } catch {}
 
     try {
@@ -174,6 +186,9 @@ export function AssignedTasksSection({
         setTasks(res.tasks);
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(res.tasks));
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("exergy-tasks-updated"));
+          }
         } catch {}
       }
       setIsDatabaseConnected(true);

@@ -39,7 +39,6 @@ const ALL_NAV_ITEMS: NavItem[] = [
     name: "Assigned Tasks",
     href: "/admin/tasks",
     icon: CheckSquare,
-    badge: 2,
   },
   {
     name: "Leads",
@@ -85,36 +84,51 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const [adminUser, setAdminUser] = useState<AdminSession | null>(null);
   const [showEmployeeContactModal, setShowEmployeeContactModal] = useState(false);
   const [activeChatCount, setActiveChatCount] = useState<number>(0);
+  const [activeTaskCount, setActiveTaskCount] = useState<number>(0);
 
-  // Sync active chat inquiries count dynamically (only counting unresolved/active chats)
+  // Sync active task count and chat inquiries dynamically
   useEffect(() => {
-    const computeActiveChats = () => {
+    const computeActiveCounts = () => {
+      // 1. Compute active tasks (status is in_progress or pending, excluding completed)
       try {
-        const raw = localStorage.getItem("exergy_admin_chats_v2");
-        if (raw) {
-          const parsed = JSON.parse(raw);
+        const rawTasks = localStorage.getItem("exergy_employee_tasks_v3");
+        if (rawTasks) {
+          const parsed = JSON.parse(rawTasks);
           if (Array.isArray(parsed)) {
-            // Count only chats requiring attention or active staff conversation
-            // Exclude "bot_resolved" and "closed"
+            const count = parsed.filter(
+              (t: any) => t.status === "in_progress" || t.status === "pending"
+            ).length;
+            setActiveTaskCount(count);
+          }
+        }
+      } catch {}
+
+      // 2. Compute active chats (status is needs_human or staff_active, excluding bot_resolved and closed)
+      try {
+        const rawChats = localStorage.getItem("exergy_admin_chats_v2");
+        if (rawChats) {
+          const parsed = JSON.parse(rawChats);
+          if (Array.isArray(parsed)) {
             const count = parsed.filter(
               (s: any) => s.status === "needs_human" || s.status === "staff_active"
             ).length;
             setActiveChatCount(count);
-            return;
           }
         }
       } catch {}
     };
 
-    computeActiveChats();
+    computeActiveCounts();
 
-    window.addEventListener("storage", computeActiveChats);
-    window.addEventListener("exergy-chats-updated", computeActiveChats);
-    const interval = setInterval(computeActiveChats, 3000);
+    window.addEventListener("storage", computeActiveCounts);
+    window.addEventListener("exergy-chats-updated", computeActiveCounts);
+    window.addEventListener("exergy-tasks-updated", computeActiveCounts);
+    const interval = setInterval(computeActiveCounts, 2500);
 
     return () => {
-      window.removeEventListener("storage", computeActiveChats);
-      window.removeEventListener("exergy-chats-updated", computeActiveChats);
+      window.removeEventListener("storage", computeActiveCounts);
+      window.removeEventListener("exergy-chats-updated", computeActiveCounts);
+      window.removeEventListener("exergy-tasks-updated", computeActiveCounts);
       clearInterval(interval);
     };
   }, []);
@@ -175,6 +189,12 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
     }
     return true;
   }).map((item) => {
+    if (item.href === "/admin/tasks") {
+      return {
+        ...item,
+        badge: activeTaskCount > 0 ? activeTaskCount : undefined,
+      };
+    }
     if (item.href === "/admin/chats") {
       return {
         ...item,
