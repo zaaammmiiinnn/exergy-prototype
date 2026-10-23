@@ -84,7 +84,7 @@ export default function AdminLoginForm() {
           <Link href="/" className="inline-flex items-center gap-3 group focus:outline-none justify-center">
             <div className="relative h-11 w-[60px] shrink-0">
               <Image
-                src="https://horizons-cdn.hostinger.com/7ad3b21d-4954-4ffa-80db-3f8b05d3a164/19a079c855d5710fe1ed0f1611a8efd2.png"
+                src="/logo.png"
                 alt="Exergy Solutions logo"
                 fill
                 priority
