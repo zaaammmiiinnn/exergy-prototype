@@ -7,7 +7,7 @@ import { ArrowUpRight, CheckCircle2, TrendingDown, Clock, ShieldAlert } from "lu
 
 export function CaseStudyTeaser() {
   return (
-    <section className="py-28 md:py-36 bg-[hsl(190,30%,98%)] border-t border-slate-200/80 text-[#12232b] relative overflow-hidden">
+    <section id="case-study" className="py-28 md:py-36 bg-[hsl(190,30%,98%)] border-t border-slate-200/80 text-[#12232b] relative overflow-hidden">
       <div className="container max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
         
         {/* Section Header */}

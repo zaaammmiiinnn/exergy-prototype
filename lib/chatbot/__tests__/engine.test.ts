@@ -193,4 +193,48 @@ describe("Deterministic Chatbot Engine", () => {
     assert.strictEqual(cancelled.nextState.currentNode, "main");
     assert.ok(cancelled.reply.includes("Conversation reset"));
   });
+
+  test("11. Verified QA flow: 'hi' -> menu -> '1' -> services -> '2' -> lead capture", () => {
+    const state = createInitialState();
+
+    // 1. Visitor greets: 'hi'
+    const step1 = handleChatMessage(state, "hi");
+    assert.strictEqual(step1.nextState.currentNode, "main");
+    assert.strictEqual(step1.nextState.mode, "menu");
+    assert.ok(step1.reply.includes("Welcome to Exergy Solutions"));
+    assert.ok(step1.quickReplies.some((qr) => qr.label.includes("Services")));
+
+    // 2. Visitor chooses: '1' (Services)
+    const step2 = handleChatMessage(step1.nextState, "1");
+    assert.strictEqual(step2.nextState.currentNode, "services");
+    assert.ok(step2.reply.includes("Cooling optimization"));
+    assert.ok(step2.reply.includes("Speak to an Engineer (Lead Capture)"));
+    assert.ok(step2.quickReplies.some((qr) => qr.action === "handoff"));
+
+    // 3. Visitor chooses: '2' (Speak to Engineer / Lead Capture)
+    const step3 = handleChatMessage(step2.nextState, "2");
+    assert.strictEqual(step3.nextState.currentNode, "handoff");
+    assert.strictEqual(step3.nextState.mode, "capture_name");
+    assert.ok(step3.reply.includes("what is your full name?"));
+
+    // 4. Enter Name
+    const step4 = handleChatMessage(step3.nextState, "Ahmed Al-Mansoor");
+    assert.strictEqual(step4.nextState.mode, "capture_email");
+    assert.strictEqual(step4.nextState.visitorName, "Ahmed Al-Mansoor");
+    assert.ok(step4.reply.includes("Ahmed Al-Mansoor"));
+
+    // 5. Enter Work Email
+    const step5 = handleChatMessage(step4.nextState, "ahmed@emiratespaper.ae");
+    assert.strictEqual(step5.nextState.mode, "capture_company");
+    assert.strictEqual(step5.nextState.visitorEmail, "ahmed@emiratespaper.ae");
+
+    // 6. Enter Facility & Challenge -> Lead Captured
+    const step6 = handleChatMessage(step5.nextState, "Emirates Paper Packaging, 35% steam loss in dryer hoods");
+    assert.strictEqual(step6.intent, "lead_captured");
+    assert.strictEqual(step6.leadPayload?.name, "Ahmed Al-Mansoor");
+    assert.strictEqual(step6.leadPayload?.email, "ahmed@emiratespaper.ae");
+    assert.strictEqual(step6.leadPayload?.company, "Emirates Paper Packaging, 35% steam loss in dryer hoods");
+    assert.ok(step6.reply.includes("Ahmed Al-Mansoor"));
+    assert.ok(step6.reply.includes("dispatched to our engineering team"));
+  });
 });

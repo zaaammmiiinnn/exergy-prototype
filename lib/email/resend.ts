@@ -20,8 +20,42 @@ export async function sendAssessmentNotificationEmails(
   const gmailPass = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASSWORD;
   const gmailUser = process.env.GMAIL_USER || "sarfraz@exergy-solutions.com";
   const apiKey = process.env.RESEND_API_KEY;
-  const adminNotifyRaw = process.env.ADMIN_NOTIFY_EMAILS || "sarfraz@exergy-solutions.com, info@exergy-solutions.com";
-  const adminRecipients = adminNotifyRaw.split(",").map((s) => s.trim()).filter(Boolean);
+  let adminNotifyRaw = process.env.ADMIN_NOTIFY_EMAILS || "sarfraz@exergy-solutions.com, info@exergy-solutions.com";
+  let adminRecipients = adminNotifyRaw.split(",").map((s) => s.trim()).filter(Boolean);
+
+  // Check site_settings.notify_emails in Supabase
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (
+    supabaseUrl &&
+    serviceKey &&
+    !supabaseUrl.includes("dummy") &&
+    !serviceKey.includes("dummy") &&
+    supabaseUrl.startsWith("https://")
+  ) {
+    try {
+      const { createServiceRoleClient } = await import("@/lib/supabase/service");
+      const supabase = createServiceRoleClient();
+      const { data } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "notify_emails")
+        .single();
+
+      if (data && data.value) {
+        const dbEmails = Array.isArray(data.value)
+          ? data.value
+          : typeof data.value === "string"
+          ? data.value.split(",")
+          : null;
+        if (dbEmails && dbEmails.length > 0) {
+          adminRecipients = dbEmails.map((e: string) => e.trim()).filter(Boolean);
+        }
+      }
+    } catch (dbErr) {
+      console.warn("[SITE SETTINGS NOTIFY_EMAILS WARNING]", dbErr);
+    }
+  }
 
   let adminNotified = false;
   let visitorReplied = false;

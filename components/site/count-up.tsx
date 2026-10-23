@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useInView, useReducedMotion } from "framer-motion";
+import { animate, useInView, useReducedMotion } from "framer-motion";
 
 interface CountUpProps {
-  to: number;
+  to: number | string;
   from?: number;
   duration?: number;
   prefix?: string;
@@ -19,51 +19,104 @@ export function CountUp({
   duration = 1.2,
   prefix = "",
   suffix = "",
-  decimals = 0,
+  decimals,
   className = "",
 }: CountUpProps) {
+  // 1. Robust parsing of `to` (handles number like 45, or string like "45%", "37.4%", "12-month")
+  let targetNumber = 0;
+  let parsedSuffix = suffix;
+
+  if (typeof to === "number") {
+    targetNumber = to;
+  } else if (typeof to === "string") {
+    const cleanStr = to.trim();
+    const match = cleanStr.match(/-?[\d.]+/);
+    if (match) {
+      targetNumber = parseFloat(match[0]) || 0;
+      if (!suffix) {
+        const remaining = cleanStr.replace(match[0], "").trim();
+        if (remaining) {
+          parsedSuffix = remaining;
+        }
+      }
+    }
+  }
+
+  // 2. Auto-detect decimals if not explicitly passed (e.g. 37.4 -> 1 decimal)
+  let resolvedDecimals = decimals;
+  if (resolvedDecimals === undefined) {
+    const toStr = String(to);
+    if (toStr.includes(".")) {
+      const parts = toStr.split(".");
+      const decPart = parts[1]?.replace(/[^\d]/g, "") || "";
+      resolvedDecimals = decPart.length;
+    } else {
+      resolvedDecimals = 0;
+    }
+  }
+
   const [value, setValue] = useState(from);
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "0px 0px -20px 0px" });
+  const inView = useInView(ref, { once: true, margin: "0px 0px -10px 0px" });
   const shouldReduceMotion = useReducedMotion();
+  const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
-    if (!inView) return;
     if (shouldReduceMotion) {
-      setValue(to);
+      setValue(targetNumber);
       return;
     }
 
-    let startTimestamp: number | null = null;
-    const durationMs = duration * 1000;
+    let controls: { stop: () => void } | undefined;
 
-    const step = (timestamp: number) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / durationMs, 1);
-      // ease-out cubic
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
-      const current = from + (to - from) * easeProgress;
-      setValue(current);
+    const startAnimation = () => {
+      if (hasAnimatedRef.current) return;
+      hasAnimatedRef.current = true;
 
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        setValue(to);
-      }
+      controls = animate(from, targetNumber, {
+        duration: duration,
+        ease: [0.16, 1, 0.3, 1], // fluid ease-out cubic
+        onUpdate: (latest) => {
+          setValue(latest);
+        },
+      });
     };
 
-    const animId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animId);
-  }, [inView, from, to, duration, shouldReduceMotion]);
+    if (inView) {
+      startAnimation();
+    } else {
+      // Robust fallback: if intersection observer was delayed or already in view, trigger via check
+      const fallbackTimer = setTimeout(() => {
+        if (!hasAnimatedRef.current && ref.current) {
+          const rect = ref.current.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            startAnimation();
+          }
+        }
+      }, 750);
+
+      return () => {
+        clearTimeout(fallbackTimer);
+        controls?.stop();
+      };
+    }
+
+    return () => {
+      controls?.stop();
+    };
+  }, [inView, targetNumber, from, duration, shouldReduceMotion]);
 
   const formatted =
-    decimals > 0 ? value.toFixed(decimals) : Math.round(value).toString();
+    resolvedDecimals > 0
+      ? value.toFixed(resolvedDecimals)
+      : Math.round(value).toString();
 
   return (
     <span ref={ref} className={`font-mono tabular-nums ${className}`}>
       {prefix}
       {formatted}
-      {suffix}
+      {parsedSuffix}
     </span>
   );
 }
+

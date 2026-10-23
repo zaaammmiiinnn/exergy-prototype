@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 /**
  * CINEMATIC INTRO ANIMATION (PRELOADER)
@@ -14,9 +15,13 @@ import { motion, AnimatePresence } from "framer-motion";
  * Rules:
  * - sessionStorage 'intro_played': skip if already viewed in current session.
  * - Accessibility: skip if prefers-reduced-motion is true.
+ * - Isolates /admin: never play on internal admin console.
  * - Loading progress bar at bottom in Golden Amber (#F0A431).
  */
 export function IntroAnimation() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
+
   const [isActive, setIsActive] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [displayText, setDisplayText] = useState("");
@@ -26,6 +31,9 @@ export function IntroAnimation() {
   const fullExt = ".com";
 
   useEffect(() => {
+    // 0. Do not run on admin routes
+    if (isAdmin) return;
+
     // 1. Session Storage check
     try {
       if (sessionStorage.getItem("intro_played") === "true") {
@@ -57,23 +65,26 @@ export function IntroAnimation() {
       mainEl.style.transformOrigin = "center 15%";
     }
 
+    let typeInterval: NodeJS.Timeout | null = null;
+    let extInterval: NodeJS.Timeout | null = null;
+
     // 0.8s: Type out "EXERGY SOLUTIONS"
     const titleTimer = setTimeout(() => {
       let charIndex = 0;
-      const typeInterval = setInterval(() => {
+      typeInterval = setInterval(() => {
         charIndex++;
         setDisplayText(fullTitle.slice(0, charIndex));
 
         if (charIndex >= fullTitle.length) {
-          clearInterval(typeInterval);
+          if (typeInterval) clearInterval(typeInterval);
 
           // 1.8s: Type out ".com"
           let extIndex = 0;
-          const extInterval = setInterval(() => {
+          extInterval = setInterval(() => {
             extIndex++;
             setExtText(fullExt.slice(0, extIndex));
             if (extIndex >= fullExt.length) {
-              clearInterval(extInterval);
+              if (extInterval) clearInterval(extInterval);
             }
           }, 90);
         }
@@ -107,6 +118,8 @@ export function IntroAnimation() {
       clearTimeout(titleTimer);
       clearTimeout(exitTimer);
       clearTimeout(completeTimer);
+      if (typeInterval) clearInterval(typeInterval);
+      if (extInterval) clearInterval(extInterval);
       document.body.style.overflow = "";
       if (mainEl) {
         mainEl.style.transform = "";
@@ -114,9 +127,10 @@ export function IntroAnimation() {
         mainEl.style.transformOrigin = "";
       }
     };
-  }, []);
+  }, [isAdmin]);
 
-  if (!isActive) return null;
+  if (isAdmin || !isActive) return null;
+
 
   return (
     <AnimatePresence>

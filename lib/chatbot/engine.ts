@@ -46,7 +46,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     parent: "main",
     position: 1,
     label: "Services",
-    text: "We optimize 6 core industrial energy and water streams:\n\n• Cooling optimization (Chilled water & refrigeration)\n• Heating & steam (Boilers & heat recovery)\n• Drying processes (Thermal & mechanical dewatering)\n• Water quality (Desalination & effluent reuse)\n• Waste-heat recovery (ORC & cascading)\n• Process integration (Plant-wide pinch analysis)",
+    text: "We optimize 6 core industrial energy and water streams:\n\n• Cooling optimization (Chilled water & refrigeration)\n• Heating & steam (Boilers & heat recovery)\n• Drying processes (Thermal & mechanical dewatering)\n• Water quality (Desalination & effluent reuse)\n• Waste-heat recovery (ORC & cascading)\n• Process integration (Plant-wide pinch analysis)\n\n1. Request Facility Assessment\n2. Speak to an Engineer (Lead Capture)\n0. Main Menu",
     keywords: ["service", "services", "cooling", "heating", "steam", "drying", "water", "waste-heat", "process"],
   },
   industries: {
@@ -135,8 +135,10 @@ const GREETING_PATTERNS = [
 export function handleChatMessage(
   state: ChatSessionState,
   input: string,
-  qaBank: QABankItem[] = chatQABankSeed
+  qaBank: QABankItem[] = chatQABankSeed,
+  menuTree: Record<string, ChatMenuItemNode> = CHAT_MENU_TREE
 ): ChatEngineOutput {
+  const tree = menuTree || CHAT_MENU_TREE;
   const rawTrimmed = input.trim();
   const normalized = rawTrimmed
     .toLowerCase()
@@ -233,7 +235,7 @@ export function handleChatMessage(
       normalized === "handoff" ||
       HUMAN_PATTERNS.some((pattern) => pattern.test(normalized))
     ) {
-      return formatNodeOutput(CHAT_MENU_TREE.handoff, {
+      return formatNodeOutput(tree.handoff || CHAT_MENU_TREE.handoff, {
         ...state,
         currentNode: "handoff",
         mode: "capture_name",
@@ -268,8 +270,8 @@ export function handleChatMessage(
   }
 
   // 1. Direct Action / Button Tap (node_key)
-  if (CHAT_MENU_TREE[input]) {
-    const node = CHAT_MENU_TREE[input];
+  if (tree[input]) {
+    const node = tree[input];
     return formatNodeOutput(node, state);
   }
 
@@ -281,7 +283,7 @@ export function handleChatMessage(
     normalized === "start over" ||
     normalized === "restart"
   ) {
-    return formatNodeOutput(CHAT_MENU_TREE.main, {
+    return formatNodeOutput(tree.main || CHAT_MENU_TREE.main, {
       ...state,
       currentNode: "main",
       fallbackCount: 0,
@@ -289,9 +291,31 @@ export function handleChatMessage(
     });
   }
 
-  // 3. Global Shortcuts: Human / Agent / Person / Call / Engineer
+  // 3. Contextual Sub-Menu Handlers (e.g. In Services: 1 -> Assessment, 2 -> Lead Capture)
+  if (state.currentNode === "services") {
+    if (
+      normalized === "2" ||
+      normalized === "lead capture" ||
+      normalized === "speak to engineer" ||
+      normalized === "speak to an engineer" ||
+      normalized === "talk to human" ||
+      normalized === "engineer"
+    ) {
+      return formatNodeOutput(tree.handoff || CHAT_MENU_TREE.handoff, {
+        ...state,
+        currentNode: "handoff",
+        mode: "capture_name",
+        fallbackCount: 0,
+      });
+    }
+    if (normalized === "1" || normalized === "assessment" || normalized === "request assessment") {
+      return formatNodeOutput(tree.assessment || CHAT_MENU_TREE.assessment, state);
+    }
+  }
+
+  // 4. Global Shortcuts: Human / Agent / Person / Call / Engineer
   if (normalized === "6" || HUMAN_PATTERNS.some((pattern) => pattern.test(normalized))) {
-    return formatNodeOutput(CHAT_MENU_TREE.handoff, {
+    return formatNodeOutput(tree.handoff || CHAT_MENU_TREE.handoff, {
       ...state,
       currentNode: "handoff",
       mode: "capture_name",
@@ -299,7 +323,7 @@ export function handleChatMessage(
     });
   }
 
-  // 4. Greetings: Hi / Hello / Good morning / etc.
+  // 5. Greetings: Hi / Hello / Good morning / etc.
   if (GREETING_PATTERNS.some((pattern) => pattern.test(normalized))) {
     return {
       reply: "Hello! Welcome to Exergy Solutions. I am your automated engineering assistant.\n\nHow can we help optimize your plant's energy and water streams today?",
@@ -314,21 +338,21 @@ export function handleChatMessage(
     };
   }
 
-  // 5. Global Shortcuts: Back / 9
+  // 6. Global Shortcuts: Back / 9
   if (normalized === "9" || normalized === "back") {
-    const current = CHAT_MENU_TREE[state.currentNode];
+    const current = tree[state.currentNode] || CHAT_MENU_TREE[state.currentNode];
     const parentKey = current?.parent || "main";
-    return formatNodeOutput(CHAT_MENU_TREE[parentKey] || CHAT_MENU_TREE.main, {
+    return formatNodeOutput(tree[parentKey] || tree.main || CHAT_MENU_TREE.main, {
       ...state,
       currentNode: parentKey,
       fallbackCount: 0,
     });
   }
 
-  // 6. Position Number Matching (1-7)
+  // 7. Position Number Matching (1-7)
   if (/^[1-7]$/.test(normalized)) {
     const num = parseInt(normalized, 10);
-    const targetNode = Object.values(CHAT_MENU_TREE).find((n) => n.position === num);
+    const targetNode = Object.values(tree).find((n) => n.position === num);
     if (targetNode) {
       return formatNodeOutput(targetNode, state);
     }
@@ -420,9 +444,9 @@ function formatNodeOutput(
     quickReplies.push(...getMainQuickReplies());
   } else if (node.key === "services") {
     quickReplies.push(
-      { label: "Request Assessment", action: "assessment" },
-      { label: "Main Menu", action: "main" },
-      { label: "Talk to Human", action: "handoff" }
+      { label: "1. Request Assessment", action: "assessment" },
+      { label: "2. Speak to Engineer", action: "handoff" },
+      { label: "Main Menu", action: "main" }
     );
   } else if (node.key === "industries") {
     quickReplies.push(

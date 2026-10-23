@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
-  { label: "Services", href: "/services" },
-  { label: "About Us", href: "/about" },
-  { label: "Industries", href: "/industries" },
-  { label: "Benefits", href: "/benefits" },
-  { label: "Contact Us", href: "/contact" },
+  { label: "Services", href: "/#services" },
+  { label: "Methodology", href: "/#methodology" },
+  { label: "Impact", href: "/#impact" },
+  { label: "Case Study", href: "/#case-study" },
+  { label: "Assessment", href: "/assessment" },
 ];
 
 export function Navbar() {

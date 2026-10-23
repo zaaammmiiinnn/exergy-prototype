@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Sora, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteChrome } from "@/components/site/site-chrome";
+import { IntroAnimation } from "@/components/IntroAnimation";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default function RootLayout({
       className={`scroll-smooth ${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="min-h-screen bg-[hsl(190,30%,98%)] text-[hsl(200,40%,12%)] flex flex-col font-sans antialiased selection:bg-teal-100 selection:text-teal-900">
+        <IntroAnimation />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

@@ -9,16 +9,21 @@ export function WhatsAppLauncher() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Contact Exergy Solutions on WhatsApp"
-      className="fixed bottom-6 left-6 z-50 flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[#25D366]/30 group"
+      className="fixed bottom-[78px] right-5 sm:bottom-[86px] sm:right-6 z-40 flex items-center justify-center w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[#25D366]/30 group"
     >
       {/* Ripple ring effect */}
       <span className="absolute -inset-1 rounded-full bg-[#25D366]/20 animate-ping pointer-events-none opacity-75" />
 
+      {/* Tooltip on hover */}
+      <span className="absolute right-full mr-2.5 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-sans font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-md">
+        WhatsApp Desk
+      </span>
+
       {/* WhatsApp SVG Icon */}
       <svg
         viewBox="0 0 24 24"
-        width="28"
-        height="28"
+        width="26"
+        height="26"
         fill="currentColor"
         className="relative z-10 transition-transform group-hover:scale-110"
       >

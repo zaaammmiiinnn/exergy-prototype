@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { handleChatMessage, ChatSessionState } from "@/lib/chatbot/engine";
+import {
+  handleChatMessage,
+  ChatSessionState,
+  CHAT_MENU_TREE,
+  ChatMenuItemNode,
+} from "@/lib/chatbot/engine";
+import { chatQABankSeed, QABankItem } from "@/content/seed/chatbot";
 import { calculateLeadScore } from "@/lib/leads/scoring";
 import { sendAssessmentNotificationEmails } from "@/lib/email/resend";
 import { createServiceRoleClient } from "@/lib/supabase/service";
@@ -8,6 +14,18 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { sessionId, input, state, action, leadData } = body;
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const isSupabaseConfigured = Boolean(
+      supabaseUrl &&
+      serviceKey &&
+      !supabaseUrl.includes("your-project") &&
+      !supabaseUrl.includes("dummy") &&
+      !serviceKey.includes("your-service-role") &&
+      !serviceKey.includes("dummy") &&
+      supabaseUrl.startsWith("https://")
+    );
 
     // Handle explicit lead dispatch
     if (action === "lead" || leadData) {
@@ -38,17 +56,6 @@ export async function POST(req: Request) {
         score,
         priority,
       }).catch((err) => console.error("[CHAT LEAD EMAIL ERROR]", err));
-
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-      const isSupabaseConfigured = Boolean(
-        supabaseUrl &&
-        serviceKey &&
-        !supabaseUrl.includes("your-project") &&
-        !supabaseUrl.includes("dummy") &&
-        !serviceKey.includes("your-service-role") &&
-        !serviceKey.includes("dummy")
-      );
 
       if (isSupabaseConfigured) {
         try {
@@ -93,7 +100,50 @@ export async function POST(req: Request) {
       fallbackCount: 0,
     };
 
-    const output = handleChatMessage(currentState, input || "");
+    // Query active chat_menu_items and chat_qa_bank from Supabase if connected
+    let dbMenuTree = CHAT_MENU_TREE;
+    let dbQABank: QABankItem[] = chatQABankSeed;
+
+    if (isSupabaseConfigured) {
+      try {
+        const supabase = createServiceRoleClient();
+        const [menuRes, qaRes] = await Promise.all([
+          supabase.from("chat_menu_items").select("*").eq("is_active", true),
+          supabase.from("chat_qa_bank").select("*").eq("is_active", true),
+        ]);
+
+        if (menuRes.data && menuRes.data.length > 0) {
+          const tree: Record<string, ChatMenuItemNode> = { ...CHAT_MENU_TREE };
+          for (const item of menuRes.data) {
+            tree[item.node_key] = {
+              key: item.node_key,
+              parent: item.parent_key || undefined,
+              position: item.position ?? 0,
+              label: item.label,
+              text: item.body || "",
+              keywords: item.keywords || [],
+              action: item.action || undefined,
+            };
+          }
+          dbMenuTree = tree;
+        }
+
+        if (qaRes.data && qaRes.data.length > 0) {
+          dbQABank = qaRes.data.map((item) => ({
+            id: item.id,
+            question: item.question,
+            answer: item.answer,
+            keywords: item.keywords || [],
+            category: item.category || "general",
+            source_page: item.source_page || "Home",
+          }));
+        }
+      } catch (dbErr) {
+        console.warn("[CHAT DB RETRIEVAL WARNING]", dbErr);
+      }
+    }
+
+    const output = handleChatMessage(currentState, input || "", dbQABank, dbMenuTree);
 
     // If intent is lead_captured, also trigger lead creation and notifications
     if (output.intent === "lead_captured" && output.leadPayload) {
