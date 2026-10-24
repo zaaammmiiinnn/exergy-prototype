@@ -21,7 +21,7 @@
     - Configured `/services/[slug]` with `force-dynamic` rendering, enabling newly created services to resolve immediately with full engineering specs, key highlights, and conditional video showcase.
     - Added `/api/services` endpoint and connected `components/site/footer.tsx` and `app/assessment/page.tsx` to dynamically list all services.
     - Expanded `ICON_MAP` in `components/site/service-card.tsx` to support all selectable icons.
-  - **Admin Leads Theme Alignment**: Aligned `/admin/leads` with the main website and console design system (`bg-[hsl(190,30%,98%)]`, Google Font `Sora`, `#12232b` dark petrol headings, `#0c758d` deep teal accents, crisp white cards, and light slate borders), eliminating dark-mode mismatches and redundant duplicate top bars.
+  - **Admin Leads Theme Alignment & Deletion**: Aligned `/admin/leads` with the main website and console design system (`bg-[hsl(190,30%,98%)]`, Google Font `Sora`, `#12232b` dark petrol headings, `#0c758d` deep teal accents, crisp white cards, and light slate borders). Added direct delete capabilities in both the leads table row actions and the slide-out inspector modal with optimistic UI removal and Supabase database deletion.
   - **Verification & Deployment**: Zero TypeScript errors (`npx tsc --noEmit`), passed test suite (18/18 tests), built via OpenNext (`npm run cf-build`), and deployed live to Cloudflare Workers (`npm run cf-deploy`) at `https://exergy-solutions.neuralwaves.workers.dev`.
 
 - **Phase 9 (Pull Request #1 Review, Test Validation & Final Cloudflare Deployment)**:
