@@ -5,6 +5,14 @@
 
 ---
 
+- **Phase 11 (Dynamic Industries Management & Public Site Reflection)**:
+  - **Admin Industries Management**: Rebuilt `/admin/industries` with "+ Add New Industry" modal and full lifecycle operations (create, update, delete) via Server Actions in `app/actions/industries.ts`. Supports detailed multi-line markdown descriptions (`body_md`), challenges list, image URLs, status toggles, and live search.
+  - **Supabase Integration**: Implemented `lib/industries/industry.ts` with `getLiveIndustries()` and `getLiveIndustryBySlug()`, fetching directly from the Supabase `industries` table using service-role credentials with robust fallback.
+  - **Public Site Dynamic Reflection**:
+    - Updated `/industries` to render live active industries dynamically with updated sector count ("made efficient across X key sectors").
+    - Added `/api/industries` endpoint and updated the assessment wizard (`app/assessment/page.tsx` Step 2 "Target Sector") and service detail sidebar (`app/services/[slug]/page.tsx` "Applicable Industries") to dynamically list all active industries.
+  - **Verification & Deployment**: Zero TypeScript errors (`npx tsc --noEmit`), passed test suite (18/18 tests), built via OpenNext (`npm run cf-build`), and deployed live to Cloudflare Workers (`npm run cf-deploy`) at `https://exergy-solutions.neuralwaves.workers.dev`.
+
 - **Phase 10 (Dynamic Services Management & Multi-Page Reflection)**:
   - **Admin Service Creation & Management**: Built "+ Add New Service" modal and full lifecycle operations (create, update, delete) on `/admin/services` via Server Actions in `app/actions/services.ts`. Form supports detailed multi-line markdown descriptions (`body_md`), intervention highlights array, icon picker (12 Lucide icons), thermodynamic principles, SEC KPI benchmarks, equipment scopes, and ROI payback periods.
   - **Supabase Integration**: Implemented `lib/services/service.ts` with `getLiveServices()` and `getLiveServiceBySlug()`, querying Supabase `services` table using service-role credentials with robust fallback to seed data.
