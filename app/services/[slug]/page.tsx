@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getLiveServices, getLiveServiceBySlug } from "@/lib/services/service";
-import { industriesSeed } from "@/content/seed/industries";
+import { getLiveIndustries } from "@/lib/industries/industry";
 import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
 import { ServiceVideoPlayer } from "@/components/site/service-video-player";
@@ -57,6 +57,9 @@ export default async function ServiceDetailPage({
   const otherServices = allServices.filter(
     (s) => s.slug !== service.slug && s.is_published !== false
   );
+
+  const allIndustries = await getLiveIndustries();
+  const industries = allIndustries.filter((ind) => ind.is_published !== false);
 
   return (
     <div className="flex flex-col">
@@ -264,7 +267,7 @@ export default async function ServiceDetailPage({
                   <span>Applicable Industries</span>
                 </div>
                 <div className="space-y-3">
-                  {industriesSeed.map((ind) => (
+                  {industries.map((ind) => (
                     <Link
                       key={ind.slug}
                       href={`/industries#${ind.slug}`}

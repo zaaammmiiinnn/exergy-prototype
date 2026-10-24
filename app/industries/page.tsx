@@ -1,17 +1,22 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { industriesSeed } from "@/content/seed/industries";
+import { getLiveIndustries } from "@/lib/industries/industry";
 import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
 import { ArrowRight, CheckCircle2, Factory, ShieldCheck, Gauge } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Industries Served | Exergy Solutions Dubai",
   description: "Deep expertise where energy and water are mission-critical: Paper, Processing, Petroleum, Buildings, Hospitality, and Healthcare.",
 };
 
-export default function IndustriesPage() {
+export default async function IndustriesPage() {
+  const allIndustries = await getLiveIndustries();
+  const industries = allIndustries.filter((ind) => ind.is_published !== false);
+
   return (
     <div className="flex flex-col">
       {/* Hero */}
@@ -30,7 +35,7 @@ export default function IndustriesPage() {
             </MotionDiv>
             <MotionDiv delay={0.25}>
               <p className="text-lg text-slate-600 leading-relaxed">
-                Energy- and water-intensive, made efficient. We understand the specific thermodynamic constraints and operating uptime requirements of your industrial operations.
+                Energy- and water-intensive, made efficient across {industries.length} key sectors. We understand the specific thermodynamic constraints and operating uptime requirements of your industrial operations.
               </p>
             </MotionDiv>
           </div>
@@ -40,7 +45,7 @@ export default function IndustriesPage() {
       {/* Industry Detail Sections */}
       <section className="py-20 bg-white text-slate-900">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-16">
-          {industriesSeed.map((ind, i) => (
+          {industries.map((ind, i) => (
             <div
               key={ind.slug}
               id={ind.slug}
@@ -50,7 +55,7 @@ export default function IndustriesPage() {
                 <div className="lg:col-span-8 space-y-4">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-xs text-teal-800 font-semibold uppercase bg-teal-50 border border-teal-200 px-2.5 py-1 rounded">
-                      Sector 0{i + 1}
+                      Sector {i + 1 < 10 ? `0${i + 1}` : i + 1}
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                       {ind.name}
@@ -61,33 +66,36 @@ export default function IndustriesPage() {
                     {ind.summary}
                   </p>
 
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                  <div className="text-sm text-slate-600 leading-relaxed space-y-2 whitespace-pre-line font-sans">
                     {ind.body_md}
-                  </p>
-
-                  <div className="pt-2">
-                    <h4 className="text-xs font-mono uppercase tracking-wider text-slate-500 mb-3 font-semibold">
-                      Primary Thermodynamic Challenges Solved:
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
-                      {ind.challenges.map((c, idx) => (
-                        <div key={idx} className="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
-                          <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
-                          <span>{c}</span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
+
+                  {ind.challenges && ind.challenges.length > 0 && (
+                    <div className="pt-2">
+                      <h4 className="text-xs font-mono uppercase tracking-wider text-slate-500 mb-3 font-semibold">
+                        Primary Thermodynamic Challenges Solved:
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+                        {ind.challenges.map((c, idx) => (
+                          <div key={idx} className="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                            <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+                            <span>{c}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="lg:col-span-4 flex flex-col justify-between h-full space-y-4">
                   <div className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
                     <Image
-                      src={ind.hero_image}
+                      src={ind.hero_image || "https://images.hostinger.com/2025f758-1013-44c6-b723-1117c9aa2810.png"}
                       alt={ind.name}
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 350px"
+                      unoptimized
                     />
                   </div>
 

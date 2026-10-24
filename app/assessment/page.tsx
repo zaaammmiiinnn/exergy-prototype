@@ -36,6 +36,7 @@ function AssessmentContent() {
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [servicesList, setServicesList] = useState(servicesSeed);
+  const [industriesList, setIndustriesList] = useState(industriesSeed);
   const [formData, setFormData] = useState<AssessmentFormData>({
     name: "",
     email: "",
@@ -57,6 +58,15 @@ function AssessmentContent() {
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setServicesList(data);
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/industries")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setIndustriesList(data);
         }
       })
       .catch(() => {});
@@ -322,7 +332,7 @@ function AssessmentContent() {
                     Target Sector <span className="text-teal-600">*</span>
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {industriesSeed.map((ind) => (
+                    {industriesList.map((ind) => (
                       <button
                         type="button"
                         key={ind.slug}
