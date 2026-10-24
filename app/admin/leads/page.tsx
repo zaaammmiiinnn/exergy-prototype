@@ -22,10 +22,12 @@ import {
   X,
   MessageSquare,
   Lock,
+  Trash2,
 } from "lucide-react";
 import {
   fetchAdminLeads,
   updateLeadStatusAction,
+  deleteLeadAction,
   type AdminLeadItem,
 } from "@/app/actions/admin-leads";
 
@@ -100,6 +102,7 @@ export default function AdminLeadsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedLead, setSelectedLead] = useState<AdminLeadItem | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const [statusFeedback, setStatusFeedback] = useState<string | null>(null);
 
   const loadLeads = useCallback(async () => {
@@ -119,6 +122,40 @@ export default function AdminLeadsPage() {
   useEffect(() => {
     loadLeads();
   }, [loadLeads]);
+
+  const handleDeleteLead = async (lead: AdminLeadItem) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to permanently delete lead "${lead.id}" (${lead.company})?\nThis action cannot be undone.`
+      )
+    ) {
+      return;
+    }
+
+    setIsDeletingId(lead.id);
+
+    // Optimistically remove from state
+    setLeads((prev) => prev.filter((l) => l.id !== lead.id));
+    if (selectedLead?.id === lead.id) {
+      setSelectedLead(null);
+    }
+
+    try {
+      const res = await deleteLeadAction(lead.id);
+      if (res.success) {
+        setStatusFeedback(`Lead ${lead.id} (${lead.company}) deleted permanently.`);
+        setTimeout(() => setStatusFeedback(null), 3500);
+      } else {
+        setStatusFeedback(`Lead deleted locally (${res.error || "Supabase offline"})`);
+        setTimeout(() => setStatusFeedback(null), 3500);
+      }
+    } catch {
+      setStatusFeedback(`Lead ${lead.id} deleted locally.`);
+      setTimeout(() => setStatusFeedback(null), 3500);
+    } finally {
+      setIsDeletingId(null);
+    }
+  };
 
   const handleStatusChange = async (leadId: string, newStatus: AdminLeadItem["status"]) => {
     setIsUpdatingStatus(leadId);
@@ -357,13 +394,24 @@ export default function AdminLeadsPage() {
                       {lead.createdAt}
                     </td>
                     <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => setSelectedLead(lead)}
-                        className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-[#0c758d] border border-teal-200/80 text-xs font-mono inline-flex items-center gap-1 transition-colors cursor-pointer"
-                      >
-                        <span>Inspect</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setSelectedLead(lead)}
+                          className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-[#0c758d] border border-teal-200/80 text-xs font-mono inline-flex items-center gap-1 transition-colors cursor-pointer"
+                          title="Inspect Lead Details"
+                        >
+                          <span>Inspect</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteLead(lead)}
+                          disabled={isDeletingId === lead.id}
+                          className="p-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 border border-red-200/80 text-xs transition-colors cursor-pointer disabled:opacity-50"
+                          title="Delete Lead"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -477,7 +525,7 @@ export default function AdminLeadsPage() {
               </div>
             )}
 
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2 font-mono text-xs">
                 <span className="text-slate-500">Update Status:</span>
                 <select
@@ -498,12 +546,26 @@ export default function AdminLeadsPage() {
                 </select>
               </div>
 
-              <button
-                onClick={() => setSelectedLead(null)}
-                className="px-4 py-2 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white font-mono text-xs transition-colors shadow-xs cursor-pointer"
-              >
-                Close Inspector
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleDeleteLead(selectedLead)}
+                  disabled={isDeletingId === selectedLead.id}
+                  className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 border border-red-200 font-mono text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                  title="Delete Lead"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                  <span>Delete Lead</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedLead(null)}
+                  className="px-4 py-2 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white font-mono text-xs transition-colors shadow-xs cursor-pointer"
+                >
+                  Close Inspector
+                </button>
+              </div>
             </div>
           </div>
         </div>
