@@ -28,7 +28,6 @@ import {
   updateLeadStatusAction,
   type AdminLeadItem,
 } from "@/app/actions/admin-leads";
-import { adminSignOutAction } from "@/app/actions/admin-auth";
 
 const INITIAL_FALLBACK_LEADS: AdminLeadItem[] = [
   {
@@ -108,7 +107,6 @@ export default function AdminLeadsPage() {
     try {
       const res = await fetchAdminLeads();
       if (res.success && res.leads && res.leads.length > 0) {
-        // Merge with existing local changes if any
         setLeads(res.leads);
       }
     } catch (err) {
@@ -136,15 +134,21 @@ export default function AdminLeadsPage() {
 
     try {
       const target = leads.find((l) => l.id === leadId);
-      const res = await updateLeadStatusAction(leadId, newStatus, target ? {
-        name: target.name,
-        email: target.email,
-        company: target.company,
-        sector: target.sector,
-        score: target.score,
-        priority: target.priority,
-        phone: target.phone,
-      } : undefined);
+      const res = await updateLeadStatusAction(
+        leadId,
+        newStatus,
+        target
+          ? {
+              name: target.name,
+              email: target.email,
+              company: target.company,
+              sector: target.sector,
+              score: target.score,
+              priority: target.priority,
+              phone: target.phone,
+            }
+          : undefined
+      );
 
       if (res.success) {
         setStatusFeedback(`Status updated to "${newStatus.toUpperCase()}"`);
@@ -159,11 +163,6 @@ export default function AdminLeadsPage() {
     } finally {
       setIsUpdatingStatus(null);
     }
-  };
-
-  const handleSignOut = async () => {
-    await adminSignOutAction();
-    router.push("/admin/login");
   };
 
   const filteredLeads = leads.filter((lead) => {
@@ -184,288 +183,235 @@ export default function AdminLeadsPage() {
   const newCount = leads.filter((l) => l.status === "new").length;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans">
-      {/* Header Bar */}
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/admin" className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse" />
-              <span className="font-heading font-bold text-white tracking-tight text-sm sm:text-base">
-                Exergy Console
-              </span>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-teal-400 bg-teal-950/80 border border-teal-800/60 px-2 py-0.5 rounded-full">
-                Operations
-              </span>
-            </Link>
-
-            <nav className="hidden md:flex items-center gap-1 font-mono text-xs">
-              <Link
-                href="/admin"
-                className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/admin/leads"
-                className="px-3 py-1.5 rounded-lg text-teal-300 bg-teal-950/60 border border-teal-800/50 font-semibold"
-              >
-                Leads & Audits
-              </Link>
-              <Link
-                href="/admin/chat"
-                className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
-              >
-                Live Chat
-              </Link>
-              <Link
-                href="/admin/tasks"
-                className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
-              >
-                Tasks
-              </Link>
-              <Link
-                href="/admin/settings"
-                className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
-              >
-                Settings
-              </Link>
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={loadLeads}
-              disabled={loading}
-              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700"
-              title="Refresh Leads from Database"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-teal-400" : ""}`} />
-            </button>
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/50 text-xs font-mono transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sign Out</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Page Title & KPI Strip */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-heading font-bold text-white tracking-tight">
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
+      {/* Top Header Row with KPI Counter Pills */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="font-heading font-extrabold text-2xl text-[#12232b] tracking-tight">
               Assessment Leads & Inquiries
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 font-mono mt-1">
-              Active engineering prospects, thermodynamic assessment requests & chatbot handoffs
-            </p>
+            <span className="px-2.5 py-0.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/70 text-[10px] font-mono font-bold uppercase tracking-wider">
+              Live Pipeline
+            </span>
           </div>
-
-          <div className="flex items-center gap-2">
-            <div className="px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-teal-400" />
-              <span className="text-xs font-mono text-slate-300">
-                Total: <strong className="text-white">{leads.length}</strong>
-              </span>
-            </div>
-            <div className="px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-800/50 flex items-center gap-2">
-              <Flame className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-xs font-mono text-amber-300">
-                Hot: <strong>{hotCount}</strong>
-              </span>
-            </div>
-            <div className="px-3 py-1.5 rounded-xl bg-blue-950/40 border border-blue-800/50 flex items-center gap-2">
-              <Clock className="w-3.5 h-3.5 text-blue-400" />
-              <span className="text-xs font-mono text-blue-300">
-                New: <strong>{newCount}</strong>
-              </span>
-            </div>
-          </div>
+          <p className="text-xs text-slate-500 font-mono mt-1">
+            Active engineering prospects, thermodynamic assessment requests & chatbot handoffs
+          </p>
         </div>
 
-        {statusFeedback && (
-          <div className="p-3 rounded-xl bg-teal-950/80 border border-teal-600 text-teal-300 text-xs font-mono flex items-center gap-2 animate-in fade-in duration-200">
-            <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
-            <span>{statusFeedback}</span>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={loadLeads}
+            disabled={loading}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-teal-200/80 bg-teal-50/70 hover:bg-teal-100 text-[#0c758d] font-mono text-[11px] font-semibold transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+            title="Refresh Leads from Supabase"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-teal-600" : ""}`} />
+            <span>Refresh</span>
+          </button>
 
-        {/* Filter & Search Bar */}
-        <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by facility, contact name, email, sector, or ID..."
-              className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 font-mono"
-            />
+          <div className="px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-teal-500" />
+            <span className="text-xs font-mono text-slate-600">
+              Total: <strong className="text-slate-900">{leads.length}</strong>
+            </span>
           </div>
 
-          {/* Status Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
-            {["all", "new", "contacted", "qualified", "proposal", "won"].map((st) => (
-              <button
-                key={st}
-                onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-lg uppercase tracking-wider text-[11px] font-semibold transition-all ${
-                  statusFilter === st
-                    ? "bg-teal-500 text-slate-950 shadow-xs"
-                    : "bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800"
-                }`}
-              >
-                {st}
-              </button>
-            ))}
+          <div className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200/80 shadow-2xs flex items-center gap-1.5">
+            <Flame className="w-3.5 h-3.5 text-amber-600" />
+            <span className="text-xs font-mono text-amber-800">
+              Hot: <strong className="font-bold">{hotCount}</strong>
+            </span>
+          </div>
+
+          <div className="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 shadow-2xs flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-blue-600" />
+            <span className="text-xs font-mono text-blue-800">
+              New: <strong className="font-bold">{newCount}</strong>
+            </span>
           </div>
         </div>
+      </div>
 
-        {/* Leads Table */}
-        <div className="bg-slate-950/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-800 bg-slate-900/80 text-[11px] font-mono uppercase tracking-wider text-slate-400">
-                  <th className="py-3 px-4">Ref ID</th>
-                  <th className="py-3 px-4">Facility & Contact</th>
-                  <th className="py-3 px-4">Sector</th>
-                  <th className="py-3 px-4">Score & Priority</th>
-                  <th className="py-3 px-4">Current Status</th>
-                  <th className="py-3 px-4">Received</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+      {statusFeedback && (
+        <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 text-[#0c758d] text-xs font-mono flex items-center gap-2 animate-in fade-in duration-200 shadow-2xs">
+          <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+          <span>{statusFeedback}</span>
+        </div>
+      )}
+
+      {/* Filter & Search Bar */}
+      <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        {/* Search Input */}
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by facility, contact name, email, sector, or ID..."
+            className="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 font-mono transition-all"
+          />
+        </div>
+
+        {/* Status Filter Buttons */}
+        <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
+          {["all", "new", "contacted", "qualified", "proposal", "won"].map((st) => (
+            <button
+              key={st}
+              onClick={() => setStatusFilter(st)}
+              className={`px-3 py-1.5 rounded-full uppercase tracking-wider text-[11px] font-semibold transition-all cursor-pointer ${
+                statusFilter === st
+                  ? "bg-[#0c758d] text-white shadow-xs"
+                  : "bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+              }`}
+            >
+              {st}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Leads Table */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-mono uppercase tracking-wider text-slate-500">
+                <th className="py-3 px-4 font-semibold">Ref ID</th>
+                <th className="py-3 px-4 font-semibold">Facility & Contact</th>
+                <th className="py-3 px-4 font-semibold">Sector</th>
+                <th className="py-3 px-4 font-semibold">Score & Priority</th>
+                <th className="py-3 px-4 font-semibold">Current Status</th>
+                <th className="py-3 px-4 font-semibold">Received</th>
+                <th className="py-3 px-4 text-right font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-xs font-mono">
+              {filteredLeads.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-slate-400 font-sans">
+                    No leads match your active filters.
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/80 text-xs font-mono">
-                {filteredLeads.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center text-slate-500">
-                      No leads match your active filters.
+              ) : (
+                filteredLeads.map((lead) => (
+                  <tr
+                    key={lead.id}
+                    className="hover:bg-teal-50/30 transition-colors group cursor-pointer"
+                    onClick={() => setSelectedLead(lead)}
+                  >
+                    <td className="py-3.5 px-4 font-bold text-[#0c758d]">
+                      {lead.id}
+                    </td>
+                    <td className="py-3.5 px-4 font-sans">
+                      <div className="font-bold text-slate-900 group-hover:text-[#0c758d] transition-colors">
+                        {lead.company}
+                      </div>
+                      <div className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5 font-mono">
+                        <span>{lead.name}</span>
+                        <span>•</span>
+                        <span>{lead.email}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-600 font-sans">
+                      {lead.sector}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900">{lead.score}</span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold ${
+                            lead.priority === "hot"
+                              ? "bg-amber-50 text-amber-700 border border-amber-200"
+                              : lead.priority === "warm"
+                              ? "bg-blue-50 text-blue-700 border border-blue-200"
+                              : "bg-slate-100 text-slate-600 border border-slate-200"
+                          }`}
+                        >
+                          {lead.priority}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={lead.status}
+                        disabled={isUpdatingStatus === lead.id}
+                        onChange={(e) =>
+                          handleStatusChange(
+                            lead.id,
+                            e.target.value as AdminLeadItem["status"]
+                          )
+                        }
+                        className="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-teal-500 font-mono cursor-pointer disabled:opacity-50"
+                      >
+                        <option value="new">NEW</option>
+                        <option value="contacted">CONTACTED</option>
+                        <option value="qualified">QUALIFIED</option>
+                        <option value="proposal">PROPOSAL</option>
+                        <option value="won">WON</option>
+                      </select>
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-500 text-[11px]">
+                      {lead.createdAt}
+                    </td>
+                    <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => setSelectedLead(lead)}
+                        className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-[#0c758d] border border-teal-200/80 text-xs font-mono inline-flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <span>Inspect</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
-                ) : (
-                  filteredLeads.map((lead) => (
-                    <tr
-                      key={lead.id}
-                      className="hover:bg-slate-800/40 transition-colors group cursor-pointer"
-                      onClick={() => setSelectedLead(lead)}
-                    >
-                      <td className="py-3.5 px-4 font-semibold text-teal-400">
-                        {lead.id}
-                      </td>
-                      <td className="py-3.5 px-4 font-sans">
-                        <div className="font-semibold text-white group-hover:text-teal-300 transition-colors">
-                          {lead.company}
-                        </div>
-                        <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5 font-mono">
-                          <span>{lead.name}</span>
-                          <span>•</span>
-                          <span>{lead.email}</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-300">
-                        {lead.sector}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-white">{lead.score}</span>
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                              lead.priority === "hot"
-                                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                                : lead.priority === "warm"
-                                ? "bg-blue-500/20 text-blue-300 border border-blue-500/40"
-                                : "bg-slate-700/40 text-slate-400 border border-slate-700"
-                            }`}
-                          >
-                            {lead.priority}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
-                        <select
-                          value={lead.status}
-                          disabled={isUpdatingStatus === lead.id}
-                          onChange={(e) =>
-                            handleStatusChange(
-                              lead.id,
-                              e.target.value as AdminLeadItem["status"]
-                            )
-                          }
-                          className="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:ring-1 focus:ring-teal-500 font-mono cursor-pointer disabled:opacity-50"
-                        >
-                          <option value="new">NEW</option>
-                          <option value="contacted">CONTACTED</option>
-                          <option value="qualified">QUALIFIED</option>
-                          <option value="proposal">PROPOSAL</option>
-                          <option value="won">WON</option>
-                        </select>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-400 text-[11px]">
-                        {lead.createdAt}
-                      </td>
-                      <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          onClick={() => setSelectedLead(lead)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-teal-300 hover:text-white border border-slate-700 text-xs transition-colors inline-flex items-center gap-1"
-                        >
-                          <span>Inspect</span>
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      </main>
+      </div>
 
       {/* Slide-out Inspection Modal */}
       {selectedLead && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6">
-            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6 text-slate-900">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
               <div>
-                <span className="font-mono text-xs text-teal-400 font-semibold uppercase">
+                <span className="font-mono text-xs text-[#0c758d] font-bold uppercase tracking-wider">
                   {selectedLead.id} // Full Facility Profile
                 </span>
-                <h2 className="text-xl font-heading font-bold text-white mt-1">
+                <h2 className="text-xl font-heading font-extrabold text-[#12232b] mt-1">
                   {selectedLead.company}
                 </h2>
               </div>
               <button
                 onClick={() => setSelectedLead(null)}
-                className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-lg bg-slate-100 text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
+                aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-              <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
-                <span className="text-slate-500 uppercase tracking-wider block mb-1">
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                <span className="text-slate-400 uppercase tracking-wider block mb-1 font-semibold text-[10px]">
                   Contact Person
                 </span>
-                <div className="text-white font-sans font-semibold text-sm">
+                <div className="text-slate-900 font-sans font-bold text-sm">
                   {selectedLead.name}
                 </div>
-                <div className="text-slate-400 mt-1 flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-teal-400" />
+                <div className="text-slate-600 mt-1.5 flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-[#0c758d]" />
                   <a href={`mailto:${selectedLead.email}`} className="hover:underline">
                     {selectedLead.email}
                   </a>
                 </div>
                 {selectedLead.phone && (
-                  <div className="text-slate-400 mt-1 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-teal-400" />
+                  <div className="text-slate-600 mt-1 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-[#0c758d]" />
                     <a href={`tel:${selectedLead.phone}`} className="hover:underline">
                       {selectedLead.phone}
                     </a>
@@ -473,29 +419,29 @@ export default function AdminLeadsPage() {
                 )}
               </div>
 
-              <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
-                <span className="text-slate-500 uppercase tracking-wider block mb-1">
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                <span className="text-slate-400 uppercase tracking-wider block mb-1 font-semibold text-[10px]">
                   Thermodynamic Priority
                 </span>
-                <div className="text-white text-sm font-bold flex items-center gap-2">
+                <div className="text-slate-900 text-sm font-bold flex items-center gap-2">
                   <span>Score: {selectedLead.score}/100</span>
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] uppercase ${
+                    className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold ${
                       selectedLead.priority === "hot"
-                        ? "bg-amber-500/20 text-amber-300"
-                        : "bg-blue-500/20 text-blue-300"
+                        ? "bg-amber-50 text-amber-700 border border-amber-200"
+                        : "bg-blue-50 text-blue-700 border border-blue-200"
                     }`}
                   >
                     {selectedLead.priority}
                   </span>
                 </div>
-                <div className="text-slate-400 mt-2">
-                  <span>Sector: </span>
-                  <strong className="text-slate-200">{selectedLead.sector}</strong>
+                <div className="text-slate-600 mt-2">
+                  <span className="text-slate-400">Sector: </span>
+                  <strong className="text-slate-800">{selectedLead.sector}</strong>
                 </div>
-                <div className="text-slate-400 mt-1">
-                  <span>Timeline: </span>
-                  <strong className="text-slate-200">
+                <div className="text-slate-600 mt-1">
+                  <span className="text-slate-400">Timeline: </span>
+                  <strong className="text-slate-800">
                     {selectedLead.timeline || "Immediate"}
                   </strong>
                 </div>
@@ -504,14 +450,14 @@ export default function AdminLeadsPage() {
 
             {selectedLead.services && selectedLead.services.length > 0 && (
               <div>
-                <span className="font-mono text-xs text-slate-400 uppercase tracking-wider block mb-2">
+                <span className="font-mono text-xs text-slate-500 uppercase tracking-wider block mb-2 font-semibold">
                   Selected Energy & Water Streams
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedLead.services.map((svc) => (
                     <span
                       key={svc}
-                      className="px-2.5 py-1 rounded-lg bg-teal-950/80 border border-teal-800/60 text-teal-300 font-mono text-xs"
+                      className="px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200/80 text-[#0c758d] font-mono text-xs font-semibold"
                     >
                       {svc}
                     </span>
@@ -522,18 +468,18 @@ export default function AdminLeadsPage() {
 
             {selectedLead.notes && (
               <div>
-                <span className="font-mono text-xs text-slate-400 uppercase tracking-wider block mb-1">
+                <span className="font-mono text-xs text-slate-500 uppercase tracking-wider block mb-1 font-semibold">
                   Process Challenge / Facility Notes
                 </span>
-                <p className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs font-sans text-slate-300 leading-relaxed">
+                <p className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs font-sans text-slate-700 leading-relaxed">
                   {selectedLead.notes}
                 </p>
               </div>
             )}
 
-            <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2 font-mono text-xs">
-                <span className="text-slate-400">Update Status:</span>
+                <span className="text-slate-500">Update Status:</span>
                 <select
                   value={selectedLead.status}
                   onChange={(e) =>
@@ -542,7 +488,7 @@ export default function AdminLeadsPage() {
                       e.target.value as AdminLeadItem["status"]
                     )
                   }
-                  className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-teal-500 font-mono"
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-teal-500 font-mono cursor-pointer"
                 >
                   <option value="new">NEW</option>
                   <option value="contacted">CONTACTED</option>
@@ -554,7 +500,7 @@ export default function AdminLeadsPage() {
 
               <button
                 onClick={() => setSelectedLead(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs transition-colors"
+                className="px-4 py-2 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white font-mono text-xs transition-colors shadow-xs cursor-pointer"
               >
                 Close Inspector
               </button>
