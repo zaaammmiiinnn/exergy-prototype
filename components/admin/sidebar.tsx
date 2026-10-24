@@ -19,6 +19,8 @@ import {
   KeyRound,
   ShieldAlert,
   Mail,
+  User,
+  UserCog,
 } from "lucide-react";
 import { adminSignOutAction, getAdminSessionAction, type AdminSession } from "@/app/actions/admin-auth";
 
@@ -69,6 +71,11 @@ const ALL_NAV_ITEMS: NavItem[] = [
     name: "Settings",
     href: "/admin/settings",
     icon: Settings,
+  },
+  {
+    name: "Profile",
+    href: "/admin/profile",
+    icon: User,
   },
 ];
 
@@ -335,8 +342,15 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
 
         {/* User Profile Block with RBAC Role Indication */}
         <div className="p-3.5 border-t border-white/[0.08] bg-[#07101d] shrink-0">
-          <div className="flex items-start gap-2.5 mb-3 px-1">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2C7FB8] to-[#0E4A4F] text-white flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/10 mt-0.5">
+          <Link
+            href="/admin/profile"
+            onClick={() => {
+              if (onClose) onClose();
+            }}
+            className="flex items-start gap-2.5 mb-3 p-1.5 -m-1 rounded-xl hover:bg-white/5 transition-all group cursor-pointer"
+            title="View & Edit Employee Profile"
+          >
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2C7FB8] to-[#0E4A4F] text-white flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/10 group-hover:ring-teal-400/50 mt-0.5 transition-all shadow-xs">
               {adminUser?.email
                 ? adminUser.email.slice(0, 2).toUpperCase()
                 : "AD"}
@@ -344,12 +358,15 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
             <div className="flex-1 min-w-0">
               {/* User Email with Role Badge e.g. neuralwaves.official@gmail.com [Founder] */}
               <div className="space-y-1">
-                <p
-                  className="text-xs font-medium text-white truncate leading-snug"
-                  title={adminUser?.email || "Administrator"}
-                >
-                  {adminUser?.email || "admin@exergy.solutions"}
-                </p>
+                <div className="flex items-center justify-between gap-1">
+                  <p
+                    className="text-xs font-medium text-white truncate leading-snug group-hover:text-teal-300 transition-colors"
+                    title={adminUser?.email || "Administrator"}
+                  >
+                    {adminUser?.email || "admin@exergy.solutions"}
+                  </p>
+                  <UserCog className="w-3.5 h-3.5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0" />
+                </div>
                 <div className="flex items-center gap-1.5">
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold border uppercase tracking-wider ${roleBadgeInfo.classes}`}
@@ -364,9 +381,24 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
 
           <div className="space-y-1.5">
+            <Link
+              href="/admin/profile"
+              onClick={() => {
+                if (onClose) onClose();
+              }}
+              className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors border cursor-pointer ${
+                pathname === "/admin/profile"
+                  ? "bg-teal-500/20 text-teal-300 border-teal-500/40 font-semibold"
+                  : "text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border-white/5"
+              }`}
+            >
+              <User className="w-3.5 h-3.5 text-teal-400" />
+              <span>Employee Profile</span>
+            </Link>
+
             <button
               type="button"
               onClick={(e) => {

@@ -5,6 +5,14 @@
 
 ---
 
+- **Phase 12 (Employee Profile Page & Supabase Database Synchronization)**:
+  - **Sidebar Profile Option**: Added a dedicated "Employee Profile" navigation button (`/admin/profile`) directly in the user profile block down where the email is displayed in `components/admin/sidebar.tsx`, along with an interactive user badge link with avatar initials, role indicator, and quick profile trigger. Also added "Profile" to the navigation menu.
+  - **Profile Management Page (`/admin/profile`)**: Built a comprehensive profile management interface at `app/admin/profile/page.tsx` adhering to the mint light theme (`hsl(190, 30%, 98%)`, Google Font `Sora`, `#12232b` headings, and `#0c758d` accents).
+    - **Identity Overview**: Displays employee initials avatar, verified database email, role badge (`Founder`, `Administrator`, `Staff Engineer`), Staff ID (`EX-ADM-042` / `EX-ENG-108`), member join date, and live Supabase sync indicator.
+    - **Editable Fields**: Full Name (synced to `admin_users`), Job Title / Engineering Designation, Department / Division, Direct Phone / WhatsApp, Operating Location, Engineering Qualifications & Specialization Bio, and Emergency Escalation Line.
+  - **Supabase Integration**: Implemented Server Actions in `app/actions/profile.ts` (`getAdminProfileAction`, `updateAdminProfileAction`) that persist profile updates directly to the Supabase `admin_users` table (`full_name`, `updated_at`) and `site_settings` JSONB key (`employee_profile_<email>`). Refreshes the signed `exergy_admin_session` cookie so changes immediately reflect across the admin console without requiring re-login.
+  - **Verification & Deployment**: Zero TypeScript errors (`npx tsc --noEmit`), passed test suite (18/18 tests), built via OpenNext (`npm run cf-build`), and deployed live to Cloudflare Workers (`npm run cf-deploy`) at `https://exergy-solutions.neuralwaves.workers.dev/admin/profile`.
+
 - **Phase 11 (Dynamic Industries Management & Public Site Reflection)**:
   - **Admin Industries Management**: Rebuilt `/admin/industries` with "+ Add New Industry" modal and full lifecycle operations (create, update, delete) via Server Actions in `app/actions/industries.ts`. Supports detailed multi-line markdown descriptions (`body_md`), challenges list, image URLs, status toggles, and live search.
   - **Supabase Integration**: Implemented `lib/industries/industry.ts` with `getLiveIndustries()` and `getLiveIndustryBySlug()`, fetching directly from the Supabase `industries` table using service-role credentials with robust fallback.
