@@ -25,6 +25,7 @@ import {
   Archive,
   RotateCcw,
   Check,
+  X,
 } from "lucide-react";
 
 interface ChatMessageItem {
@@ -200,7 +201,7 @@ const STORAGE_KEY = "exergy_admin_chats_v2";
 
 export default function AdminChatsPage() {
   const [sessions, setSessions] = useState<ChatSessionItem[]>([]);
-  const [selectedSessionId, setSelectedSessionId] = useState<string>("CHAT-2026-081");
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>("CHAT-2026-081");
   const [activeFilter, setActiveFilter] = useState<"all" | "needs_human" | "staff_active" | "bot_resolved" | "closed">("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -691,6 +692,21 @@ export default function AdminChatsPage() {
                       </button>
                     </>
                   )}
+
+                  <div className="h-5 w-px bg-slate-200 mx-0.5" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedSessionId(null);
+                      setIsMobileListHidden(false);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 hover:border-slate-300 text-slate-600 hover:text-slate-900 text-xs font-mono font-medium transition-all cursor-pointer shadow-2xs group"
+                    title="Close active chat window and return to inbox"
+                    aria-label="Close active chat window"
+                  >
+                    <X className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700" />
+                    <span>Close Window</span>
+                  </button>
                 </div>
               </div>
 
@@ -785,14 +801,28 @@ export default function AdminChatsPage() {
                     <XCircle className="w-4 h-4 text-slate-400 shrink-0" />
                     <span>This conversation is closed and archived. Reopen to send further engineering responses.</span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleReopenChat}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer shadow-xs shrink-0"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reopen Chat</span>
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedSessionId(null);
+                        setIsMobileListHidden(false);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer shadow-2xs"
+                      title="Close chat window and return to inbox"
+                    >
+                      <X className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Close Window</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleReopenChat}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Reopen Chat</span>
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -861,9 +891,16 @@ export default function AdminChatsPage() {
               )}
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 text-xs font-mono p-8">
-              <MessageSquare className="w-8 h-8 text-slate-300 mb-2" />
-              <span>Select a conversation from the left to view and respond</span>
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-50/30">
+              <div className="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 text-[#0c758d] flex items-center justify-center shadow-xs mb-3">
+                <MessageSquare className="w-8 h-8 text-[#0c758d]" />
+              </div>
+              <h3 className="font-heading font-bold text-sm text-slate-800 mb-1">
+                No Chat Window Open
+              </h3>
+              <p className="text-xs text-slate-500 font-mono max-w-sm">
+                Select an active inquiry, review request, or closed ticket from the inbox list on the left to view transcripts and send responses.
+              </p>
             </div>
           )}
         </div>
