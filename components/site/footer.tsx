@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { siteSettingsSeed } from "@/content/seed/settings";
@@ -8,6 +8,18 @@ import { MapPin, Mail, Phone, Linkedin, ArrowUpRight, MessageSquare, Twitter, Yo
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const [services, setServices] = useState(servicesSeed);
+
+  useEffect(() => {
+    fetch("/api/services")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setServices(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const companyLinks = [
     { label: "About Us", href: "/about" },
@@ -122,7 +134,7 @@ export function Footer() {
               01 / ENGINEERING SERVICES
             </h3>
             <ul className="space-y-2.5 text-xs font-sans text-slate-400">
-              {servicesSeed.map((s) => (
+              {services.map((s) => (
                 <li key={s.slug}>
                   <Link 
                     href={`/services/${s.slug}`} 

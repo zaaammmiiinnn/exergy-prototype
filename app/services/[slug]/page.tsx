@@ -2,7 +2,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { servicesSeed } from "@/content/seed/services";
+import { getLiveServices, getLiveServiceBySlug } from "@/lib/services/service";
 import { industriesSeed } from "@/content/seed/industries";
 import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
@@ -21,14 +21,18 @@ import {
   Sparkles,
 } from "lucide-react";
 
-export function generateStaticParams() {
-  return servicesSeed.map((s) => ({
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const services = await getLiveServices();
+  return services.map((s) => ({
     slug: s.slug,
   }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const service = servicesSeed.find((s) => s.slug === params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const service = await getLiveServiceBySlug(params.slug);
   if (!service) return { title: "Service Not Found" };
 
   return {
@@ -37,19 +41,22 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function ServiceDetailPage({
+export default async function ServiceDetailPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const service = servicesSeed.find((s) => s.slug === params.slug);
+  const service = await getLiveServiceBySlug(params.slug);
 
   if (!service) {
     notFound();
   }
 
   // Related sibling services
-  const otherServices = servicesSeed.filter((s) => s.slug !== service.slug);
+  const allServices = await getLiveServices();
+  const otherServices = allServices.filter(
+    (s) => s.slug !== service.slug && s.is_published !== false
+  );
 
   return (
     <div className="flex flex-col">
@@ -105,12 +112,13 @@ export default function ServiceDetailPage({
             <div className="lg:col-span-5">
               <div className="relative aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-xl">
                 <Image
-                  src={service.hero_image}
+                  src={service.hero_image || "https://images.hostinger.com/e5c328ee-2778-4da7-ba8a-5e933f55fcfa.png"}
                   alt={service.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 500px"
                   priority
+                  unoptimized
                 />
               </div>
             </div>
@@ -119,31 +127,33 @@ export default function ServiceDetailPage({
       </section>
 
       {/* Video Walkthrough Section */}
-      <section className="py-16 bg-white text-slate-900 border-b border-slate-200">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl mb-8 space-y-2">
-            <span className="text-xs font-mono uppercase text-teal-700 tracking-wider font-semibold">
-              Live Engineering Demonstration
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
-              Thermodynamic Video Walkthrough
-            </h2>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Examine where useful exergy is destroyed in nominal systems and witness how our turnkey intervention restores optimal thermodynamic performance.
-            </p>
-          </div>
+      {service.video_url && (
+        <section className="py-16 bg-white text-slate-900 border-b border-slate-200">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="max-w-3xl mb-8 space-y-2">
+              <span className="text-xs font-mono uppercase text-teal-700 tracking-wider font-semibold">
+                Live Engineering Demonstration
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                Thermodynamic Video Walkthrough
+              </h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Examine where useful exergy is destroyed in nominal systems and witness how our turnkey intervention restores optimal thermodynamic performance.
+              </p>
+            </div>
 
-          <ServiceVideoPlayer
-            title={service.video_title}
-            subtitle={service.title}
-            videoUrl={service.video_url}
-            posterUrl={service.video_poster}
-            duration={service.video_duration}
-            chapters={service.video_chapters}
-            serviceTitle={service.title}
-          />
-        </div>
-      </section>
+            <ServiceVideoPlayer
+              title={service.video_title || service.title}
+              subtitle={service.title}
+              videoUrl={service.video_url}
+              posterUrl={service.video_poster || service.hero_image}
+              duration={service.video_duration || "3:00"}
+              chapters={service.video_chapters || []}
+              serviceTitle={service.title}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Scope Details & Deep Thermodynamic Analysis */}
       <section className="py-20 bg-slate-50 text-slate-900">
@@ -155,9 +165,9 @@ export default function ServiceDetailPage({
                 <h2 className="text-2xl font-bold text-slate-900 mb-4">
                   What We Do & Where Waste Occurs
                 </h2>
-                <p className="text-slate-600 leading-relaxed text-base">
+                <div className="text-slate-600 leading-relaxed text-base space-y-3 whitespace-pre-line">
                   {service.body_md}
-                </p>
+                </div>
               </div>
 
               {/* Second Law Thermodynamic Physics Card */}

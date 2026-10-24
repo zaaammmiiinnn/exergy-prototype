@@ -35,6 +35,7 @@ function AssessmentContent() {
 
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [servicesList, setServicesList] = useState(servicesSeed);
   const [formData, setFormData] = useState<AssessmentFormData>({
     name: "",
     email: "",
@@ -49,6 +50,17 @@ function AssessmentContent() {
     timeline: "this_quarter",
     consent: false,
   });
+
+  useEffect(() => {
+    fetch("/api/services")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setServicesList(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Restore draft from sessionStorage safely
   useEffect(() => {
@@ -370,7 +382,7 @@ function AssessmentContent() {
                     Optimization Streams (Select all that apply) <span className="text-teal-600">*</span>
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {servicesSeed.map((s) => {
+                    {servicesList.map((s) => {
                       const selected = formData.services.includes(s.slug);
                       return (
                         <button

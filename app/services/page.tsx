@@ -1,18 +1,23 @@
 import React from "react";
 import Link from "next/link";
-import { servicesSeed } from "@/content/seed/services";
+import { getLiveServices } from "@/lib/services/service";
 import { ServiceCard } from "@/components/site/service-card";
 import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
 import { ServicesVideoShowcase } from "@/components/site/services-video-showcase";
 import { ArrowRight, Layers, Film, Sparkles } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Services | Exergy Solutions Dubai",
   description: "Consulting solutions across every energy and water flow. From a single utility to a fully integrated plant — we optimize capex and opex.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const allServices = await getLiveServices();
+  const services = allServices.filter((s) => s.is_published !== false);
+
   return (
     <div className="flex flex-col">
       {/* Hero */}
@@ -66,7 +71,7 @@ export default function ServicesPage() {
               Complete Service Portfolio
             </span>
             <h2 className="text-3xl font-bold text-slate-900">
-              Our 6 Core Engineering Solutions
+              Our {services.length} Engineering Solutions
             </h2>
             <p className="text-sm text-slate-600">
               Each service is engineered with guaranteed performance metrics and turnkey implementation.
@@ -74,8 +79,8 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {servicesSeed.map((service, index) => (
-              <ServiceCard key={service.id} service={service} index={index} />
+            {services.map((service, index) => (
+              <ServiceCard key={service.id || service.slug} service={service} index={index} />
             ))}
           </div>
         </div>

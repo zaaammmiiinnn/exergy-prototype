@@ -1,7 +1,25 @@
 import React from "react";
 import Link from "next/link";
 import { ServiceSeed } from "@/content/seed/services";
-import { ArrowRight, Check, Snowflake, Flame, Wind, Droplets, Recycle, Network } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Snowflake,
+  Flame,
+  Wind,
+  Droplets,
+  Recycle,
+  Network,
+  Zap,
+  Gauge,
+  Sun,
+  Layers,
+  Factory,
+  Cpu,
+  ShieldCheck,
+  Box,
+  Activity,
+} from "lucide-react";
 import { MotionDiv } from "./motion";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -11,6 +29,15 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Droplets,
   Recycle,
   Network,
+  Zap,
+  Gauge,
+  Sun,
+  Layers,
+  Factory,
+  Cpu,
+  ShieldCheck,
+  Box,
+  Activity,
 };
 
 export function ServiceCard({
