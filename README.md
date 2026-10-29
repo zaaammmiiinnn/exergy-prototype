@@ -1,6 +1,6 @@
 # Exergy Solutions — Industrial Energy Efficiency Platform
 
-[![Live Production](https://img.shields.io/badge/Production-Live-30a66a?style=flat&logo=cloudflare)](https://exergy-solutions.neuralwaves.workers.dev)
+[![Live Production](https://img.shields.io/badge/Production-Live-30a66a?style=flat&logo=cloudflare)](https://exergy-solutions.com)
 [![Next.js 14](https://img.shields.io/badge/Next.js-14.2.35-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![Cloudflare Workers](https://img.shields.io/badge/Deployed%20on-Cloudflare%20Workers-f38020?style=flat&logo=cloudflare)](https://workers.cloudflare.com/)
 [![Supabase](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ecf8e?style=flat&logo=supabase)](https://supabase.com/)
@@ -15,11 +15,13 @@ Deployed natively to **Cloudflare Workers** via `@opennextjs/cloudflare`.
 
 ## 🌐 Live Deployments & URLs
 
-- **Production URL**: [https://exergy-solutions.neuralwaves.workers.dev](https://exergy-solutions.neuralwaves.workers.dev)
-- **Admin Console**: [https://exergy-solutions.neuralwaves.workers.dev/admin](https://exergy-solutions.neuralwaves.workers.dev/admin)
-- **Assessment Wizard**: [https://exergy-solutions.neuralwaves.workers.dev/assessment](https://exergy-solutions.neuralwaves.workers.dev/assessment)
-- **Client Portal**: [https://exergy-solutions.neuralwaves.workers.dev/portal](https://exergy-solutions.neuralwaves.workers.dev/portal)
-- **Health Check Endpoint**: [https://exergy-solutions.neuralwaves.workers.dev/healthz](https://exergy-solutions.neuralwaves.workers.dev/healthz)
+- **Primary Custom Domain**: [https://exergy-solutions.com](https://exergy-solutions.com)
+- **Alternative Domain**: [https://www.exergy-solutions.com](https://www.exergy-solutions.com)
+- **Admin Console**: [https://exergy-solutions.com/admin](https://exergy-solutions.com/admin)
+- **Assessment Wizard**: [https://exergy-solutions.com/assessment](https://exergy-solutions.com/assessment)
+- **Client Portal**: [https://exergy-solutions.com/portal](https://exergy-solutions.com/portal)
+- **Health Check Endpoint**: [https://exergy-solutions.com/healthz](https://exergy-solutions.com/healthz)
+- **Workers Fallback URL**: [https://exergy-solutions.neuralwaves.workers.dev](https://exergy-solutions.neuralwaves.workers.dev)
 
 ---
 

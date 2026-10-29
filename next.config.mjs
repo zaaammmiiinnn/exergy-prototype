@@ -36,6 +36,8 @@ const nextConfig = {
   experimental: {
     serverActions: {
       allowedOrigins: [
+        "exergy-solutions.com",
+        "www.exergy-solutions.com",
         "exergy-solutions.neuralwaves.workers.dev",
         "localhost:3000",
         "localhost:3001",

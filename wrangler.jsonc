@@ -9,8 +9,12 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "routes": [
+    { "pattern": "exergy-solutions.com/*", "zone_name": "exergy-solutions.com" },
+    { "pattern": "www.exergy-solutions.com/*", "zone_name": "exergy-solutions.com" }
+  ],
   "vars": {
-    "NEXT_PUBLIC_SITE_URL": "https://exergy-solutions.neuralwaves.workers.dev",
+    "NEXT_PUBLIC_SITE_URL": "https://exergy-solutions.com",
     "ADMIN_NOTIFY_EMAILS": "sarfraz@exergy-solutions.com,info@exergy-solutions.com",
     "NEXT_PUBLIC_SUPABASE_URL": "https://twwdvliikafbtvzsotks.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR3d2R2bGlpa2FmYnR2enNvdGtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzg3MjAsImV4cCI6MjEwNzkxNDcyMH0.A_ny6XoMPNVrsXB4ioxvWT35SyrKUePdHedOKJKvV6A"

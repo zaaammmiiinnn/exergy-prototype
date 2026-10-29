@@ -1,9 +1,16 @@
 # Project Progress & Status Tracker
 
-**Current Phase:** Live Supabase Database Connected & Production Deployed (`https://exergy-solutions.neuralwaves.workers.dev`)  
-**Last Updated:** 2026-10-19
+**Current Phase:** Live Custom Domain Active & Production Deployed (`https://exergy-solutions.com`)  
+**Last Updated:** 2026-10-29
 
 ---
+
+- **Phase 13 (Custom Domain Cutover & Live Cloudflare Routing)**:
+  - **DNS & Nameservers Verification**: Confirmed active Cloudflare nameservers (`owen.ns.cloudflare.com`, `ines.ns.cloudflare.com`) resolving `exergy-solutions.com` and `www.exergy-solutions.com`.
+  - **Cloudflare Routing Integration**: Configured zone-based routing in `wrangler.jsonc` (`exergy-solutions.com/*`, `www.exergy-solutions.com/*`) targeting the primary zone `exergy-solutions.com` on account `1686ed1f985574ea81e0087358500e6c`.
+  - **CSRF & Server Actions Security**: Added `exergy-solutions.com` and `www.exergy-solutions.com` to `experimental.serverActions.allowedOrigins` in `next.config.mjs` ensuring forms, lead assessment wizards, and admin portal actions execute without cross-origin rejection.
+  - **Environment & Email URL Alignment**: Updated `NEXT_PUBLIC_SITE_URL` to `https://exergy-solutions.com` in `wrangler.jsonc` and `.env.local`. Updated admin notification links in `lib/email/resend.ts` and documentation in `README.md`.
+  - **Verification & Deployment**: Rebuilt with OpenNext (`npm run cf-build`) and deployed live via Wrangler (`npm run cf-deploy`) to Version ID `84be95ab-4537-4047-a058-93c208a08e5b`. Verified live HTTP/2 200 responses with OpenNext headers on `https://exergy-solutions.com`, `https://www.exergy-solutions.com`, and `https://exergy-solutions.com/healthz`.
 
 - **Phase 12 (Employee Profile Page & Supabase Database Synchronization)**:
   - **Sidebar Profile Option**: Added a dedicated "Employee Profile" navigation button (`/admin/profile`) directly in the user profile block down where the email is displayed in `components/admin/sidebar.tsx`, along with an interactive user badge link with avatar initials, role indicator, and quick profile trigger. Also added "Profile" to the navigation menu.
