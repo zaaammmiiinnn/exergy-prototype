@@ -144,24 +144,14 @@ export async function adminLoginAction(
       requiresPasswordChange = true;
     }
 
-    // Check B: Normal hashed or migrated password match
+    // Check B: Normal stored password match (supports plain text or hash without modifying database)
     const storedNormal = (adminUser.password_hash || adminUser.password || "").trim();
     if (!isValidPassword && storedNormal) {
       if (storedNormal.includes(":")) {
         isValidPassword = await verifyPasswordWebCrypto(cleanPassword, storedNormal);
       } else {
-        // Upgrade legacy plain-text password to PBKDF2 hash on successful login
         if (cleanPassword === storedNormal) {
           isValidPassword = true;
-          try {
-            const upgradedHash = await hashPasswordWebCrypto(cleanPassword);
-            await supabase
-              .from("admin_users")
-              .update({ password_hash: upgradedHash })
-              .eq("id", adminUser.id);
-          } catch (upgradeErr) {
-            console.warn("[PASSWORD HASH UPGRADE ERROR]", upgradeErr);
-          }
         }
       }
     }
@@ -287,25 +277,27 @@ export async function changeAdminPasswordAction(
 
     // Verify current password if user is not in forced password change mode
     if (!session.mustChangePassword && currentPassword) {
-      const stored = targetUser?.password_hash || "";
+      const stored = (targetUser?.password_hash || "").trim();
       if (stored.includes(":")) {
         const isValid = await verifyPasswordWebCrypto(currentPassword, stored);
         if (!isValid) {
           return { success: false, error: "Current password is incorrect." };
         }
+      } else if (stored) {
+        if (currentPassword.trim() !== stored) {
+          return { success: false, error: "Current password is incorrect." };
+        }
       }
     }
 
-    // Hash the new password securely using PBKDF2
-    const hashedPassword = await hashPasswordWebCrypto(plainPassword);
+    // Store readable plain password directly as requested
+    const savedPassword = plainPassword.trim();
     const nowIso = new Date().toISOString();
 
     const { error: errA } = await supabase
       .from("admin_users")
       .update({
-        password_hash: hashedPassword,
-        temp_password: null,
-        must_change_password: false,
+        password_hash: savedPassword,
         updated_at: nowIso,
       })
       .ilike("email", session.email);

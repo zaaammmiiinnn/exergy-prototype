@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     // If not in forced temporary password mode, verify current password
     if (!session.mustChangePassword && currentPassword) {
-      const stored = targetUser?.password_hash || "";
+      const stored = (targetUser?.password_hash || "").trim();
       if (stored.includes(":")) {
         const isValid = await verifyPasswordWebCrypto(currentPassword, stored);
         if (!isValid) {
@@ -70,19 +70,24 @@ export async function POST(request: Request) {
             { status: 400 }
           );
         }
+      } else if (stored) {
+        if (currentPassword.trim() !== stored) {
+          return NextResponse.json(
+            { success: false, error: "Current password verification failed." },
+            { status: 400 }
+          );
+        }
       }
     }
 
-    // Cryptographically hash the new password using PBKDF2
-    const hashedPassword = await hashPasswordWebCrypto(plainPassword);
+    // Store readable plain password directly as requested
+    const savedPassword = plainPassword.trim();
     const nowIso = new Date().toISOString();
 
     const { error: updateError } = await supabase
       .from("admin_users")
       .update({
-        password_hash: hashedPassword,
-        temp_password: null,
-        must_change_password: false,
+        password_hash: savedPassword,
         updated_at: nowIso,
       })
       .ilike("email", emailToUpdate);
