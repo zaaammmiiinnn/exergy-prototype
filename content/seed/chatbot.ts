@@ -131,7 +131,7 @@ export const chatQABankSeed: QABankItem[] = [
   {
     id: "qa-013",
     question: "What is your email or phone?",
-    answer: "You can reach our engineering team directly at sarfraz@exergy-solutions.com or info@exergy-solutions.com, or book an assessment online.",
+    answer: "You can reach our engineering team directly at sarfraz@exergy-solutions.com or info@support.exergy-solutions.com, or book an assessment online.",
     keywords: ["email", "phone", "contact", "call", "reach"],
     category: "contact",
     source_page: "Contact"

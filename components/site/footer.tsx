@@ -191,8 +191,8 @@ export function Footer() {
                   <a href="mailto:sarfraz@exergy-solutions.com" className="hover:text-white transition-colors block text-[#0c758d]">
                     sarfraz@exergy-solutions.com
                   </a>
-                  <a href="mailto:info@exergy-solutions.com" className="hover:text-white transition-colors block">
-                    info@exergy-solutions.com
+                  <a href="mailto:info@support.exergy-solutions.com" className="hover:text-white transition-colors block">
+                    info@support.exergy-solutions.com
                   </a>
                 </div>
               </div>

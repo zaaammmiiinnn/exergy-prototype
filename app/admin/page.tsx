@@ -74,7 +74,7 @@ const MOCK_LEADS: MockLead[] = [
   {
     id: "EX-2026-1054",
     name: "Exergy Operations Support",
-    email: "info@exergy-solutions.com",
+    email: "info@support.exergy-solutions.com",
     company: "Exergy Solutions Operations",
     sector: "cooling",
     score: 82,
@@ -555,7 +555,7 @@ export default function AdminDashboardPage() {
               <button
                 onClick={() =>
                   alert(
-                    "CSV Export dispatched for administrative record: sarfraz@exergy-solutions.com & info@exergy-solutions.com"
+                    "CSV Export dispatched for administrative record: sarfraz@exergy-solutions.com & info@support.exergy-solutions.com"
                   )
                 }
                 className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-2xs"

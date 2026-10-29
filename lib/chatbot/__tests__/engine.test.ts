@@ -33,7 +33,7 @@ describe("Deterministic Chatbot Engine", () => {
     const r6 = handleChatMessage(state, "6");
     assert.strictEqual(r6.nextState.currentNode, "handoff");
     assert.ok(r6.reply.includes("sarfraz@exergy-solutions.com"));
-    assert.ok(r6.reply.includes("info@exergy-solutions.com"));
+    assert.ok(r6.reply.includes("info@support.exergy-solutions.com"));
   });
 
   test("2. Global shortcuts (menu, 0, start over) reset to main menu", () => {
@@ -62,7 +62,7 @@ describe("Deterministic Chatbot Engine", () => {
       const res = handleChatMessage(state, kw);
       assert.strictEqual(res.nextState.currentNode, "handoff");
       assert.ok(res.reply.includes("sarfraz@exergy-solutions.com"));
-      assert.ok(res.reply.includes("info@exergy-solutions.com"));
+      assert.ok(res.reply.includes("info@support.exergy-solutions.com"));
     }
   });
 

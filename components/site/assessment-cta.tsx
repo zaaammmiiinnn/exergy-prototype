@@ -196,8 +196,8 @@ export function AssessmentCTA() {
                   sarfraz@exergy-solutions.com
                 </a>
                 <span className="hidden sm:inline text-slate-300">|</span>
-                <a href="mailto:info@exergy-solutions.com" className="text-[#0c758d] hover:underline font-medium">
-                  info@exergy-solutions.com
+                <a href="mailto:info@support.exergy-solutions.com" className="text-[#0c758d] hover:underline font-medium">
+                  info@support.exergy-solutions.com
                 </a>
               </div>
             </div>

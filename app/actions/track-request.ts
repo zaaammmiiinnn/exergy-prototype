@@ -73,7 +73,7 @@ const DEMO_LEADS: Record<string, Partial<TrackedRequestResult>> = {
   "EX-2026-1054": {
     name: "Exergy Support & Ops",
     company: "Exergy Solutions Facilities Operations",
-    email: "info@exergy-solutions.com",
+    email: "info@support.exergy-solutions.com",
     sector: "cooling",
     facilityType: "Regional GCC Data Center Facility",
     services: ["Cooling Systems", "Water & Effluent Reduction"],

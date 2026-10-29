@@ -82,8 +82,8 @@ export default function ContactPage() {
                     <a href="mailto:sarfraz@exergy-solutions.com" className="text-teal-700 hover:text-teal-800 transition-colors block text-sm font-medium">
                       sarfraz@exergy-solutions.com
                     </a>
-                    <a href="mailto:info@exergy-solutions.com" className="text-slate-600 hover:text-teal-800 transition-colors block text-xs">
-                      info@exergy-solutions.com
+                    <a href="mailto:info@support.exergy-solutions.com" className="text-slate-600 hover:text-teal-800 transition-colors block text-xs">
+                      info@support.exergy-solutions.com
                     </a>
                   </div>
                 </div>

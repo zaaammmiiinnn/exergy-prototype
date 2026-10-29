@@ -87,7 +87,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     parent: "main",
     position: 6,
     label: "Talk to a Human",
-    text: "Our engineering operations team is available at sarfraz@exergy-solutions.com and info@exergy-solutions.com.\n\nTo have an engineer follow up directly with your facility, what is your full name?",
+    text: "Our engineering operations team is available at sarfraz@exergy-solutions.com and info@support.exergy-solutions.com.\n\nTo have an engineer follow up directly with your facility, what is your full name?",
     keywords: ["human", "agent", "person", "representative", "call", "engineer", "help", "talk", "handoff"],
     action: "handoff",
   },
@@ -206,7 +206,7 @@ export function handleChatMessage(
     };
 
     return {
-      reply: `Thank you, ${leadPayload.name}! Your request has been logged and dispatched to our engineering team in Dubai.\n\nA senior specialist will review your requirements and follow up at ${leadPayload.email} within one business day.\n\nOur operations desk can also be contacted directly at sarfraz@exergy-solutions.com and info@exergy-solutions.com.`,
+      reply: `Thank you, ${leadPayload.name}! Your request has been logged and dispatched to our engineering team in Dubai.\n\nA senior specialist will review your requirements and follow up at ${leadPayload.email} within one business day.\n\nOur operations desk can also be contacted directly at sarfraz@exergy-solutions.com and info@support.exergy-solutions.com.`,
       quickReplies: [
         { label: "1. Services Overview", action: "services" },
         { label: "3. Full Assessment", action: "assessment" },

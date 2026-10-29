@@ -110,8 +110,16 @@ const KNOWN_CUSTOMER_ACCOUNTS: Record<string, CustomerSession> = {
     sector: "processing",
     authenticatedAt: new Date().toISOString(),
   },
+  "info@support.exergy-solutions.com": {
+    email: "info@support.exergy-solutions.com",
+    name: "Operations Lead",
+    company: "Exergy Solutions Operations",
+    phone: "+971 50 123 4567",
+    sector: "cooling",
+    authenticatedAt: new Date().toISOString(),
+  },
   "info@exergy-solutions.com": {
-    email: "info@exergy-solutions.com",
+    email: "info@support.exergy-solutions.com",
     name: "Operations Lead",
     company: "Exergy Solutions Operations",
     phone: "+971 50 123 4567",

@@ -151,7 +151,7 @@ export async function updateLeadStatusAction(
           source: "assessment",
           status: newStatus,
           full_name: fallbackLeadData?.name || "Assessment Lead",
-          email: fallbackLeadData?.email || "info@exergy-solutions.com",
+          email: fallbackLeadData?.email || "info@support.exergy-solutions.com",
           phone: fallbackLeadData?.phone || null,
           company: fallbackLeadData?.company || "Exergy Industrial Client",
           sector: fallbackLeadData?.sector || "processing",

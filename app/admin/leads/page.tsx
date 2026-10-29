@@ -50,7 +50,7 @@ const INITIAL_FALLBACK_LEADS: AdminLeadItem[] = [
   {
     id: "EX-2026-1054",
     name: "Exergy Operations Support",
-    email: "info@exergy-solutions.com",
+    email: "info@support.exergy-solutions.com",
     company: "Exergy Solutions Operations",
     sector: "Cooling & Power",
     score: 82,
