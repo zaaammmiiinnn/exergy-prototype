@@ -43,7 +43,7 @@ export const chatQABankSeed: QABankItem[] = [
   {
     id: "qa-005",
     question: "What services do you offer?",
-    answer: "We provide six core engineering solutions: Cooling optimization, Heating & steam, Drying processes, Water quality, Waste-heat recovery, and Process integration.",
+    answer: "We provide nine core engineering solutions: Cooling optimization, Heating & steam, Drying processes, Water quality, Waste-heat recovery, Process integration, Water & Desalination Consultancy, Water Treatment Systems Design & Installation, and Municipal Wastewater Treatment & Reuse.",
     keywords: ["services", "offer", "solutions", "scope", "offerings"],
     category: "services",
     source_page: "Services"
@@ -71,6 +71,30 @@ export const chatQABankSeed: QABankItem[] = [
     keywords: ["water", "quality", "treatment", "desalination", "effluent", "ro"],
     category: "services",
     source_page: "Services / Water"
+  },
+  {
+    id: "qa-015",
+    question: "What is your water, wastewater and desalination consultancy?",
+    answer: "We deliver Front-End Engineering Design (FEED), hydraulic network modeling, and thermodynamic optimization for industrial effluent, municipal treatment, and SWRO desalination plants.",
+    keywords: ["desalination", "consultancy", "swro", "erd", "feed", "hydraulic"],
+    category: "services",
+    source_page: "Services / Desalination Consultancy"
+  },
+  {
+    id: "qa-016",
+    question: "What does water treatment systems design and installation include?",
+    answer: "Turnkey modular skid fabrication, precision site installation, and predictive maintenance for industrial process water, ultrafiltration, and high-purity treatment trains.",
+    keywords: ["skid", "installation", "maintenance", "filtration", "ultrafiltration", "cedi"],
+    category: "services",
+    source_page: "Services / Water Treatment Systems"
+  },
+  {
+    id: "qa-017",
+    question: "What is municipal wastewater treatment and reuse?",
+    answer: "Advanced biological nutrient removal (BNR), membrane bioreactors (MBR), and resource recovery converting wastewater into high-grade reusable TSE and on-site biogas energy.",
+    keywords: ["municipal", "wastewater", "tse", "mbr", "mbbr", "reuse", "biogas"],
+    category: "services",
+    source_page: "Services / Municipal Wastewater"
   },
   {
     id: "qa-009",

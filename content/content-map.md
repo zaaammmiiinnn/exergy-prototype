@@ -69,7 +69,7 @@ Generated from `content/crawl/exergy_crawl.json` extracted on 2026-10-16.
 | Title | `Engineering Services \| Exergy Solutions` | `NEW – APPROVAL` |
 | H1 / H2 | **H2:** "Consulting solutions across every energy and water flow" | Crawl |
 | Subhead | **P-12:** "From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume." | Crawl |
-| Service Items | 1. **Cooling optimization** (`/services/cooling`)<br>2. **Heating & steam** (`/services/heating`)<br>3. **Drying processes** (`/services/drying`)<br>4. **Water quality** (`/services/water`)<br>5. **Waste-heat recovery** (`/services/waste-heat`)<br>6. **Process integration** (`/services/process`) | Crawl |
+| Service Items | 1. **Cooling optimization** (`/services/cooling`)<br>2. **Heating & steam** (`/services/heating`)<br>3. **Drying processes** (`/services/drying`)<br>4. **Water quality** (`/services/water`)<br>5. **Waste-heat recovery** (`/services/waste-heat`)<br>6. **Process integration** (`/services/process`)<br>7. **Engineering Design and Consultancy Services for Water, Wastewater and Desalination Systems** (`/services/water-wastewater-desalination-consultancy`)<br>8. **Water Treatment Systems Design, Installation and Maintenance** (`/services/water-treatment-systems-design-installation`)<br>9. **Municipal Wastewater Treatment, Reuse and Resource Recovery Systems** (`/services/municipal-wastewater-treatment-reuse`) | Crawl / Client Addition |
 | CTAs | **CTA-06:** "Request assessment" (`/assessment`) | Crawl |
 | Images | **IMG-03:** [Control Room](https://images.hostinger.com/e5c328ee-2778-4da7-ba8a-5e933f55fcfa.png) — *Energy optimization control room dashboards* | Crawl |
 
@@ -112,6 +112,24 @@ Generated from `content/crawl/exergy_crawl.json` extracted on 2026-10-16.
 - **Summary (P-18):** "Whole-plant pinch and exergy integration unifying capex and opex decisions across energy and water." (Crawl)
 - **Target Systems:** Pinch analysis, utility network balancing, multi-effect evaporation.
 - **CTA:** "Request assessment" (`/assessment?service=process`)
+
+### Page 4g: Engineering Design & Consultancy for Water, Wastewater and Desalination (`/services/water-wastewater-desalination-consultancy`)
+- **H1:** "Engineering Design and Consultancy Services for Water, Wastewater and Desalination Systems" (`CLIENT ADDITION`)
+- **Summary (P-34):** "Front-end engineering design (FEED), hydraulic network modeling, and thermodynamic optimization for industrial effluent, municipal treatment, and SWRO desalination plants."
+- **Target Systems:** SWRO desalination, isobaric PX recovery, high-recovery membrane trains, hydraulic pumping networks.
+- **CTA:** "Request assessment" (`/assessment?service=water-wastewater-desalination-consultancy`)
+
+### Page 4h: Water Treatment Systems Design, Installation and Maintenance (`/services/water-treatment-systems-design-installation`)
+- **H1:** "Water Treatment Systems Design, Installation and Maintenance" (`CLIENT ADDITION`)
+- **Summary (P-35):** "Turnkey design, modular skid fabrication, precision site installation, and predictive maintenance for industrial process water and high-purity treatment trains."
+- **Target Systems:** Ultrafiltration (UF), brackish RO (BWRO), continuous electrodeionization (CEDI), modular skid systems.
+- **CTA:** "Request assessment" (`/assessment?service=water-treatment-systems-design-installation`)
+
+### Page 4i: Municipal Wastewater Treatment, Reuse and Resource Recovery Systems (`/services/municipal-wastewater-treatment-reuse`)
+- **H1:** "Municipal Wastewater Treatment, Reuse and Resource Recovery Systems" (`CLIENT ADDITION`)
+- **Summary (P-36):** "Advanced biological nutrient removal (BNR), membrane bioreactors (MBR), and resource recovery converting wastewater into high-grade reusable TSE and biogas energy."
+- **Target Systems:** Membrane Bioreactors (MBR), MBBR, anaerobic digestion, biogas power generation, TSE reclamation.
+- **CTA:** "Request assessment" (`/assessment?service=municipal-wastewater-treatment-reuse`)
 
 ---
 

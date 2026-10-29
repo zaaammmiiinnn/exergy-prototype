@@ -16,6 +16,7 @@ import {
   Sparkles,
   ShieldCheck,
   CheckCircle2,
+  Layers,
 } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -25,6 +26,9 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   water: <Droplets className="w-4 h-4" />,
   "waste-heat": <Recycle className="w-4 h-4" />,
   process: <Network className="w-4 h-4" />,
+  "water-wastewater-desalination-consultancy": <Layers className="w-4 h-4" />,
+  "water-treatment-systems-design-installation": <Droplets className="w-4 h-4" />,
+  "municipal-wastewater-treatment-reuse": <Recycle className="w-4 h-4" />,
 };
 
 export function ServicesVideoShowcase() {

@@ -5,6 +5,21 @@
 
 ---
 
+- **Phase 14 (3 New Water, Wastewater & Desalination Services Integration)**:
+  - **Client Services Added**:
+    1. `Engineering Design and Consultancy Services for Water, Wastewater and Desalination Systems` (`/services/water-wastewater-desalination-consultancy`)
+    2. `Water Treatment Systems Design, Installation and Maintenance` (`/services/water-treatment-systems-design-installation`)
+    3. `Municipal Wastewater Treatment, Reuse and Resource Recovery Systems` (`/services/municipal-wastewater-treatment-reuse`)
+  - **Full Engineering Depth**: Configured complete Second-Law thermodynamic principles, specific energy consumption benchmarks (SEC KPIs), equipment scopes, ROI payback periods, and video chapter breakdowns for all 3 disciplines in `content/seed/services.ts`.
+  - **Live Supabase Synchronization**: Upserted all 3 new services directly into the Supabase PostgreSQL `services` table using service-role credentials. Generated migration script `supabase/migrations/20261029_add_water_services.sql`.
+  - **Cross-Site Dynamic Reflection**:
+    - Expanded `/services` portfolio to 9 solutions with dynamic count and responsive grid cards.
+    - Updated `components/site/services-video-showcase.tsx` category tabs and icon mappings (`Layers`, `Droplets`, `Recycle`).
+    - Pre-rendered all 9 dedicated service detail pages (`/services/[slug]`) with dynamic static parameters.
+    - Updated deterministic chatbot engine Q&A bank (`content/seed/chatbot.ts`) with specific answers for each new water service.
+    - Integrated seamlessly with the 4-step assessment wizard (`/assessment`) and footer links.
+  - **Verification & Deployment**: Zero TypeScript errors (`npx tsc --noEmit`), passed test suite (18/18 tests), built via OpenNext (`npm run cf-build`), and deployed live to Cloudflare Workers (`npm run cf-deploy`) to Version ID `7c395e5f-c0ff-4e18-9c71-6b9d127610cd`. Verified live HTTP/2 200 responses on all routes at `https://exergy-solutions.com`.
+
 - **Phase 13 (Custom Domain Cutover & Live Cloudflare Routing)**:
   - **DNS & Nameservers Verification**: Confirmed active Cloudflare nameservers (`owen.ns.cloudflare.com`, `ines.ns.cloudflare.com`) resolving `exergy-solutions.com` and `www.exergy-solutions.com`.
   - **Cloudflare Routing Integration**: Configured zone-based routing in `wrangler.jsonc` (`exergy-solutions.com/*`, `www.exergy-solutions.com/*`) targeting the primary zone `exergy-solutions.com` on account `1686ed1f985574ea81e0087358500e6c`.

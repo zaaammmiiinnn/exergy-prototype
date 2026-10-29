@@ -330,5 +330,155 @@ export const servicesSeed: ServiceSeed[] = [
       "Continuous supervisory exergy M&V telemetry across all balance-of-plant interfaces"
     ],
     roi_payback: "12 to 18 months, with capex savings on future equipment often paying for the entire implementation before installation."
+  },
+  {
+    id: "srv-007",
+    slug: "water-wastewater-desalination-consultancy",
+    title: "Engineering Design and Consultancy Services for Water, Wastewater and Desalination Systems",
+    summary: "Front-end engineering design (FEED), hydraulic network modeling, and thermodynamic optimization for industrial effluent, municipal treatment, and SWRO desalination plants.",
+    body_md: "Turnkey engineering design, hydraulic modeling, and thermodynamic consultancy for high-capacity seawater reverse osmosis (SWRO), industrial effluent plants, and advanced water treatment infrastructure. We bridge process chemistry and Second-Law thermodynamic optimization to eliminate parasitic pumping loads, optimize membrane flux, and right-size treatment trains prior to capital deployment. From feasibility studies and tender specifications to commissioning and M&V verification, our engineering consultancy ensures lifecycle efficiency and regulatory compliance.",
+    highlights: [
+      "Front-End Engineering Design (FEED) & hydraulic network modeling",
+      "SWRO isobaric energy recovery device (ERD) optimization",
+      "Membrane fouling mitigation & chemical dose balancing",
+      "Capex right-sizing and lifecycle opex benchmarking"
+    ],
+    hero_image: "https://images.hostinger.com/f5fa9afd-9b48-4bce-8326-a997fad4bd0c.png",
+    icon: "Layers",
+    position: 7,
+    is_published: true,
+    locale: "en",
+    seo_title: "Water, Wastewater & Desalination Design & Consultancy | Exergy Solutions",
+    seo_description: "Comprehensive engineering design and thermodynamic consultancy for water, wastewater, and desalination systems in the UAE and GCC.",
+    video_url: "/videos/water.mp4",
+    video_poster: "https://images.hostinger.com/f5fa9afd-9b48-4bce-8326-a997fad4bd0c.png",
+    video_title: "Desalination & Hydraulic Exergy Consulting",
+    video_duration: "3:15",
+    video_chapters: [
+      {
+        time: "0:00",
+        title: "Baseline Osmotic Pressure & Energy Auditing",
+        description: "Evaluating membrane feed pressures, recovery ratios, and specific energy consumption across high-pressure passes."
+      },
+      {
+        time: "1:15",
+        title: "Isobaric Hydraulic Recovery Integration",
+        description: "Designing ceramic pressure exchange arrays to recapture up to 98% of brine hydraulic work potential."
+      },
+      {
+        time: "2:20",
+        title: "Commissioning & M&V Performance Verification",
+        description: "Calibrating real-time flow meters and conductivity sensors to guarantee contractual specific power thresholds."
+      }
+    ],
+    thermodynamic_principle: "Separation thermodynamics dictates that high-pressure desalination requires overcoming osmotic pressure differentials (ΔΠ). By coupling computational fluid dynamics (CFD) with thermodynamic exergy audits, we minimize irreversible friction losses across high-pressure piping manifolds, isobaric pressure exchangers, and variable-frequency feed pumping networks, achieving near-theoretical minimum specific separation energy.",
+    sec_kpi: "Cuts total SWRO facility specific energy consumption to < 2.75 kWh/m³ and reduces booster pumping power by 14–22%.",
+    equipment_scope: [
+      "High-pressure multi-stage centrifugal pumps with variable-speed drives",
+      "Isobaric ceramic rotary energy recovery devices (PX technology)",
+      "Automated antiscalant and chemical metering dosing skids",
+      "Supervisory SCADA telemetry and thermodynamic mass-balance instrumentation"
+    ],
+    roi_payback: "12 to 18 months via avoided over-engineering capex and recurring electrical pumping savings."
+  },
+  {
+    id: "srv-008",
+    slug: "water-treatment-systems-design-installation",
+    title: "Water Treatment Systems Design, Installation and Maintenance",
+    summary: "Turnkey design, modular skid fabrication, precision site installation, and predictive maintenance for industrial process water and high-purity treatment trains.",
+    body_md: "End-to-end engineering, precision skid assembly, site installation, and lifecycle maintenance for industrial process water and high-purity treatment networks. Utilizing multi-media filtration, ultrafiltration (UF), nanofiltration (NF), double-pass reverse osmosis (RO), and continuous electrodeionization (CEDI), we construct durable water treatment infrastructure tailored to the harsh water matrices of the Gulf region. Our proactive maintenance protocols prevent membrane scaling, biofouling, and unnecessary downtime.",
+    highlights: [
+      "Turnkey modular skid fabrication & site installation",
+      "Ultrafiltration (UF) & brackish reverse osmosis (BWRO)",
+      "Continuous electrodeionization (CEDI) for boiler feedwater",
+      "Predictive maintenance, CIP cleaning & remote telemetry"
+    ],
+    hero_image: "https://images.hostinger.com/f5fa9afd-9b48-4bce-8326-a997fad4bd0c.png",
+    icon: "Droplets",
+    position: 8,
+    is_published: true,
+    locale: "en",
+    seo_title: "Water Treatment Systems Design & Installation | Exergy Solutions",
+    seo_description: "Turnkey design, modular fabrication, site installation, and predictive maintenance for industrial process water treatment systems.",
+    video_url: "/videos/water.mp4",
+    video_poster: "https://images.hostinger.com/f5fa9afd-9b48-4bce-8326-a997fad4bd0c.png",
+    video_title: "Industrial Water Treatment & Skid Engineering",
+    video_duration: "2:50",
+    video_chapters: [
+      {
+        time: "0:00",
+        title: "Raw Water Characterization & Skid Design",
+        description: "Analyzing silt density index (SDI), total dissolved solids (TDS), and scaling tendencies for customized treatment trains."
+      },
+      {
+        time: "1:05",
+        title: "Skid Assembly & Precision Field Installation",
+        description: "Integrating high-efficiency motors, pneumatic control valves, and hygienic piping manifolds."
+      },
+      {
+        time: "2:00",
+        title: "Preventative Maintenance & Telemetry Monitoring",
+        description: "Deploying predictive algorithms for chemical cleaning cycles and membrane differential pressure alerts."
+      }
+    ],
+    thermodynamic_principle: "Second-law efficiency in membrane filtration relies on maintaining optimal flux rates below critical transmembrane pressure (TMP). Operating above critical TMP leads to rapid concentration polarization, accelerated entropy generation, and premature scaling. Our systems utilize automated dynamic backwashing and chemical-in-place (CIP) regimens to preserve thermodynamic permeability and reduce pumping lift.",
+    sec_kpi: "Reduces process water production specific power to < 0.85 kWh/m³ while extending membrane operational lifespan by 35–50%.",
+    equipment_scope: [
+      "Custom skid-mounted units in 316L stainless and FRP construction",
+      "Automated hollow-fiber ultrafiltration and brackish RO membrane banks",
+      "Continuous electrodeionization (CEDI) polishing modules",
+      "Automated Clean-in-Place (CIP) neutralizing and sanitization stations"
+    ],
+    roi_payback: "14 to 20 months through eliminated third-party water hauling and extended asset life."
+  },
+  {
+    id: "srv-009",
+    slug: "municipal-wastewater-treatment-reuse",
+    title: "Municipal Wastewater Treatment, Reuse and Resource Recovery Systems",
+    summary: "Advanced biological nutrient removal (BNR), membrane bioreactors (MBR), and resource recovery converting wastewater into high-grade reusable TSE and biogas energy.",
+    body_md: "Next-generation municipal and decentralized wastewater treatment infrastructure engineered for high-recovery reuse, tertiary polishing, and valuable resource extraction. We transform wastewater facilities from energy sinks into regenerative utility hubs. Integrating membrane bioreactors (MBR), moving bed biofilm reactors (MBBR), anaerobic digestion for biogas recovery, and solar-sludge drying, we deliver TSE (treated sewage effluent) compliant with Dubai and GCC municipal irrigation and cooling tower make-up standards.",
+    highlights: [
+      "Advanced biological treatment (MBR & MBBR) with BNR",
+      "High-purity TSE reclamation for district cooling & irrigation",
+      "Biogas generation & anaerobic digester energy recovery",
+      "Zero-odor enclosed systems & sludge volume minimization"
+    ],
+    hero_image: "https://images.hostinger.com/2025f758-1013-44c6-b723-1117c9aa2810.png",
+    icon: "Recycle",
+    position: 9,
+    is_published: true,
+    locale: "en",
+    seo_title: "Municipal Wastewater Treatment & Reuse Systems | Exergy Solutions",
+    seo_description: "Turnkey municipal wastewater treatment, water reclamation, and resource recovery systems engineered for high-efficiency reuse across the GCC.",
+    video_url: "/videos/water.mp4",
+    video_poster: "https://images.hostinger.com/2025f758-1013-44c6-b723-1117c9aa2810.png",
+    video_title: "Municipal Wastewater & TSE Resource Recovery",
+    video_duration: "3:30",
+    video_chapters: [
+      {
+        time: "0:00",
+        title: "Influent Characterization & Biological Nutrient Removal",
+        description: "Designing anoxic and aerobic zones for total nitrogen and phosphorus removal."
+      },
+      {
+        time: "1:20",
+        title: "Membrane Bioreactor & Tertiary Polishing",
+        description: "Separating biomass via 0.04-micron submerged membranes to deliver crystal-clear TSE."
+      },
+      {
+        time: "2:30",
+        title: "Biogas Energy Co-Generation & Sludge Recovery",
+        description: "Harvesting methane from sludge digestion to power on-site aeration and pumping loads."
+      }
+    ],
+    thermodynamic_principle: "Biological wastewater treatment typically consumes 50–60% of total electrical energy in aeration blowers. By applying dissolved oxygen (DO) exergy control, variable-speed magnetic bearing turbo blowers, and extracting chemical exergy from carbonaceous sludge via mesophilic anaerobic digestion, the facility achieves a positive net-energy balance while recovering high-grade reusable water.",
+    sec_kpi: "Cuts aeration specific power consumption by 30–45% (< 0.35 kWh/m³ treated) while recovering 95%+ of influent as high-grade reusable TSE.",
+    equipment_scope: [
+      "High-efficiency fine-bubble diffused aeration grids and high-speed turbo blowers",
+      "Submerged hollow-fiber Membrane Bioreactor (MBR) cassette trains",
+      "Anaerobic digesters with combined heat and power (CHP) microturbines",
+      "Tertiary UV disinfection and ozonation oxidation reactors"
+    ],
+    roi_payback: "18 to 28 months through displaced municipal potable water tariffs, on-site biogas power, and bio-solid resale."
   }
 ];
