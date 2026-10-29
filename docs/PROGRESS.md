@@ -5,6 +5,18 @@
 
 ---
 
+- **Phase 15 (Plain-Text Password Preservation & Automatic Hash Upgrade Elimination)**:
+  - **Issue Resolved**: Identified that `adminLoginAction` in `app/actions/admin-auth.ts` contained an automatic "legacy password upgrade" routine that re-hashed any plain password using PBKDF2 WebCrypto and updated `admin_users.password_hash` in Supabase upon every successful administrator login, causing the long salt:hash string (`1fa6a283a3d7953e...`) to overwrite readable passwords.
+  - **Auto-Upgrade Removed**: Permanently removed the database update and hashing logic from `adminLoginAction`. Plain passwords are now verified directly as string comparisons without modifying `admin_users.password_hash`.
+  - **Change Password Logic Updated**: Updated `changeAdminPasswordAction` and `app/api/admin/change-password/route.ts` to store new plain passwords directly and removed references to nonexistent columns (`temp_password`, `must_change_password`) that previously caused `PGRST204` errors.
+  - **Database Passwords Restored**: Reset all user accounts in Supabase `admin_users` table to their readable plain passwords:
+    - `neuralwaves.official@gmail.com` -> `ExergyAdmin123!`
+    - `sarfraz@exergy-solutions.com` -> `ExergyFnd1`
+    - `info@support.exergy-solutions.com` -> `ExergyAdmin123!`
+    - `employee@exergy.com` -> `ExergyEmp1`
+    - `admin@exergy.solutions` -> `ExergyAdmin123!`
+  - **Deployment & Verification**: Tested login on the live production site `https://exergy-solutions.com/api/admin/login` and verified that after login, `admin_users.password_hash` remained `ExergyAdmin123!` in Supabase without being replaced by any hash. Built via OpenNext and deployed to Cloudflare Workers (Version ID `3c01255b-2086-41b5-81cc-af53ff4edb02`).
+
 - **Phase 14 (3 New Water, Wastewater & Desalination Services Integration)**:
   - **Client Services Added**:
     1. `Engineering Design and Consultancy Services for Water, Wastewater and Desalination Systems` (`/services/water-wastewater-desalination-consultancy`)
