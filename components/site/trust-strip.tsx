@@ -38,7 +38,7 @@ export function TrustStrip() {
             
             {/* Left Column: Heading and Story */}
             <div className="lg:col-span-6 space-y-6">
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#30a66a]">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0d7647]">
                 ABOUT US
               </div>
 

@@ -221,21 +221,21 @@ export function Footer() {
             © {currentYear} Exergy Solutions FZE · All rights reserved.
           </div>
 
-          <div className="flex items-center gap-6">
-            <Link href="/admin" className="text-teal-400 hover:text-teal-300 transition-colors flex items-center gap-1 font-semibold">
+          <div className="flex flex-wrap items-center gap-y-2 gap-x-6">
+            <Link href="/admin" className="py-2 text-teal-400 hover:text-teal-300 transition-colors flex items-center gap-1 font-semibold">
               <Lock className="w-3 h-3 text-teal-400" />
               <span>Portal</span>
             </Link>
             <span className="text-teal-800">|</span>
-            <Link href="/privacy" className="hover:text-[#0c758d] transition-colors">
+            <Link href="/privacy" className="py-2 hover:text-teal-300 transition-colors">
               Privacy Policy
             </Link>
             <span className="text-teal-800">|</span>
-            <Link href="/terms" className="hover:text-[#0c758d] transition-colors">
+            <Link href="/terms" className="py-2 hover:text-teal-300 transition-colors">
               Terms of Engagement
             </Link>
             <span className="text-teal-800">|</span>
-            <span className="text-slate-500">ISO 50001 & IPMVP Aligned</span>
+            <span className="text-slate-500 py-2">ISO 50001 & IPMVP Aligned</span>
           </div>
         </div>
 

@@ -276,10 +276,12 @@ export function AssessmentCTA() {
                 {step === 1 && (
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                      <label htmlFor="cta-name" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                         Full Name <span className="text-[#30a66a]">*</span>
                       </label>
                       <input
+                        id="cta-name"
+                        name="name"
                         type="text"
                         required
                         placeholder="e.g. Tariq Al-Mansoor"
@@ -290,10 +292,12 @@ export function AssessmentCTA() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                      <label htmlFor="cta-company" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                         Company / Facility Name <span className="text-[#30a66a]">*</span>
                       </label>
                       <input
+                        id="cta-company"
+                        name="company"
                         type="text"
                         required
                         placeholder="e.g. Gulf Kraft Paper Mills"
@@ -305,10 +309,13 @@ export function AssessmentCTA() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                        <label htmlFor="cta-sector" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                           Sector / Industry
                         </label>
                         <select
+                          id="cta-sector"
+                          name="sector"
+                          aria-label="Sector or Industry"
                           value={formData.sector}
                           onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
                           className="w-full px-4 py-2.5 bg-[#061821] border border-teal-900/60 focus:border-[#30a66a] text-xs text-white rounded-xl focus:outline-none transition-colors"
@@ -322,10 +329,12 @@ export function AssessmentCTA() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                        <label htmlFor="cta-country" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                           Country / Emirate
                         </label>
                         <input
+                          id="cta-country"
+                          name="country"
                           type="text"
                           value={formData.country}
                           onChange={(e) => setFormData({ ...formData, country: e.target.value })}
@@ -371,10 +380,12 @@ export function AssessmentCTA() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                       <div className="space-y-1.5">
-                        <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                        <label htmlFor="cta-scale" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                           Facility Capacity / Scale
                         </label>
                         <input
+                          id="cta-scale"
+                          name="facilityType"
                           type="text"
                           placeholder="e.g. 5,000 TR or 20 T/h steam"
                           value={formData.facilityType}
@@ -384,10 +395,13 @@ export function AssessmentCTA() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                        <label htmlFor="cta-timeline" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                           Target Implementation Timeline
                         </label>
                         <select
+                          id="cta-timeline"
+                          name="timeline"
+                          aria-label="Target Implementation Timeline"
                           value={formData.timeline}
                           onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
                           className="w-full px-4 py-2.5 bg-[#061821] border border-teal-900/60 focus:border-[#30a66a] text-xs text-white rounded-xl focus:outline-none transition-colors"
@@ -406,10 +420,12 @@ export function AssessmentCTA() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                        <label htmlFor="cta-email" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                           Work Email <span className="text-[#30a66a]">*</span>
                         </label>
                         <input
+                          id="cta-email"
+                          name="email"
                           type="email"
                           required
                           placeholder="name@company.com"
@@ -420,10 +436,12 @@ export function AssessmentCTA() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                        <label htmlFor="cta-phone" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                           Mobile Number
                         </label>
                         <input
+                          id="cta-phone"
+                          name="phone"
                           type="tel"
                           placeholder="+971 50 123 4567"
                           value={formData.phone}
@@ -434,10 +452,12 @@ export function AssessmentCTA() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block font-mono text-xs uppercase tracking-wider text-slate-300">
+                      <label htmlFor="cta-challenge" className="block font-mono text-xs uppercase tracking-wider text-slate-300">
                         Main Efficiency Challenge / Known Bottlenecks
                       </label>
                       <textarea
+                        id="cta-challenge"
+                        name="mainChallenge"
                         rows={3}
                         placeholder="e.g. High cooling tower blowdown losses, low delta-T syndrome across district cooling interfaces..."
                         value={formData.mainChallenge}
