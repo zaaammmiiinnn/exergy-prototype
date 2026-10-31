@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
+    google: "wSxLQ0M8nYmHOTLuTkjc1s6yqHb15xDMzwdseox4wp0",
   },
 };
 
@@ -113,6 +113,10 @@ export default function RootLayout({
       className={`scroll-smooth ${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
+        <meta
+          name="google-site-verification"
+          content="wSxLQ0M8nYmHOTLuTkjc1s6yqHb15xDMzwdseox4wp0"
+        />
         <JsonLd data={globalSchemas} />
       </head>
       <body className="min-h-screen bg-[hsl(190,30%,98%)] text-[hsl(200,40%,12%)] flex flex-col font-sans antialiased selection:bg-teal-100 selection:text-teal-900">

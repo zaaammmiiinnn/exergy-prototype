@@ -53,6 +53,9 @@ export function constructMetadata({
       creator: "@exergysolutions",
       images: [fullImageUrl],
     },
+    verification: {
+      google: "wSxLQ0M8nYmHOTLuTkjc1s6yqHb15xDMzwdseox4wp0",
+    },
     robots: noIndex
       ? {
           index: false,
