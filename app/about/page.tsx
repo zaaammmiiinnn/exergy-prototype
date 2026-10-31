@@ -24,15 +24,34 @@ import {
   Network,
 } from "lucide-react";
 
-export const metadata = {
-  title: "About Us | Exergy Solutions Dubai",
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
+export const metadata = constructMetadata({
+  title: "About Us | Exergy Solutions Dubai - Thermodynamic Engineering",
   description:
-    "To save the earth for future generations we have been pushing reduce, reuse and recycle. We are all about Reduce — engineering thermodynamic efficiency into every energy and water system.",
-};
+    "We engineer thermodynamic efficiency into energy- and water-intensive industrial systems. Learn about our Dubai-based engineering team, principles, and guaranteed turnkey results.",
+  path: "/about",
+});
 
 export default function AboutPage() {
+  const pageSchema = getWebPageSchema({
+    title: "About Us | Exergy Solutions Dubai - Thermodynamic Engineering",
+    description:
+      "We engineer thermodynamic efficiency into energy- and water-intensive industrial systems. Learn about our Dubai-based engineering team, principles, and guaranteed turnkey results.",
+    url: "/about",
+    type: "AboutPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "About Us", url: "/about" },
+  ]);
+
   return (
     <div className="flex flex-col bg-white">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       {/* 1. Hero Section */}
       <section className="bg-slate-50 text-slate-900 pt-16 pb-20 border-b border-slate-200 relative overflow-hidden">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10">

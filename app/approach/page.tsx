@@ -6,14 +6,34 @@ import { CTABand } from "@/components/site/cta-band";
 import { StatStrip } from "@/components/site/stat-strip";
 import { Check, ShieldCheck } from "lucide-react";
 
-export const metadata = {
-  title: "Our Approach | Exergy Analysis & Turnkey Delivery",
-  description: "Most audits count kilowatt-hours. We measure exergy — the useful work energy can actually do. That distinction lets us find savings conventional methods overlook.",
-};
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
+export const metadata = constructMetadata({
+  title: "Thermodynamic Approach & Methodology | Exergy Solutions Dubai",
+  description:
+    "Second-Law exergy analysis, pinch optimization, and guaranteed turnkey implementation. Discover how our 4-step thermodynamic methodology delivers 25-30% verified energy savings.",
+  path: "/approach",
+});
 
 export default function ApproachPage() {
+  const pageSchema = getWebPageSchema({
+    title: "Thermodynamic Approach & Methodology | Exergy Solutions Dubai",
+    description:
+      "Second-Law exergy analysis, pinch optimization, and guaranteed turnkey implementation. Discover how our 4-step thermodynamic methodology delivers 25-30% verified energy savings.",
+    url: "/approach",
+    type: "WebPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Approach & Methodology", url: "/approach" },
+  ]);
+
   return (
     <div className="flex flex-col">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       {/* Hero */}
       <section className="bg-slate-50 text-slate-900 pt-16 pb-20 border-b border-slate-200 relative">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">

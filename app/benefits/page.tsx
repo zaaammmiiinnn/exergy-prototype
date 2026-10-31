@@ -4,15 +4,34 @@ import { siteSettingsSeed } from "@/content/seed/settings";
 import { BenefitsSection } from "@/components/site/benefits-section";
 import { ArrowRight, ShieldCheck, CheckCircle2, ChevronRight, Activity, BarChart3, Lock, Zap } from "lucide-react";
 
-export const metadata = {
-  title: "Benefits & Performance Guarantee | Exergy Solutions Dubai",
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
+export const metadata = constructMetadata({
+  title: "Benefits & Contractual Guarantee | Exergy Solutions Dubai",
   description:
-    "Profitability, growth and excellence. Our turnkey solutions convert thermodynamic insight into results you can bank on.",
-};
+    "Explore the tangible ROI of thermodynamic optimization: 25-30% OPEX cuts, reduced CAPEX through right-sizing, freed capacity, and contractually guaranteed savings against baseline.",
+  path: "/benefits",
+});
 
 export default function BenefitsPage() {
+  const pageSchema = getWebPageSchema({
+    title: "Benefits & Performance Guarantee | Exergy Solutions Dubai",
+    description:
+      "Explore the tangible ROI of thermodynamic optimization: 25-30% OPEX cuts, reduced CAPEX through right-sizing, freed capacity, and contractually guaranteed savings.",
+    url: "/benefits",
+    type: "WebPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Benefits & Guarantee", url: "/benefits" },
+  ]);
+
   return (
     <div className="flex flex-col bg-[#0A1628] text-[#F1F5F9]">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       
       {/* ═══════════════════════════════════════════════════════════════
           1. HERO SECTION: Blueprint Aesthetic with Verbatim Crawl Copy

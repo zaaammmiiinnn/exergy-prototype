@@ -1,14 +1,34 @@
 import React from "react";
 import { siteSettingsSeed } from "@/content/seed/settings";
 
-export const metadata = {
-  title: "Terms of Service | Exergy Solutions",
-  description: "Terms and conditions governing the use of the Exergy Solutions website and assessment platform.",
-};
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
+export const metadata = constructMetadata({
+  title: "Terms of Engagement & Service | Exergy Solutions Dubai",
+  description:
+    "Commercial, advisory, and performance guarantee terms governing engineering evaluations, facility audits, and turnkey contracts with Exergy Solutions.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
+  const pageSchema = getWebPageSchema({
+    title: "Terms of Engagement & Service | Exergy Solutions Dubai",
+    description:
+      "Commercial, advisory, and performance guarantee terms governing engineering evaluations, facility audits, and turnkey contracts with Exergy Solutions.",
+    url: "/terms",
+    type: "WebPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Terms of Engagement", url: "/terms" },
+  ]);
+
   return (
     <div className="bg-slate-50 text-slate-800 py-16 sm:py-24">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       <div className="container max-w-4xl mx-auto px-4 sm:px-6 space-y-8">
         <div>
           <span className="text-teal-700 font-mono text-xs uppercase tracking-wider font-semibold">

@@ -7,19 +7,39 @@ import { CTABand } from "@/components/site/cta-band";
 import { ServicesVideoShowcase } from "@/components/site/services-video-showcase";
 import { ArrowRight, Layers, Film, Sparkles } from "lucide-react";
 
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Services | Exergy Solutions Dubai",
-  description: "Consulting solutions across every energy and water flow. From a single utility to a fully integrated plant — we optimize capex and opex.",
-};
+export const metadata = constructMetadata({
+  title: "Engineering Services | Industrial Energy & Water Optimization Dubai",
+  description:
+    "Comprehensive industrial energy and water optimization services: cooling, heating, industrial drying, waste heat recovery, pinch analysis, and wastewater reuse.",
+  path: "/services",
+});
 
 export default async function ServicesPage() {
   const allServices = await getLiveServices();
   const services = allServices.filter((s) => s.is_published !== false);
 
+  const pageSchema = getWebPageSchema({
+    title: "Engineering Services | Industrial Energy & Water Optimization",
+    description:
+      "Comprehensive industrial energy and water optimization services: cooling, heating, drying, waste heat recovery, pinch analysis, and wastewater reuse.",
+    url: "/services",
+    type: "CollectionPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Services", url: "/services" },
+  ]);
+
   return (
     <div className="flex flex-col">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       {/* Hero */}
       <section className="bg-slate-50 text-slate-900 pt-16 pb-20 border-b border-slate-200 relative">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">

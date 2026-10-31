@@ -6,14 +6,34 @@ import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
 import { ArrowRight, Layers, CheckCircle2 } from "lucide-react";
 
-export const metadata = {
-  title: "Applications | Where Exergy Solutions Delivers Savings",
-  description: "Energy- and water-intensive, made efficient. Wherever heat, cold, moisture or water quality drives your costs, exergy analysis reveals a leaner path.",
-};
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
+export const metadata = constructMetadata({
+  title: "Industrial Applications & Projects | Exergy Solutions Dubai",
+  description:
+    "Explore thermodynamic applications across industrial chillers, boilers, drying systems, and water treatment. Integrated energy-water optimization with guaranteed capex/opex reductions.",
+  path: "/applications",
+});
 
 export default function ApplicationsPage() {
+  const pageSchema = getWebPageSchema({
+    title: "Industrial Applications & Projects | Exergy Solutions Dubai",
+    description:
+      "Explore thermodynamic applications across industrial chillers, boilers, drying systems, and water treatment. Integrated energy-water optimization with guaranteed capex/opex reductions.",
+    url: "/applications",
+    type: "CollectionPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Applications & Projects", url: "/applications" },
+  ]);
+
   return (
     <div className="flex flex-col">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       {/* Hero */}
       <section className="bg-slate-50 text-slate-900 pt-16 pb-20 border-b border-slate-200 relative">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">

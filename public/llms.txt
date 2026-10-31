@@ -1,0 +1,33 @@
+# Exergy Solutions
+
+> Specialist thermodynamic energy and water optimization consultancy based in Dubai, UAE. Applying Second-Law thermodynamics and pinch analysis to slash CAPEX and OPEX for industrial operations with contractually guaranteed turnkey implementation.
+
+## Overview
+Exergy Solutions engineers efficiency into high-consumption industrial systems. Unlike traditional energy audits that count kilowatt-hours, Exergy Solutions analyzes thermodynamic exergy (the maximum theoretical useful work obtainable from an energy flow). This methodology exposes hidden irreversibilities across combined thermal and hydraulic networks.
+
+## Core Engineering Services
+- [Cooling Optimization](https://exergy-solutions.com/services/cooling): Chilled water, industrial refrigeration, and HVAC networks optimized for high-ambient Gulf climates.
+- [Heating & Boiler Efficiency](https://exergy-solutions.com/services/heating): Steam generation, heat recovery steam generators (HRSG), and combustion air preheating.
+- [Industrial Drying](https://exergy-solutions.com/services/drying): Closed-loop dehumidification, exhaust energy cascading, and humidity control.
+- [Water & Desalination Systems](https://exergy-solutions.com/services/water): Reverse osmosis energy recovery devices, membrane efficiency, and brine minimization.
+- [Waste Heat Recovery](https://exergy-solutions.com/services/waste-heat): Organic Rankine Cycles (ORC), absorption chillers, and pinch analysis heat exchanger networks (HEN).
+- [Process Integration](https://exergy-solutions.com/services/process): Plant-wide utility pinch optimization and multi-effect process integration.
+- [Water, Wastewater & Desalination Consultancy](https://exergy-solutions.com/services/water-wastewater-desalination-consultancy): Technical advisory, membrane autopsies, and zero liquid discharge (ZLD).
+- [Water Treatment Systems Design & Installation](https://exergy-solutions.com/services/water-treatment-systems-design-installation): Turnkey EPC filtration, ultrafiltration, and chemical dosing.
+- [Municipal Wastewater Treatment & Reuse](https://exergy-solutions.com/services/municipal-wastewater-treatment-reuse): Tertiary polishing, MBR/MBBR retrofits, and district reuse.
+
+## Target Industries
+- Pulp & Paper Manufacturing
+- Chemical & Petrochemical Processing
+- District Cooling & Central Utility Plants
+- Commercial Real Estate & High-Rise Towers
+- Hospitality & Large Resorts
+- Healthcare & Cleanroom Facilities
+
+## Regional Presence & Verification
+- Headquarters: 334/6D Al Wasl Street DM199 Al Satwa, Dubai, UAE
+- Technical Desk: info@support.exergy-solutions.com / sarfraz@exergy-solutions.com
+- Phone: +971 50 123 4567
+- Measurement & Verification: ISO 50001 and IPMVP aligned performance contracts
+- Website: https://exergy-solutions.com
+- Assessment Request: https://exergy-solutions.com/assessment

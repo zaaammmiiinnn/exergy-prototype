@@ -1,0 +1,64 @@
+# Exergy Solutions — Complete Technical Engineering Knowledge Base
+
+## Organization & Philosophy
+Exergy Solutions FZE is a Dubai-based industrial engineering firm specializing in First- and Second-Law thermodynamic analysis for industrial utilities and process manufacturing. 
+
+### What is Exergy Analysis?
+Energy cannot be destroyed (First Law of Thermodynamics), but quality (exergy) is destroyed in every real irreversible process (Second Law of Thermodynamics). Traditional energy audits only calculate heat balances, often suggesting heat recovery where temperature lift is thermodynamically unfavorable. Exergy analysis pinpoints where the capacity to do useful work is destroyed by friction, throttling, mixing, and heat transfer across large temperature differences.
+
+### Guarantee Model
+Exergy Solutions delivers turnkey engineering implementations backed by measured performance guarantees:
+- Baseline measurement established using calibrated instrumentation.
+- IPMVP (International Performance Measurement and Verification Protocol) Option B/C methodology.
+- ISO 50001 energy management compliance.
+- 25% to 30% typical OPEX reductions on energy- and water-intensive industrial assets.
+
+## Detailed Service Catalog
+
+### 1. Cooling Optimization
+- Slug: /services/cooling
+- Scope: Central chiller plants, variable primary flow pumping, water-cooled condenser networks, refrigerant subcooling, and cooling tower approach optimization.
+- KPI: Chiller plant specific energy consumption (kW/TR) reduced by 18-28%.
+
+### 2. Heating Optimization & Boiler Systems
+- Slug: /services/heating
+- Scope: High-pressure steam systems, flash steam recovery, condensate return stabilization, flue gas economizers, and combustion trim control.
+- KPI: Boiler efficiency uplift from 76% to 88%+; steam trap loss reduction below 3%.
+
+### 3. Industrial Drying
+- Slug: /services/drying
+- Scope: Spray dryers, rotary drum dryers, convective ovens, paper machine hood heat recovery, and exhaust humidity cascade loops.
+- KPI: Specific moisture removal rate improved by 22-35%.
+
+### 4. Water Systems Optimization & Desalination
+- Slug: /services/water
+- Scope: Seawater reverse osmosis (SWRO), isobaric energy recovery devices (ERD), booster pump VFDs, and anti-scalant dosing optimization.
+- KPI: Specific energy consumption slashed to <3.0 kWh/m³ permeate.
+
+### 5. Waste Heat Recovery (WHR) & Pinch Analysis
+- Slug: /services/waste-heat
+- Scope: Low-grade waste heat conversion to power via Organic Rankine Cycles (ORC), absorption chillers, and composite curve Pinch analysis.
+- KPI: Net electrical output generation from 90°C+ thermal effluents.
+
+### 6. Process & Utility Integration
+- Slug: /services/process
+- Scope: Factory-wide mass and thermal network integration, simultaneous heating and cooling loops, thermal storage buffering.
+- KPI: Peak electrical demand shaving by 30-40%.
+
+### 7. Water, Wastewater & Desalination Consultancy
+- Slug: /services/water-wastewater-desalination-consultancy
+- Scope: Advanced process audits, zero liquid discharge (ZLD) feasibility, membrane autopsy, and regulatory compliance advisory.
+
+### 8. Water Treatment Systems Design & Installation
+- Slug: /services/water-treatment-systems-design-installation
+- Scope: Turnkey design, fabrication, skids, multimedia filtration, nanofiltration, and automated backwash cycles.
+
+### 9. Municipal Wastewater Treatment & Reuse
+- Slug: /services/municipal-wastewater-treatment-reuse
+- Scope: Membrane bioreactor (MBR) upgrades, moving bed biofilm reactor (MBBR) retrofits, UV/ozone disinfection, and TSE polishing.
+
+## Contact Information
+- Address: 334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE
+- Emails: info@support.exergy-solutions.com, sarfraz@exergy-solutions.com
+- Telephone: +971 50 123 4567
+- Canonical URL: https://exergy-solutions.com

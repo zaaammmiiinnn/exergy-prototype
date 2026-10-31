@@ -2,14 +2,34 @@ import React from "react";
 import Link from "next/link";
 import { siteSettingsSeed } from "@/content/seed/settings";
 
-export const metadata = {
-  title: "Privacy Policy | Exergy Solutions",
-  description: "UAE PDPL-compliant privacy disclosures detailing data collection, processors, and protection rights.",
-};
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
+export const metadata = constructMetadata({
+  title: "Privacy Policy | Exergy Solutions Dubai",
+  description:
+    "UAE PDPL-compliant privacy policy detailing data governance, protection rights, and engineering assessment confidentiality for Exergy Solutions.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
+  const pageSchema = getWebPageSchema({
+    title: "Privacy Policy | Exergy Solutions Dubai",
+    description:
+      "UAE PDPL-compliant privacy policy detailing data governance, protection rights, and engineering assessment confidentiality for Exergy Solutions.",
+    url: "/privacy",
+    type: "WebPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Privacy Policy", url: "/privacy" },
+  ]);
+
   return (
     <div className="bg-slate-50 text-slate-800 py-16 sm:py-24">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       <div className="container max-w-4xl mx-auto px-4 sm:px-6 space-y-8">
         <div>
           <span className="text-teal-700 font-mono text-xs uppercase tracking-wider font-semibold">

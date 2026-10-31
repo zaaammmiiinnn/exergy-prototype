@@ -21,6 +21,10 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getServiceSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
@@ -35,10 +39,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const service = await getLiveServiceBySlug(params.slug);
   if (!service) return { title: "Service Not Found" };
 
-  return {
-    title: `${service.title} | Exergy Solutions`,
+  return constructMetadata({
+    title: `${service.title} | Exergy Solutions Dubai`,
     description: service.summary,
-  };
+    path: `/services/${service.slug}`,
+    image: service.hero_image,
+  });
 }
 
 export default async function ServiceDetailPage({
@@ -52,6 +58,13 @@ export default async function ServiceDetailPage({
     notFound();
   }
 
+  const serviceSchema = getServiceSchema(service);
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Services", url: "/services" },
+    { name: service.title, url: `/services/${service.slug}` },
+  ]);
+
   // Related sibling services
   const allServices = await getLiveServices();
   const otherServices = allServices.filter(
@@ -63,6 +76,7 @@ export default async function ServiceDetailPage({
 
   return (
     <div className="flex flex-col">
+      <JsonLd data={[serviceSchema, breadcrumbs]} />
       {/* Breadcrumb & Hero */}
       <section className="bg-slate-50 text-slate-900 pt-12 pb-16 border-b border-slate-200 relative">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
@@ -116,7 +130,7 @@ export default async function ServiceDetailPage({
               <div className="relative aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-xl">
                 <Image
                   src={service.hero_image || "https://images.hostinger.com/e5c328ee-2778-4da7-ba8a-5e933f55fcfa.png"}
-                  alt={service.title}
+                  alt={`${service.title} thermodynamic engineering and optimization`}
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 500px"

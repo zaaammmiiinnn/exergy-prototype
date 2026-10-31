@@ -6,19 +6,39 @@ import { MotionDiv } from "@/components/site/motion";
 import { CTABand } from "@/components/site/cta-band";
 import { ArrowRight, CheckCircle2, Factory, ShieldCheck, Gauge } from "lucide-react";
 
+import { constructMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/lib/seo/schema";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Industries Served | Exergy Solutions Dubai",
-  description: "Deep expertise where energy and water are mission-critical: Paper, Processing, Petroleum, Buildings, Hospitality, and Healthcare.",
-};
+export const metadata = constructMetadata({
+  title: "Industries Served | Industrial Energy & Water Engineering Dubai",
+  description:
+    "Targeted thermodynamic optimization across energy- and water-intensive industries: pulp and paper, petrochemicals, district cooling, food processing, commercial facilities, and healthcare.",
+  path: "/industries",
+});
 
 export default async function IndustriesPage() {
   const allIndustries = await getLiveIndustries();
   const industries = allIndustries.filter((ind) => ind.is_published !== false);
 
+  const pageSchema = getWebPageSchema({
+    title: "Industries Served | Industrial Energy & Water Optimization",
+    description:
+      "Targeted thermodynamic optimization across energy- and water-intensive industries: pulp and paper, petrochemicals, district cooling, food processing, commercial facilities, and healthcare.",
+    url: "/industries",
+    type: "CollectionPage",
+  });
+
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Industries", url: "/industries" },
+  ]);
+
   return (
     <div className="flex flex-col">
+      <JsonLd data={[pageSchema, breadcrumbs]} />
       {/* Hero */}
       <section className="bg-slate-50 text-slate-900 pt-16 pb-20 border-b border-slate-200 relative">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
@@ -91,7 +111,7 @@ export default async function IndustriesPage() {
                   <div className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
                     <Image
                       src={ind.hero_image || "https://images.hostinger.com/2025f758-1013-44c6-b723-1117c9aa2810.png"}
-                      alt={ind.name}
+                      alt={`Industrial thermodynamic efficiency for ${ind.name}`}
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 350px"

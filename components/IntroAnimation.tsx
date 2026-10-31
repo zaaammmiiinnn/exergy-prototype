@@ -199,7 +199,7 @@ export function IntroAnimation() {
 
           {/* Typewriter Text: EXERGY SOLUTIONS.com */}
           <div className="h-8 flex items-center justify-center">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-mono font-bold tracking-widest uppercase text-white flex items-center">
+            <div role="status" aria-label="Exergy Solutions preloader" className="text-xl sm:text-2xl md:text-3xl font-mono font-bold tracking-widest uppercase text-white flex items-center">
               <span>{displayText}</span>
               <span className="text-[#2C7FB8] font-normal">{extText}</span>
               {/* Terminal blinking cursor */}
@@ -208,7 +208,7 @@ export function IntroAnimation() {
                 transition={{ repeat: Infinity, duration: 0.5 }}
                 className="inline-block w-2.5 h-5 sm:h-6 ml-1.5 bg-[#F0A431]"
               />
-            </h1>
+            </div>
           </div>
 
           <div className="mt-4 font-mono text-[10px] text-slate-400 tracking-[0.2em] uppercase">
