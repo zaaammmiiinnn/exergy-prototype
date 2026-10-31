@@ -10,7 +10,7 @@
     "cf-build": "npx opennextjs-cloudflare build",
     "cf-deploy": "npx opennextjs-cloudflare deploy",
     "preview": "wrangler dev",
-    "test": "node --import tsx --test 'lib/**/__tests__/*.test.ts'"
+    "test": "tsx --test lib/auth/__tests__/session.test.ts lib/chatbot/__tests__/engine.test.ts lib/seo/__tests__/seo.test.ts lib/__tests__/rbac.test.ts lib/chat/__tests__/chat-system.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

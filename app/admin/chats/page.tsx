@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   MessageSquare,
   Clock,
@@ -15,22 +15,22 @@ import {
   Phone,
   Search,
   Filter,
-  CheckSquare,
   ArrowLeft,
   ArrowDown,
   Sparkles,
   RefreshCw,
   UserCheck,
-  XCircle,
-  Archive,
-  RotateCcw,
+  Trash2,
   Check,
+  RotateCcw,
   X,
+  Smartphone,
+  Monitor,
 } from "lucide-react";
 
 interface ChatMessageItem {
   id: string;
-  sender: "visitor" | "bot" | "staff" | "system";
+  sender: "visitor" | "bot" | "admin" | "system";
   text: string;
   time: string;
 }
@@ -38,869 +38,627 @@ interface ChatMessageItem {
 interface ChatSessionItem {
   id: string;
   visitor: string;
-  company: string;
-  sector: string;
+  company?: string;
+  sector?: string;
   email?: string;
   phone?: string;
-  status: "needs_human" | "bot_resolved" | "staff_active" | "closed";
+  deviceType?: string;
+  status: "needs_human" | "open" | "resolved" | "closed" | "bot";
   lastMessageTime: string;
   unread: boolean;
   messages: ChatMessageItem[];
 }
 
-const INITIAL_SESSIONS: ChatSessionItem[] = [
-  {
-    id: "CHAT-2026-081",
-    visitor: "Gulf Food & Bev Plant Manager",
-    company: "Gulf F&B Processors FZCO",
-    sector: "Continuous Food & Beverage Processing",
-    email: "ops.manager@gulffnb.ae",
-    phone: "+971 50 234 5678",
-    status: "needs_human",
-    lastMessageTime: "4 mins ago",
-    unread: true,
-    messages: [
-      {
-        id: "m-1",
-        sender: "visitor",
-        text: "Hello, we operate 3 industrial ammonia chillers in Al Quoz and our peak electricity bill exceeded AED 180,000 last month. Can you optimize compressor lift and condenser temperatures?",
-        time: "10:41 AM",
-      },
-      {
-        id: "m-2",
-        sender: "bot",
-        text: "Exergy Solutions specializes in industrial refrigeration lift cycle minimization and waste-heat recovery. We evaluate condenser approach temperatures, subcooling loops, and variable head pressure controls to typically yield 15–25% power reductions. Would you like to connect with our Dubai engineering team for a plant assessment?",
-        time: "10:41 AM",
-      },
-      {
-        id: "m-3",
-        sender: "visitor",
-        text: "Yes please, could a senior engineer review our condenser logs? We have 4.2 MW thermal cooling load.",
-        time: "10:43 AM",
-      },
-      {
-        id: "m-4",
-        sender: "system",
-        text: "Visitor requested technical consultation • Escalated to Staff Engineer queue",
-        time: "10:43 AM",
-      },
-    ],
-  },
-  {
-    id: "CHAT-2026-080",
-    visitor: "Sharjah Chemical Engineer",
-    company: "Crescent Chemical Technologies",
-    sector: "Chemical Refining & Distillation",
-    email: "dr.hamad@crescentchem.ae",
-    status: "bot_resolved",
-    lastMessageTime: "22 mins ago",
-    unread: false,
-    messages: [
-      {
-        id: "m-1",
-        sender: "visitor",
-        text: "Do you provide whole-plant pinch analysis and composite curve integration for continuous distillation columns?",
-        time: "10:20 AM",
-      },
-      {
-        id: "m-2",
-        sender: "bot",
-        text: "Yes. Our process integration service uses Pinch Analysis and thermodynamic exergy modeling to match high-grade heat sources with low-grade reboiler duties, reducing net utility demand across chemical processing plants.",
-        time: "10:20 AM",
-      },
-      {
-        id: "m-3",
-        sender: "visitor",
-        text: "Understood, thank you. I will submit an assessment intake with our stream data.",
-        time: "10:22 AM",
-      },
-      {
-        id: "m-4",
-        sender: "bot",
-        text: "You can submit your facility specifications at /assessment anytime. Have a productive day!",
-        time: "10:22 AM",
-      },
-    ],
-  },
-  {
-    id: "CHAT-2026-079",
-    visitor: "District Cooling Ops Lead",
-    company: "Emirates Regional Cooling Utilities",
-    sector: "District Cooling & HVAC",
-    email: "cooling.lead@ercu.ae",
-    phone: "+971 52 876 5432",
-    status: "needs_human",
-    lastMessageTime: "1 hour ago",
-    unread: true,
-    messages: [
-      {
-        id: "m-1",
-        sender: "visitor",
-        text: "We are experiencing low delta-T syndrome across several commercial tower substations. Can exergy optimization resolve this without repiping the entire building?",
-        time: "09:30 AM",
-      },
-      {
-        id: "m-2",
-        sender: "bot",
-        text: "Low Delta-T syndrome causes excessive pumping power and chiller derating. Exergy Solutions addresses this through hydraulic balancing, decoupled coil staging, and secondary bridge valve tuning to restore designed Delta-T.",
-        time: "09:31 AM",
-      },
-      {
-        id: "m-3",
-        sender: "visitor",
-        text: "Can an engineer visit our Business Bay plant next Tuesday to review the temperature sensors and valve bypasses?",
-        time: "09:34 AM",
-      },
-      {
-        id: "m-4",
-        sender: "system",
-        text: "Visitor requested on-site engineering review • Awaiting staff response",
-        time: "09:34 AM",
-      },
-    ],
-  },
-  {
-    id: "CHAT-2026-076",
-    visitor: "Ras Al Khaimah Cement Plant",
-    company: "RAK Industrial Materials Ltd",
-    sector: "Cement & Calcination",
-    email: "tariq@rakcement.ae",
-    status: "staff_active",
-    lastMessageTime: "3 hours ago",
-    unread: false,
-    messages: [
-      {
-        id: "m-1",
-        sender: "visitor",
-        text: "Can waste heat from our clinker cooler exhaust be converted into power or steam?",
-        time: "07:15 AM",
-      },
-      {
-        id: "m-2",
-        sender: "bot",
-        text: "Yes, exhaust gas from clinker coolers (typically 280°C–340°C) is prime for Organic Rankine Cycle (ORC) power generation or high-pressure waste heat recovery steam generators.",
-        time: "07:16 AM",
-      },
-      {
-        id: "m-3",
-        sender: "staff",
-        text: "Hello Tariq, this is Staff Engineer from Exergy Solutions. Based on your clinker cooler flow rates, we estimate 1.8 MW of clean electrical power generation. When are you available for a preliminary stream review?",
-        time: "07:45 AM",
-      },
-      {
-        id: "m-4",
-        sender: "visitor",
-        text: "Thursday afternoon works great for our technical director.",
-        time: "08:00 AM",
-      },
-    ],
-  },
-];
-
-const STORAGE_KEY = "exergy_admin_chats_v2";
-
 export default function AdminChatsPage() {
   const [sessions, setSessions] = useState<ChatSessionItem[]>([]);
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>("CHAT-2026-081");
-  const [activeFilter, setActiveFilter] = useState<"all" | "needs_human" | "staff_active" | "bot_resolved" | "closed">("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSessionId, setSelectedSessionId] = useState<string>("");
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [replyText, setReplyText] = useState("");
-  const [isMobileListHidden, setIsMobileListHidden] = useState(false);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const userScrolledUpRef = useRef(false);
 
+  // Fetch conversations from central database
+  const fetchConversations = useCallback(async (selectId?: string) => {
+    try {
+      const url = `/api/admin/chats${activeFilter !== "all" ? `?status=${activeFilter}` : ""}${
+        searchQuery ? `${activeFilter !== "all" ? "&" : "?"}search=${encodeURIComponent(searchQuery)}` : ""
+      }`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.success && Array.isArray(data.conversations)) {
+        const mapped: ChatSessionItem[] = data.conversations.map((c: any) => {
+          const d = c.last_message_at ? new Date(c.last_message_at) : new Date(c.created_at);
+          const timeStr = !isNaN(d.getTime())
+            ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            : "Recent";
+
+          return {
+            id: c.id,
+            visitor: c.visitor_name || (c.visitor_id ? `Visitor ${c.visitor_id.slice(-6)}` : "Visitor"),
+            company: c.company_name || "Prospective Industrial Client",
+            sector: "Industrial Operations",
+            email: c.visitor_email || undefined,
+            phone: undefined,
+            deviceType: c.user_agent?.toLowerCase().includes("mobile") ? "mobile" : "desktop",
+            status: c.status || "open",
+            lastMessageTime: timeStr,
+            unread: Boolean(c.unread_by_admin),
+            messages: [],
+          };
+        });
+
+        setSessions(mapped);
+
+        // Maintain selection or select first
+        setSelectedSessionId((prev) => {
+          if (selectId) return selectId;
+          if (prev && mapped.some((s) => s.id === prev)) return prev;
+          return mapped[0]?.id || "";
+        });
+      }
+    } catch (err) {
+      console.warn("[ADMIN CHATS FETCH ERROR]", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [activeFilter, searchQuery]);
+
+  // Initial load and periodic polling every 4 seconds
+  useEffect(() => {
+    fetchConversations();
+    const interval = setInterval(() => {
+      fetchConversations();
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [fetchConversations]);
+
+  // Load message history for currently selected conversation
+  const loadMessagesForSession = useCallback(async (convId: string) => {
+    if (!convId) return;
+    try {
+      const res = await fetch(`/api/chat/messages?conversationId=${encodeURIComponent(convId)}&markRead=true`);
+      const data = await res.json();
+
+      if (data.success && Array.isArray(data.messages)) {
+        const formatted: ChatMessageItem[] = data.messages.map((m: any) => {
+          const d = m.created_at ? new Date(m.created_at) : new Date();
+          const timeStr = !isNaN(d.getTime())
+            ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            : "";
+
+          return {
+            id: m.id,
+            sender: m.sender_type || (m.sender === "admin" ? "admin" : m.sender === "visitor" ? "visitor" : "bot"),
+            text: m.message_content || m.body || "",
+            time: timeStr,
+          };
+        });
+
+        setSessions((prev) =>
+          prev.map((s) => {
+            if (s.id === convId) {
+              return {
+                ...s,
+                unread: false,
+                messages: formatted,
+              };
+            }
+            return s;
+          })
+        );
+      }
+    } catch (err) {
+      console.warn("[FETCH SESSION MESSAGES ERROR]", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedSessionId) {
+      loadMessagesForSession(selectedSessionId);
+    }
+  }, [selectedSessionId, loadMessagesForSession]);
+
   const scrollToBottom = (smooth = true) => {
-    const el = messagesContainerRef.current;
-    if (!el) return;
-    el.scrollTo({
-      top: el.scrollHeight,
-      behavior: smooth ? "smooth" : "instant",
-    });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: smooth ? "smooth" : "auto",
+        block: "end",
+      });
+    }
   };
 
   const handleMessagesScroll = () => {
     const el = messagesContainerRef.current;
     if (!el) return;
     const { scrollTop, scrollHeight, clientHeight } = el;
-    // Show jump-to-bottom if scrolled up more than 80px
     const isUp = scrollHeight - scrollTop - clientHeight > 80;
     userScrolledUpRef.current = isUp;
     setShowScrollBottom(isUp);
   };
 
-  // Load chat sessions from localStorage or default
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setSessions(parsed);
-          setSelectedSessionId(parsed[0].id);
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new Event("exergy-chats-updated"));
-          }
-          return;
-        }
-      }
-    } catch {}
-    setSessions(INITIAL_SESSIONS);
-    setSelectedSessionId(INITIAL_SESSIONS[0].id);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SESSIONS));
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("exergy-chats-updated"));
-      }
-    } catch {}
-  }, []);
-
-  // Save sessions to localStorage and notify sidebar
-  const saveSessions = (updated: ChatSessionItem[]) => {
-    setSessions(updated);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("exergy-chats-updated"));
-      }
-    } catch {}
-  };
-
   const selectedSession = sessions.find((s) => s.id === selectedSessionId) || sessions[0];
 
-  // When switching conversation sessions, reset scroll position to bottom
   useEffect(() => {
     userScrolledUpRef.current = false;
     setShowScrollBottom(false);
-    const timer = setTimeout(() => {
-      scrollToBottom(false);
-    }, 50);
+    const timer = setTimeout(() => scrollToBottom(false), 50);
     return () => clearTimeout(timer);
   }, [selectedSessionId]);
 
-  // When a message is added, smooth scroll to bottom if user hasn't scrolled up to read earlier history
   useEffect(() => {
     if (!userScrolledUpRef.current) {
-      const timer = setTimeout(() => {
-        scrollToBottom(true);
-      }, 50);
+      const timer = setTimeout(() => scrollToBottom(true), 50);
       return () => clearTimeout(timer);
     }
   }, [selectedSession?.messages?.length]);
 
-  const handleSendReply = (e: React.FormEvent) => {
+  // Send admin reply
+  const handleSendReply = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!replyText.trim() || !selectedSession) return;
+    if (!replyText.trim() || !selectedSession || isSubmitting) return;
 
-    const newMessage: ChatMessageItem = {
-      id: `msg-${Date.now()}`,
-      sender: "staff",
-      text: replyText.trim(),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-
-    const updatedSessions = sessions.map((session) => {
-      if (session.id === selectedSession.id) {
-        return {
-          ...session,
-          status: "staff_active" as const,
-          unread: false,
-          lastMessageTime: "Just now",
-          messages: [...session.messages, newMessage],
-        };
-      }
-      return session;
-    });
-
-    saveSessions(updatedSessions);
+    const currentText = replyText.trim();
     setReplyText("");
-  };
+    setIsSubmitting(true);
 
-  const handleQuickReply = (text: string) => {
-    setReplyText(text);
-  };
+    try {
+      const res = await fetch("/api/admin/chats/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: selectedSession.id,
+          message: currentText,
+          senderName: "Operations Engineer",
+        }),
+      });
 
-  const handleMarkResolved = () => {
-    if (!selectedSession) return;
-    const systemMsg: ChatMessageItem = {
-      id: `sys-${Date.now()}`,
-      sender: "system",
-      text: "Inquiry marked as resolved by Staff Engineer",
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-    const updatedSessions = sessions.map((session) => {
-      if (session.id === selectedSession.id) {
-        return {
-          ...session,
-          status: "bot_resolved" as const,
-          unread: false,
-          messages: [...session.messages, systemMsg],
+      const data = await res.json();
+      if (data.success && data.message) {
+        const d = new Date(data.message.created_at);
+        const timeStr = !isNaN(d.getTime())
+          ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          : "Just now";
+
+        const newMsg: ChatMessageItem = {
+          id: data.message.id,
+          sender: "admin",
+          text: currentText,
+          time: timeStr,
         };
+
+        setSessions((prev) =>
+          prev.map((s) =>
+            s.id === selectedSession.id
+              ? {
+                  ...s,
+                  status: "open",
+                  messages: [...s.messages, newMsg],
+                }
+              : s
+          )
+        );
       }
-      return session;
-    });
-    saveSessions(updatedSessions);
+    } catch (err) {
+      console.error("[ADMIN SEND REPLY ERROR]", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleCloseChat = () => {
+  // Change conversation status
+  const handleStatusChange = async (newStatus: "open" | "needs_human" | "resolved" | "closed") => {
     if (!selectedSession) return;
-    const systemMsg: ChatMessageItem = {
-      id: `sys-${Date.now()}`,
-      sender: "system",
-      text: "Conversation closed and archived by Staff Engineer",
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-    const updatedSessions = sessions.map((session) => {
-      if (session.id === selectedSession.id) {
-        return {
-          ...session,
-          status: "closed" as const,
-          unread: false,
-          messages: [...session.messages, systemMsg],
-        };
-      }
-      return session;
-    });
-    saveSessions(updatedSessions);
+    try {
+      await fetch("/api/admin/chats/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: selectedSession.id,
+          status: newStatus,
+        }),
+      });
+
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === selectedSession.id ? { ...s, status: newStatus } : s
+        )
+      );
+    } catch (err) {
+      console.warn("[UPDATE STATUS ERROR]", err);
+    }
   };
 
-  const handleReopenChat = () => {
+  // Delete conversation
+  const handleDeleteConversation = async () => {
     if (!selectedSession) return;
-    const systemMsg: ChatMessageItem = {
-      id: `sys-${Date.now()}`,
-      sender: "system",
-      text: "Conversation reopened by Staff Engineer",
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-    const updatedSessions = sessions.map((session) => {
-      if (session.id === selectedSession.id) {
-        return {
-          ...session,
-          status: "staff_active" as const,
-          unread: false,
-          messages: [...session.messages, systemMsg],
-        };
+    if (!confirm("Are you sure you want to permanently delete this conversation?")) return;
+
+    try {
+      const res = await fetch(`/api/admin/chats?id=${encodeURIComponent(selectedSession.id)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSessions((prev) => prev.filter((s) => s.id !== selectedSession.id));
+        const remaining = sessions.filter((s) => s.id !== selectedSession.id);
+        setSelectedSessionId(remaining[0]?.id || "");
       }
-      return session;
-    });
-    saveSessions(updatedSessions);
+    } catch (err) {
+      console.warn("[DELETE CONVERSATION ERROR]", err);
+    }
   };
 
-  const filteredSessions = sessions.filter((s) => {
-    const matchesFilter =
-      activeFilter === "all" ? true : s.status === activeFilter;
-    const matchesSearch =
-      s.visitor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.id.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "needs_human":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+            <AlertCircle className="w-3 h-3 text-amber-600" />
+            Needs Engineer
+          </span>
+        );
+      case "open":
+      case "bot":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+            Active
+          </span>
+        );
+      case "resolved":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+            <Check className="w-3 h-3 text-slate-500" />
+            Resolved
+          </span>
+        );
+      case "closed":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+            <X className="w-3 h-3 text-rose-500" />
+            Closed
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
 
-  const countNeedsHuman = sessions.filter((s) => s.status === "needs_human").length;
-  const countStaffActive = sessions.filter((s) => s.status === "staff_active").length;
-  const countResolved = sessions.filter((s) => s.status === "bot_resolved").length;
-  const countClosed = sessions.filter((s) => s.status === "closed").length;
+  const stats = {
+    total: sessions.length,
+    needsHuman: sessions.filter((s) => s.status === "needs_human").length,
+    open: sessions.filter((s) => s.status === "open" || s.status === "bot").length,
+    resolved: sessions.filter((s) => s.status === "resolved").length,
+  };
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-teal-50 border border-teal-200/70 text-[#0c758d] flex items-center justify-center shadow-2xs">
+            <div className="p-2 rounded-xl bg-teal-50 border border-teal-200 text-[#0c758d]">
               <MessageSquare className="w-5 h-5" />
             </div>
-            <h1 className="font-heading font-extrabold text-2xl text-slate-900 tracking-tight">
-              Chat Inbox &amp; Inquiries
-            </h1>
-            {countNeedsHuman > 0 && (
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-mono font-bold animate-pulse">
-                {countNeedsHuman} Needs Review
-              </span>
-            )}
+            <div>
+              <h1 className="font-heading font-extrabold text-2xl text-[#12232b] tracking-tight">
+                Customer Support / Live Chat
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Real-time central database chat console & customer inquiry management.
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-slate-500 font-mono mt-1">
-            Real-time deterministic chatbot sessions and human escalation requests
-          </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Role: <strong className="text-slate-800">Staff Engineer</strong></span>
+        <button
+          onClick={() => fetchConversations()}
+          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs self-start sm:self-auto"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          <span>Refresh Live Queue</span>
+        </button>
+      </div>
+
+      {/* KPI Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            Total Conversations
+          </span>
+          <p className="text-2xl font-bold font-heading text-[#12232b] mt-1">
+            {stats.total}
+          </p>
+        </div>
+        <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+            Needs Human Engineer
+          </span>
+          <p className="text-2xl font-bold font-heading text-amber-900 mt-1">
+            {stats.needsHuman}
+          </p>
+        </div>
+        <div className="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
+            Active Chats
+          </span>
+          <p className="text-2xl font-bold font-heading text-emerald-900 mt-1">
+            {stats.open}
+          </p>
+        </div>
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            Resolved Sessions
+          </span>
+          <p className="text-2xl font-bold font-heading text-slate-800 mt-1">
+            {stats.resolved}
+          </p>
         </div>
       </div>
 
-      {/* Main Two-Pane Chat Container */}
-      <div className="bg-white border border-slate-200/90 rounded-3xl shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12 h-[calc(100vh-210px)] min-h-[580px] max-h-[850px]">
-        {/* Left Pane: Conversation List (4 columns) */}
-        <div
-          className={`md:col-span-4 border-r border-slate-200/80 flex flex-col h-full min-h-0 overflow-hidden bg-slate-50/50 ${
-            isMobileListHidden ? "hidden md:flex" : "flex"
-          }`}
-        >
-          {/* Search & Filter Header */}
-          <div className="p-4 border-b border-slate-200/80 space-y-3 bg-white shrink-0">
+      {/* Main Split-Pane Workspace */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white border border-slate-200 rounded-2xl shadow-sm min-h-[640px] overflow-hidden">
+        {/* Left Column: Conversation Sessions List */}
+        <div className="lg:col-span-5 border-r border-slate-200 flex flex-col h-[640px]">
+          {/* Search & Filter Bar */}
+          <div className="p-3.5 border-b border-slate-200 space-y-2.5 bg-slate-50/60">
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search visitor, company, ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:bg-white"
+                placeholder="Search visitor, email, or session..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
               />
             </div>
 
-            {/* Filter Chips */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono">
-              <button
-                onClick={() => setActiveFilter("all")}
-                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0 ${
-                  activeFilter === "all"
-                    ? "bg-[#0c758d] text-white font-bold"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                All ({sessions.length})
-              </button>
-              <button
-                onClick={() => setActiveFilter("needs_human")}
-                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0 ${
-                  activeFilter === "needs_human"
-                    ? "bg-amber-600 text-white font-bold"
-                    : "bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100"
-                }`}
-              >
-                Needs Review ({countNeedsHuman})
-              </button>
-              <button
-                onClick={() => setActiveFilter("staff_active")}
-                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0 ${
-                  activeFilter === "staff_active"
-                    ? "bg-teal-700 text-white font-bold"
-                    : "bg-teal-50 text-teal-800 border border-teal-200/80 hover:bg-teal-100"
-                }`}
-              >
-                Active ({countStaffActive})
-              </button>
-              <button
-                onClick={() => setActiveFilter("bot_resolved")}
-                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0 ${
-                  activeFilter === "bot_resolved"
-                    ? "bg-emerald-700 text-white font-bold"
-                    : "bg-emerald-50 text-emerald-800 border border-emerald-200/80 hover:bg-emerald-100"
-                }`}
-              >
-                Resolved ({countResolved})
-              </button>
-              <button
-                onClick={() => setActiveFilter("closed")}
-                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0 ${
-                  activeFilter === "closed"
-                    ? "bg-slate-700 text-white font-bold"
-                    : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200"
-                }`}
-              >
-                Closed ({countClosed})
-              </button>
+            {/* Filter Tabs */}
+            <div className="flex gap-1 overflow-x-auto text-xs pb-0.5">
+              {[
+                { id: "all", label: "All" },
+                { id: "needs_human", label: "Needs Human" },
+                { id: "open", label: "Open" },
+                { id: "resolved", label: "Resolved" },
+                { id: "closed", label: "Closed" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveFilter(tab.id)}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold shrink-0 transition-colors ${
+                    activeFilter === tab.id
+                      ? "bg-[#0c758d] text-white"
+                      : "bg-white text-slate-600 hover:bg-slate-200/60 border border-slate-200"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Session Cards List */}
-          <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 overscroll-contain">
-            {filteredSessions.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 text-xs font-mono">
-                No matching chat inquiries.
+          {/* Session Cards Scroll Container */}
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+            {sessions.length === 0 ? (
+              <div className="p-8 text-center text-slate-400">
+                <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-xs">No customer conversations found.</p>
               </div>
             ) : (
-              filteredSessions.map((session) => {
-                const isSelected = selectedSession?.id === session.id;
-                const lastMsg = session.messages[session.messages.length - 1];
-
+              sessions.map((s) => {
+                const isSelected = s.id === selectedSessionId;
                 return (
-                  <div
-                    key={session.id}
-                    onClick={() => {
-                      setSelectedSessionId(session.id);
-                      setIsMobileListHidden(true);
-                    }}
-                    className={`p-4 transition-all cursor-pointer relative hover:bg-white ${
+                  <button
+                    key={s.id}
+                    onClick={() => setSelectedSessionId(s.id)}
+                    className={`w-full text-left p-3.5 transition-colors relative flex flex-col gap-1.5 ${
                       isSelected
-                        ? "bg-white shadow-xs border-l-4 border-l-[#0c758d]"
-                        : "bg-slate-50/40"
+                        ? "bg-teal-50/50 border-l-4 border-l-[#0c758d]"
+                        : "hover:bg-slate-50/80"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-[11px] font-bold text-[#0c758d]">
-                        {session.id}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        {session.lastMessageTime}
-                      </span>
-                    </div>
-
-                    <h4 className="font-heading font-bold text-xs text-slate-900 mt-1 line-clamp-1">
-                      {session.visitor}
-                    </h4>
-
-                    <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
-                      {session.company}
-                    </p>
-
-                    <p className="text-xs text-slate-600 line-clamp-1 mt-1 font-sans">
-                      {lastMsg?.text || "New chat initiated..."}
-                    </p>
-
-                    <div className="mt-2.5 flex items-center justify-between gap-2">
-                      <span
-                        className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded-full border ${
-                          session.status === "needs_human"
-                            ? "bg-amber-50 text-amber-800 border-amber-200"
-                            : session.status === "staff_active"
-                            ? "bg-teal-50 text-teal-800 border-teal-200"
-                            : session.status === "bot_resolved"
-                            ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                            : "bg-slate-100 text-slate-700 border-slate-300"
-                        }`}
-                      >
-                        {session.status === "needs_human"
-                          ? "Needs Review"
-                          : session.status === "staff_active"
-                          ? "Staff Active"
-                          : session.status === "bot_resolved"
-                          ? "Resolved"
-                          : "Closed"}
-                      </span>
-
-                      <span className="text-[11px] text-[#0c758d] font-bold font-mono">
-                        Open &rarr;
+                      <div className="flex items-center gap-1.5 font-semibold text-xs text-slate-900 truncate">
+                        <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate">{s.visitor}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 shrink-0">
+                        {s.lastMessageTime}
                       </span>
                     </div>
-                  </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[11px] text-slate-500 truncate">
+                        {s.email || s.company || "Prospective Industrial Inquirer"}
+                      </span>
+                      {getStatusBadge(s.status)}
+                    </div>
+
+                    {s.unread && (
+                      <span className="w-2 h-2 rounded-full bg-rose-500 absolute top-3.5 right-3" />
+                    )}
+                  </button>
                 );
               })
             )}
           </div>
         </div>
 
-        {/* Right Pane: Active Conversation & Reply View (8 columns) */}
-        <div
-          className={`md:col-span-8 flex flex-col h-full min-h-0 overflow-hidden bg-white relative ${
-            !isMobileListHidden ? "hidden md:flex" : "flex"
-          }`}
-        >
+        {/* Right Column: Live Chat Pane & Admin Dispatch */}
+        <div className="lg:col-span-7 flex flex-col h-[640px]">
           {selectedSession ? (
             <>
               {/* Conversation Header */}
-              <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between gap-3 bg-slate-50/40 shrink-0">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setIsMobileListHidden(false)}
-                    className="md:hidden p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                  </button>
-
-                  <div className="w-9 h-9 rounded-full bg-teal-100/70 border border-teal-200 text-[#0c758d] flex items-center justify-center shrink-0 font-bold text-xs font-mono">
-                    {selectedSession.id.slice(-2)}
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-heading font-bold text-sm text-slate-900">
-                        {selectedSession.visitor}
-                      </h3>
-                      <span className="text-[10px] font-mono text-slate-400">
-                        {selectedSession.id}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
-                      <span className="flex items-center gap-1">
-                        <Building className="w-3 h-3 text-slate-400" />
-                        {selectedSession.company}
-                      </span>
-                      {selectedSession.email && (
-                        <span className="hidden sm:flex items-center gap-1 font-mono text-[11px]">
-                          <Mail className="w-3 h-3 text-slate-400" />
-                          {selectedSession.email}
-                        </span>
+              <div className="p-4 border-b border-slate-200 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-heading font-bold text-sm text-[#12232b]">
+                      {selectedSession.visitor}
+                    </h2>
+                    {getStatusBadge(selectedSession.status)}
+                    <span className="flex items-center gap-1 text-[11px] text-slate-400">
+                      {selectedSession.deviceType === "mobile" ? (
+                        <Smartphone className="w-3 h-3" />
+                      ) : (
+                        <Monitor className="w-3 h-3" />
                       )}
-                    </div>
+                      <span className="capitalize">{selectedSession.deviceType || "Desktop"}</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                    {selectedSession.email && (
+                      <span className="flex items-center gap-1">
+                        <Mail className="w-3 h-3 text-slate-400" />
+                        <span>{selectedSession.email}</span>
+                      </span>
+                    )}
+                    <span className="font-mono text-[11px] text-slate-400">
+                      ID: {selectedSession.id.slice(0, 12)}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {selectedSession.status === "bot_resolved" && (
-                    <>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-mono font-semibold">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Resolved</span>
-                      </span>
-                      <button
-                        onClick={handleCloseChat}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-mono font-semibold transition-colors cursor-pointer shadow-2xs"
-                        title="Close and archive conversation"
-                      >
-                        <Archive className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Close Chat</span>
-                      </button>
-                      <button
-                        onClick={handleReopenChat}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-teal-200 bg-teal-50 hover:bg-teal-100 text-[#0c758d] text-xs font-mono font-semibold transition-colors cursor-pointer"
-                        title="Reopen conversation for active replies"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5 text-[#0c758d]" />
-                        <span>Reopen</span>
-                      </button>
-                    </>
-                  )}
-
-                  {selectedSession.status === "closed" && (
-                    <>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-slate-300 bg-slate-100 text-slate-700 text-xs font-mono font-semibold">
-                        <XCircle className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Closed</span>
-                      </span>
-                      <button
-                        onClick={handleReopenChat}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-teal-200 bg-teal-50 hover:bg-teal-100 text-[#0c758d] text-xs font-mono font-bold transition-colors cursor-pointer"
-                        title="Reopen conversation for active replies"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5 text-[#0c758d]" />
-                        <span>Reopen Chat</span>
-                      </button>
-                    </>
-                  )}
-
-                  {(selectedSession.status === "needs_human" || selectedSession.status === "staff_active") && (
-                    <>
-                      <button
-                        onClick={handleMarkResolved}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-mono font-bold transition-colors cursor-pointer shadow-2xs"
-                        title="Mark this inquiry as resolved"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Mark Resolved</span>
-                      </button>
-                      <button
-                        onClick={handleCloseChat}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-mono font-bold transition-colors cursor-pointer shadow-2xs"
-                        title="Close and archive conversation"
-                      >
-                        <XCircle className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Close Chat</span>
-                      </button>
-                    </>
-                  )}
-
-                  <div className="h-5 w-px bg-slate-200 mx-0.5" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedSessionId(null);
-                      setIsMobileListHidden(false);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 hover:border-slate-300 text-slate-600 hover:text-slate-900 text-xs font-mono font-medium transition-all cursor-pointer shadow-2xs group"
-                    title="Close active chat window and return to inbox"
-                    aria-label="Close active chat window"
+                {/* Status Action Buttons */}
+                <div className="flex items-center gap-1.5">
+                  <select
+                    value={selectedSession.status}
+                    onChange={(e) =>
+                      handleStatusChange(
+                        e.target.value as "open" | "needs_human" | "resolved" | "closed"
+                      )
+                    }
+                    className="text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1 font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
                   >
-                    <X className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700" />
-                    <span>Close Window</span>
+                    <option value="needs_human">Needs Human</option>
+                    <option value="open">Active / Open</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                  </select>
+
+                  <button
+                    onClick={handleDeleteConversation}
+                    title="Delete Conversation"
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Message Transcript Stream */}
+              {/* Messages Thread Container */}
               <div
                 ref={messagesContainerRef}
                 onScroll={handleMessagesScroll}
-                className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50/20 overscroll-contain"
+                className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-50/40 text-xs"
               >
-                {selectedSession.messages.map((msg) => {
-                  if (msg.sender === "system") {
+                {selectedSession.messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-slate-400 space-y-1">
+                    <Bot className="w-8 h-8 opacity-40" />
+                    <p>No messages loaded for this session.</p>
+                  </div>
+                ) : (
+                  selectedSession.messages.map((m) => {
+                    const isStaff = m.sender === "admin";
+                    const isVisitor = m.sender === "visitor";
+                    const isBot = m.sender === "bot";
+
                     return (
                       <div
-                        key={msg.id}
-                        className="flex items-center justify-center my-3"
-                      >
-                        <span className="px-3 py-1 rounded-full bg-amber-50/90 border border-amber-200 text-amber-900 text-[11px] font-mono flex items-center gap-1.5 shadow-2xs">
-                          <AlertCircle className="w-3 h-3 text-amber-600" />
-                          <span>{msg.text}</span>
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  const isVisitor = msg.sender === "visitor";
-                  const isStaff = msg.sender === "staff";
-
-                  return (
-                    <div
-                      key={msg.id}
-                      className={`flex flex-col ${
-                        isVisitor ? "items-start" : "items-end"
-                      }`}
-                    >
-                      <div className="flex items-center gap-1.5 mb-1 px-1 text-[11px] font-mono text-slate-400">
-                        {isVisitor ? (
-                          <>
-                            <User className="w-3 h-3 text-slate-400" />
-                            <span>{selectedSession.visitor}</span>
-                          </>
-                        ) : isStaff ? (
-                          <>
-                            <UserCheck className="w-3 h-3 text-teal-600" />
-                            <span className="text-[#0c758d] font-bold">Staff Engineer</span>
-                          </>
-                        ) : (
-                          <>
-                            <Bot className="w-3 h-3 text-teal-600" />
-                            <span>Exergy Bot</span>
-                          </>
-                        )}
-                        <span>•</span>
-                        <span>{msg.time}</span>
-                      </div>
-
-                      <div
-                        className={`max-w-lg rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-2xs ${
-                          isVisitor
-                            ? "bg-white border border-slate-200 text-slate-800 rounded-tl-xs"
-                            : isStaff
-                            ? "bg-[#0c758d] text-white rounded-tr-xs"
-                            : "bg-teal-50 border border-teal-200/80 text-teal-950 rounded-tr-xs"
+                        key={m.id}
+                        className={`flex flex-col ${
+                          isStaff ? "items-end" : "items-start"
                         }`}
                       >
-                        {msg.text}
+                        <div className="flex items-center gap-1 text-[10px] text-slate-400 mb-0.5 px-1">
+                          {isStaff ? (
+                            <>
+                              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                              <span className="font-semibold text-emerald-700">
+                                Engineering Support
+                              </span>
+                            </>
+                          ) : isVisitor ? (
+                            <>
+                              <User className="w-3 h-3 text-slate-500" />
+                              <span>{selectedSession.visitor}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Bot className="w-3 h-3 text-[#0c758d]" />
+                              <span>Exergy Automated Assistant</span>
+                            </>
+                          )}
+                          <span>•</span>
+                          <span>{m.time}</span>
+                        </div>
+
+                        <div
+                          className={`p-3.5 rounded-2xl max-w-[85%] leading-relaxed whitespace-pre-wrap ${
+                            isStaff
+                              ? "bg-[#0c758d] text-white rounded-br-none shadow-xs"
+                              : isVisitor
+                              ? "bg-white border border-slate-200 text-slate-900 rounded-bl-none shadow-xs"
+                              : "bg-slate-100 text-slate-800 rounded-bl-none"
+                          }`}
+                        >
+                          {m.text}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
+
+                <div ref={messagesEndRef} />
               </div>
 
-              {/* Scroll to Bottom Floating Pill */}
+              {/* Jump to bottom shortcut */}
               {showScrollBottom && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    userScrolledUpRef.current = false;
-                    setShowScrollBottom(false);
-                    scrollToBottom(true);
-                  }}
-                  className="absolute bottom-28 right-6 z-20 px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white text-[11px] font-mono font-medium shadow-xl flex items-center gap-1.5 backdrop-blur-sm transition-all cursor-pointer animate-in fade-in"
-                >
-                  <ArrowDown className="w-3.5 h-3.5 text-teal-400" />
-                  <span>Scroll to latest</span>
-                </button>
-              )}
-
-              {/* Reply or Closed State */}
-              {selectedSession.status === "closed" ? (
-                <div className="p-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-                  <div className="flex items-center gap-2 text-xs font-mono text-slate-600">
-                    <XCircle className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>This conversation is closed and archived. Reopen to send further engineering responses.</span>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedSessionId(null);
-                        setIsMobileListHidden(false);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer shadow-2xs"
-                      title="Close chat window and return to inbox"
-                    >
-                      <X className="w-3.5 h-3.5 text-slate-500" />
-                      <span>Close Window</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleReopenChat}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Reopen Chat</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {/* Quick Response Suggestion Chips */}
-                  <div className="p-2.5 px-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px] font-mono shrink-0">
-                    <span className="text-slate-400 shrink-0">Quick reply:</span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleQuickReply(
-                          "Hi, this is Staff Engineer from Exergy Solutions. I have reviewed your plant inquiry and would be glad to assist. Could you share your current evaporator operating temperatures?"
-                        )
-                      }
-                      className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
-                    >
-                      Request Operating Temps
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleQuickReply(
-                          "We can schedule an engineer on-site next week to conduct temperature baseline measurements across your headers. Does Tuesday 10:00 AM work for your team?"
-                        )
-                      }
-                      className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
-                    >
-                      Propose Site Visit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleQuickReply(
-                          "Please upload your recent utility bills and P&ID diagrams at /portal so we can calculate your estimated thermal exergy savings."
-                        )
-                      }
-                      className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-[#0c758d] hover:border-[#0c758d] transition-colors whitespace-nowrap cursor-pointer"
-                    >
-                      Request Utility Bills
-                    </button>
-                  </div>
-
-                  {/* Reply Input Box */}
-                  <form
-                    onSubmit={handleSendReply}
-                    className="p-4 border-t border-slate-200 bg-white flex items-center gap-3 shrink-0"
+                <div className="relative">
+                  <button
+                    onClick={() => scrollToBottom(true)}
+                    className="absolute -top-10 right-4 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-md text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-1"
                   >
-                    <input
-                      type="text"
-                      required
-                      placeholder="Type engineering response to client as Staff Engineer..."
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:bg-white"
-                    />
-
-                    <button
-                      type="submit"
-                      disabled={!replyText.trim()}
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white font-heading font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer shadow-xs active:scale-98"
-                    >
-                      <span>Send</span>
-                      <Send className="w-3.5 h-3.5" />
-                    </button>
-                  </form>
-                </>
+                    <ArrowDown className="w-3.5 h-3.5 text-[#0c758d]" />
+                    <span>Latest Messages</span>
+                  </button>
+                </div>
               )}
+
+              {/* Admin Reply Composer Bar */}
+              <form
+                onSubmit={handleSendReply}
+                className="p-3 border-t border-slate-200 bg-white flex items-center gap-2 shrink-0"
+              >
+                <input
+                  type="text"
+                  placeholder="Reply directly to customer..."
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  disabled={isSubmitting}
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+                />
+                <button
+                  type="submit"
+                  disabled={!replyText.trim() || isSubmitting}
+                  className="px-4 py-2 rounded-full bg-[#0c758d] hover:bg-[#095f73] text-white text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Send Reply</span>
+                </button>
+              </form>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-50/30">
-              <div className="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 text-[#0c758d] flex items-center justify-center shadow-xs mb-3">
-                <MessageSquare className="w-8 h-8 text-[#0c758d]" />
-              </div>
-              <h3 className="font-heading font-bold text-sm text-slate-800 mb-1">
-                No Chat Window Open
-              </h3>
-              <p className="text-xs text-slate-500 font-mono max-w-sm">
-                Select an active inquiry, review request, or closed ticket from the inbox list on the left to view transcripts and send responses.
-              </p>
+            <div className="flex flex-col items-center justify-center h-full text-slate-400 space-y-2">
+              <MessageSquare className="w-10 h-10 opacity-30" />
+              <p className="text-sm font-medium">Select a conversation from the left to view messages.</p>
             </div>
           )}
         </div>

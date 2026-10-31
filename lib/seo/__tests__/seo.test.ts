@@ -21,10 +21,10 @@ describe("Technical SEO Metadata & Schema Architecture", () => {
     assert.equal(meta.title, "Test Page");
     assert.equal(meta.description, "A comprehensive test description for SEO testing.");
     assert.equal(meta.alternates?.canonical, `${SITE_URL}/services`);
-    assert.equal(meta.openGraph?.url, `${SITE_URL}/services`);
-    assert.equal(meta.openGraph?.type, "website");
-    assert.ok(meta.openGraph?.images && meta.openGraph.images.length > 0);
-    assert.equal(meta.twitter?.card, "summary_large_image");
+    assert.equal((meta.openGraph as any)?.url, `${SITE_URL}/services`);
+    assert.equal((meta.openGraph as any)?.type, "website");
+    assert.ok((meta.openGraph as any)?.images && (meta.openGraph as any).images.length > 0);
+    assert.equal((meta.twitter as any)?.card, "summary_large_image");
     assert.equal((meta.robots as any)?.index, true);
     assert.equal((meta.robots as any)?.follow, true);
   });

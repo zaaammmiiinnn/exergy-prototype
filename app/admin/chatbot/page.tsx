@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Bot,
   Plus,
@@ -14,6 +14,9 @@ import {
   Send,
   HelpCircle,
   X,
+  Link as LinkIcon,
+  RefreshCw,
+  Edit2,
 } from "lucide-react";
 import { chatQABankSeed, QABankItem } from "@/content/seed/chatbot";
 import { handleChatMessage } from "@/lib/chatbot/engine";
@@ -23,17 +26,41 @@ export default function AdminChatbotPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // New item form state
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
   const [newKeywords, setNewKeywords] = useState("");
+  const [newSynonyms, setNewSynonyms] = useState("");
   const [newCategory, setNewCategory] = useState("general");
   const [newSourcePage, setNewSourcePage] = useState("Services");
+  const [newDestinationUrl, setNewDestinationUrl] = useState("");
+  const [newPriority, setNewPriority] = useState<number>(5);
 
   // Interactive Matcher Sandbox
   const [testInput, setTestInput] = useState("");
   const [testResult, setTestResult] = useState<any>(null);
+
+  // Load from backend API
+  const loadKnowledge = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/admin/chatbot/knowledge");
+      const data = await res.json();
+      if (data.success && Array.isArray(data.knowledge) && data.knowledge.length > 0) {
+        setQaList(data.knowledge);
+      }
+    } catch (err) {
+      console.warn("[LOAD KNOWLEDGE ERROR]", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadKnowledge();
+  }, []);
 
   const categories = [
     "all",
@@ -50,7 +77,7 @@ export default function AdminChatbotPage() {
     return matchesCategory && matchesSearch;
   });
 
-  const handleAddEntry = (e: React.FormEvent) => {
+  const handleAddEntry = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newQuestion.trim() || !newAnswer.trim()) return;
 
@@ -59,23 +86,59 @@ export default function AdminChatbotPage() {
       .map((k) => k.trim().toLowerCase())
       .filter(Boolean);
 
-    const newItem: QABankItem = {
-      id: `qa-${Date.now()}`,
+    const synonymsArray = newSynonyms
+      .split(",")
+      .map((k) => k.trim().toLowerCase())
+      .filter(Boolean);
+
+    const payload = {
       question: newQuestion.trim(),
       answer: newAnswer.trim(),
       keywords: keywordsArray.length > 0 ? keywordsArray : [newQuestion.slice(0, 10).toLowerCase()],
+      synonyms: synonymsArray,
       category: newCategory,
       source_page: newSourcePage.trim() || "General",
+      destination_url: newDestinationUrl.trim() || undefined,
+      priority: newPriority,
+      is_active: true,
     };
 
-    setQaList((prev) => [newItem, ...prev]);
+    try {
+      const res = await fetch("/api/admin/chatbot/knowledge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "add", item: payload }),
+      });
+      const data = await res.json();
+      if (data.success && data.item) {
+        setQaList((prev) => [data.item, ...prev]);
+      }
+    } catch {
+      // Local fallback
+      const localItem: QABankItem = {
+        id: `qa-${Date.now()}`,
+        ...payload,
+      };
+      setQaList((prev) => [localItem, ...prev]);
+    }
+
     setIsAddModalOpen(false);
     setNewQuestion("");
     setNewAnswer("");
     setNewKeywords("");
+    setNewSynonyms("");
+    setNewDestinationUrl("");
   };
 
-  const handleDeleteEntry = (id: string) => {
+  const handleDeleteEntry = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this FAQ entry?")) return;
+    try {
+      await fetch("/api/admin/chatbot/knowledge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete", id }),
+      });
+    } catch {}
     setQaList((prev) => prev.filter((item) => item.id !== id));
   };
 
@@ -98,23 +161,32 @@ export default function AdminChatbotPage() {
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="font-heading font-extrabold text-2xl text-[#12232b] tracking-tight">
-              Chatbot Knowledge & Rules
+              Chatbot Knowledge Management
             </h1>
             <span className="px-2 py-0.5 rounded-full bg-teal-50 text-[#0c758d] border border-teal-200/70 text-xs font-mono font-bold">
-              Deterministic Engine
+              Database-Backed Engine
             </span>
           </div>
           <p className="text-xs text-slate-500 font-mono mt-1">
-            Zero LLM hallucination — keyword matching, Q&A bank, and human handoff rules
+            Manage FAQs, keywords, synonyms, and section navigation links. Updates take effect immediately.
           </p>
         </div>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0c758d] text-white text-xs font-semibold hover:bg-[#09586a] transition-all shadow-xs cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Q&A Entry</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={loadKnowledge}
+            className="p-2 text-slate-500 hover:text-slate-900 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 transition-colors shadow-xs"
+            title="Refresh from Database"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0c758d] text-white text-xs font-semibold hover:bg-[#09586a] transition-all shadow-xs cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Knowledge Entry</span>
+          </button>
+        </div>
       </div>
 
       {/* Core Rules Overview */}
@@ -145,7 +217,7 @@ export default function AdminChatbotPage() {
             <span className="font-mono text-[#0c758d] font-bold">{qaList.length} Items</span>
           </div>
           <p className="text-slate-500 font-sans text-xs">
-            Pre-approved thermodynamic answers with explicit source attribution.
+            Pre-approved thermodynamic answers with explicit source & navigation attribution.
           </p>
         </div>
       </div>
@@ -159,20 +231,22 @@ export default function AdminChatbotPage() {
               Live Engine Rule Tester
             </h3>
           </div>
-          <span className="text-[10px] text-slate-400 font-mono">Test input against current rules</span>
+          <span className="text-[10px] text-slate-400 font-mono">
+            Test inquiries before publishing
+          </span>
         </div>
 
         <form onSubmit={handleRunTest} className="flex gap-2">
           <input
             type="text"
+            placeholder="Test customer question (e.g. 'How much does an assessment cost?', 'cooling', 'pricing')..."
             value={testInput}
             onChange={(e) => setTestInput(e.target.value)}
-            placeholder="Type query to test (e.g. 'how much can we save', 'cooling', 'talk to human')..."
-            className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-400"
+            className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-400 font-mono"
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-[#0c758d] hover:bg-[#095f73] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs rounded-xl transition-colors flex items-center gap-1.5"
           >
             <Send className="w-3.5 h-3.5" />
             <span>Test Match</span>
@@ -180,120 +254,141 @@ export default function AdminChatbotPage() {
         </form>
 
         {testResult && (
-          <div className="mt-3 p-3.5 bg-slate-800/80 rounded-xl border border-slate-700 font-mono text-xs space-y-2">
-            <div className="flex items-center justify-between text-slate-400 text-[11px]">
-              <span>Intent: <span className="text-teal-300 font-bold">{testResult.intent || "menu / message"}</span></span>
-              <span>Next State Node: <span className="text-teal-300 font-bold">{testResult.nextState.currentNode}</span></span>
+          <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-2.5 text-xs font-mono">
+            <div className="flex items-center justify-between text-teal-400">
+              <span className="font-bold">Engine Response:</span>
+              <span className="text-[10px] text-slate-400">
+                Mode: {testResult.nextState?.mode || "qa"}
+              </span>
             </div>
-            <div className="p-2.5 bg-slate-950 rounded border border-slate-800 text-slate-200 whitespace-pre-wrap font-sans text-xs">
+            <p className="text-slate-200 whitespace-pre-wrap leading-relaxed font-sans text-xs">
               {testResult.reply}
-            </div>
+            </p>
+            {testResult.navigationLink && (
+              <div className="text-[11px] text-teal-300 font-sans">
+                Navigation Link: <span className="font-bold underline">{testResult.navigationLink.url}</span>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Knowledge Bank Management Section */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-[#0c758d]" />
-            <h2 className="font-heading font-bold text-base text-[#12232b]">
-              Knowledge Bank Entries ({filteredQA.length})
-            </h2>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Search */}
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search questions or keywords..."
-                className="pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
-              />
-            </div>
-
-            {/* Category Pills */}
-            <div className="flex items-center gap-1 overflow-x-auto">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`text-[11px] px-2.5 py-1 rounded-full capitalize font-medium transition-colors ${
-                    selectedCategory === cat
-                      ? "bg-[#0c758d] text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200">
+        <div className="relative w-full sm:w-80">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search questions or keywords..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+          />
         </div>
 
-        {/* Q&A List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredQA.map((qa) => (
-            <div
-              key={qa.id}
-              className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition-colors space-y-2.5 flex flex-col justify-between"
+        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto text-xs">
+          <span className="text-slate-500 text-xs shrink-0">Category:</span>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize shrink-0 transition-colors ${
+                selectedCategory === cat
+                  ? "bg-[#0c758d] text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
             >
-              <div className="space-y-1.5">
-                <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-heading font-bold text-xs text-slate-900 leading-snug">
-                    {qa.question}
-                  </h4>
-                  <button
-                    onClick={() => handleDeleteEntry(qa.id)}
-                    className="text-slate-400 hover:text-rose-600 transition-colors p-1"
-                    title="Delete Entry"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                  {qa.answer}
-                </p>
-              </div>
-
-              <div className="pt-2 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono">
-                <div className="flex flex-wrap items-center gap-1">
-                  <Tag className="w-3 h-3 text-[#0c758d]" />
-                  {qa.keywords.slice(0, 4).map((kw, i) => (
-                    <span
-                      key={i}
-                      className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-600"
-                    >
-                      {kw}
-                    </span>
-                  ))}
-                  {qa.keywords.length > 4 && (
-                    <span className="text-slate-400">+{qa.keywords.length - 4}</span>
-                  )}
-                </div>
-                <span className="text-slate-500 font-medium bg-slate-200/70 px-2 py-0.5 rounded">
-                  Source: {qa.source_page}
-                </span>
-              </div>
-            </div>
+              {cat}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Add Entry Modal */}
+      {/* Knowledge Base Table */}
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <th className="py-3 px-4">Question</th>
+                <th className="py-3 px-4">Answer & Source</th>
+                <th className="py-3 px-4">Category</th>
+                <th className="py-3 px-4">Keywords</th>
+                <th className="py-3 px-4">Destination Link</th>
+                <th className="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredQA.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-slate-400">
+                    No matching FAQ entries found.
+                  </td>
+                </tr>
+              ) : (
+                filteredQA.map((item) => (
+                  <tr key={item.id} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-slate-900 max-w-xs">
+                      {item.question}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-600 max-w-sm">
+                      <p className="line-clamp-2">{item.answer}</p>
+                      <span className="text-[10px] text-slate-400 mt-0.5 block font-mono">
+                        Source: {item.source_page}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-semibold capitalize">
+                        {item.category}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex flex-wrap gap-1 max-w-[200px]">
+                        {item.keywords.slice(0, 4).map((kw, i) => (
+                          <span
+                            key={i}
+                            className="px-1.5 py-0.5 rounded bg-teal-50 text-[#0c758d] text-[10px] font-mono"
+                          >
+                            {kw}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-[11px] font-mono text-slate-500">
+                      {item.destination_url ? (
+                        <span className="text-[#0c758d] underline">{item.destination_url}</span>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <button
+                        onClick={() => handleDeleteEntry(item.id)}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                        title="Delete FAQ"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Add Knowledge Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-heading font-bold text-sm text-slate-900">
-                Add New Chatbot Q&A Rule
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-heading font-bold text-base text-slate-900">
+                Add Knowledge Base FAQ
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -301,89 +396,95 @@ export default function AdminChatbotPage() {
 
             <form onSubmit={handleAddEntry} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Question
-                </label>
+                <label className="block font-semibold text-slate-700 mb-1">Question</label>
                 <input
                   type="text"
                   required
+                  placeholder="e.g. What is the turnkey implementation warranty?"
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
-                  placeholder="e.g. Do you support waste-heat recovery in food processing?"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
                 />
               </div>
 
               <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Approved Answer
-                </label>
+                <label className="block font-semibold text-slate-700 mb-1">Answer</label>
                 <textarea
                   required
                   rows={3}
+                  placeholder="Accurate, pre-approved thermodynamic answer..."
                   value={newAnswer}
                   onChange={(e) => setNewAnswer(e.target.value)}
-                  placeholder="Enter exact technical answer..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Trigger Keywords (comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={newKeywords}
-                  onChange={(e) => setNewKeywords(e.target.value)}
-                  placeholder="e.g. waste-heat, food, processing, pasteurization"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    Category
-                  </label>
+                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0c758d] capitalize"
                   >
                     <option value="general">General</option>
                     <option value="services">Services</option>
-                    <option value="industries">Industries</option>
                     <option value="approach">Approach</option>
                     <option value="benefits">Benefits</option>
+                    <option value="pricing">Pricing</option>
                     <option value="contact">Contact</option>
+                    <option value="industries">Industries</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    Source Page
-                  </label>
+                  <label className="block font-semibold text-slate-700 mb-1">Destination URL</label>
                   <input
                     type="text"
-                    value={newSourcePage}
-                    onChange={(e) => setNewSourcePage(e.target.value)}
-                    placeholder="e.g. Services / Waste-Heat"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+                    placeholder="e.g. /services#cooling"
+                    value={newDestinationUrl}
+                    onChange={(e) => setNewDestinationUrl(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Keywords (comma separated)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. warranty, turnkey, guarantee, contract"
+                  value={newKeywords}
+                  onChange={(e) => setNewKeywords(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Synonyms / Phrases (comma separated)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. performance warranty, guarantee terms"
+                  value={newSynonyms}
+                  onChange={(e) => setNewSynonyms(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0c758d]"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-[#0c758d] text-white font-semibold hover:bg-[#095f73] transition-colors"
+                  className="px-4 py-2 bg-[#0c758d] text-white rounded-xl font-semibold hover:bg-[#09586a]"
                 >
                   Save Entry
                 </button>

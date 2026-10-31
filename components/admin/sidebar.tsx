@@ -48,7 +48,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
     icon: Users,
   },
   {
-    name: "Chat Inbox",
+    name: "Customer Support / Live Chat",
     href: "/admin/chats",
     icon: MessageSquare,
   },

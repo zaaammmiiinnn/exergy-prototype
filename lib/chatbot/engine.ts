@@ -12,7 +12,7 @@ export interface ChatSessionState {
 
 export interface ChatEngineOutput {
   reply: string;
-  quickReplies: { label: string; action: string }[];
+  quickReplies: { label: string; action: string; url?: string }[];
   nextState: ChatSessionState;
   intent?: "handoff" | "assessment" | "qa" | "menu" | "lead_captured" | "track";
   leadPayload?: {
@@ -20,6 +20,10 @@ export interface ChatEngineOutput {
     email: string;
     company: string;
     note?: string;
+  };
+  navigationLink?: {
+    label: string;
+    url: string;
   };
 }
 
@@ -31,6 +35,7 @@ export interface ChatMenuItemNode {
   text: string;
   keywords: string[];
   action?: string;
+  url?: string;
 }
 
 export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
@@ -48,6 +53,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     label: "Services",
     text: "We optimize 6 core industrial energy and water streams:\n\n• Cooling optimization (Chilled water & refrigeration)\n• Heating & steam (Boilers & heat recovery)\n• Drying processes (Thermal & mechanical dewatering)\n• Water quality (Desalination & effluent reuse)\n• Waste-heat recovery (ORC & cascading)\n• Process integration (Plant-wide pinch analysis)\n\n1. Request Facility Assessment\n2. Speak to an Engineer (Lead Capture)\n0. Main Menu",
     keywords: ["service", "services", "cooling", "heating", "steam", "drying", "water", "waste-heat", "process"],
+    url: "/services",
   },
   industries: {
     key: "industries",
@@ -56,6 +62,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     label: "Industries",
     text: "We specialize in heavy operations where energy and water are mission-critical:\n\n1. Paper Mills\n2. Processing (Food & Chemical)\n3. Petroleum & Refining\n4. Commercial Buildings\n5. Hospitality\n6. Healthcare & Cleanrooms",
     keywords: ["industry", "industries", "sectors", "paper", "petroleum", "buildings", "hospitality", "healthcare"],
+    url: "/industries",
   },
   assessment: {
     key: "assessment",
@@ -65,6 +72,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     text: "Book a no-obligation exergy assessment. We will quantify the opportunity and back our implementation with a performance guarantee. We reply within one business day.",
     keywords: ["assessment", "audit", "quote", "book", "cost"],
     action: "start_assessment",
+    url: "/assessment",
   },
   faqs: {
     key: "faqs",
@@ -81,6 +89,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     label: "Approach",
     text: "Efficiency engineered from the laws of physics. While first-law audits count kilowatt-hours, we measure useful work potential (second law) to find savings conventional methods overlook.",
     keywords: ["approach", "method", "physics", "thermodynamics", "second law"],
+    url: "/approach",
   },
   handoff: {
     key: "handoff",
@@ -99,6 +108,7 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     text: "You can track the live status of your assessment request anytime inside your Client Account Portal (/portal) or tracking page (/track). Sign in to view assigned engineers, thermodynamic modeling progress, and direct contact details.",
     keywords: ["track", "tracking", "status", "progress", "reference", "my request", "check status", "order", "lead"],
     action: "track",
+    url: "/track",
   },
 };
 
@@ -128,9 +138,111 @@ const GREETING_PATTERNS = [
   /\bmarhaba\b/,
 ];
 
+// Direct section navigation patterns
+const NAVIGATION_RULES: {
+  patterns: RegExp[];
+  reply: string;
+  url: string;
+  label: string;
+}[] = [
+  {
+    patterns: [
+      /\b(where\s+can\s+i\s+see|show\s+me|explore|view)\s+your\s+services\b/,
+      /\bwhere\s+are\s+the\s+services\b/,
+    ],
+    reply: "You can explore all our services here.\n\n[Explore Services → /services]",
+    url: "/services",
+    label: "Explore Services",
+  },
+  {
+    patterns: [
+      /\b(how\s+can\s+i\s+contact|how\s+to\s+contact)\s+(your\s+team|you|support)\b/,
+      /\bwhere\s+can\s+i\s+contact\b/,
+      /\bcontact\s+page\b/,
+    ],
+    reply: "You can reach our engineering team through our contact page.\n\n[Contact Us → /contact]",
+    url: "/contact",
+    label: "Contact Us",
+  },
+  {
+    patterns: [
+      /\b(where\s+can\s+i\s+see|view|check)\s+(your\s+)?pricing\b/,
+      /\bhow\s+much\s+does\s+it\s+cost\b/,
+      /\bview\s+pricing\b/,
+    ],
+    reply: "You can find our available packages and turnkey ROI models here.\n\n[View Pricing → /pricing]",
+    url: "/assessment",
+    label: "View Pricing",
+  },
+  {
+    patterns: [
+      /\b(how\s+do\s+i\s+track|track\s+my\s+request|check\s+status\s+of\s+my\s+request)\b/,
+    ],
+    reply: "You can monitor the live status of your facility assessment request here.\n\n[Track Request → /track]",
+    url: "/track",
+    label: "Track Request",
+  },
+  {
+    patterns: [
+      /\b(where\s+is|open)\s+(the\s+)?(client\s+)?portal\b/,
+    ],
+    reply: "You can access your client account portal here.\n\n[Client Portal → /portal]",
+    url: "/portal",
+    label: "Client Portal",
+  },
+  {
+    patterns: [
+      /\b(cooling\s+services?|cooling\s+optimization)\b/,
+    ],
+    reply: "Explore our industrial cooling and refrigeration optimization engineering.\n\n[Cooling Optimization → /services#cooling]",
+    url: "/services#cooling",
+    label: "Cooling Optimization",
+  },
+  {
+    patterns: [
+      /\b(heating\s+services?|steam\s+optimization|boilers?)\b/,
+    ],
+    reply: "Learn how we integrate boiler steam networks and heat recovery.\n\n[Heating & Steam → /services#heating]",
+    url: "/services#heating",
+    label: "Heating & Steam",
+  },
+  {
+    patterns: [
+      /\b(drying\s+processes?|dewatering|paper\s+drying)\b/,
+    ],
+    reply: "Discover our thermal and mechanical drying optimizations for paper and processing.\n\n[Drying Processes → /services#drying]",
+    url: "/services#drying",
+    label: "Drying Processes",
+  },
+  {
+    patterns: [
+      /\b(water\s+quality|desalination\s+consultancy|effluent\s+treatment)\b/,
+    ],
+    reply: "Review our low-energy desalination, effluent reuse, and water quality solutions.\n\n[Water Quality → /services#water]",
+    url: "/services#water",
+    label: "Water Quality",
+  },
+  {
+    patterns: [
+      /\b(waste\s*heat\s*recovery|orc\s+systems?)\b/,
+    ],
+    reply: "Discover our low-grade thermal cascading and ORC power generation systems.\n\n[Waste-Heat Recovery → /services#waste-heat]",
+    url: "/services#waste-heat",
+    label: "Waste-Heat Recovery",
+  },
+  {
+    patterns: [
+      /\b(process\s+integration|pinch\s+analysis)\b/,
+    ],
+    reply: "Learn about our whole-plant pinch analysis unifying thermal energy and water.\n\n[Process Integration → /services#process]",
+    url: "/services#process",
+    label: "Process Integration",
+  },
+];
+
 /**
- * Pure function: deterministic rule-based chatbot engine with interactive lead capture.
- * No I/O inside this matcher.
+ * Pure function: deterministic rule-based chatbot engine with interactive lead capture
+ * and website-aware navigation.
  */
 export function handleChatMessage(
   state: ChatSessionState,
@@ -171,7 +283,7 @@ export function handleChatMessage(
     }
   }
 
-  // B. Lead Capture Mode: Step 2 - Work Email (Checked before name)
+  // B. Lead Capture Mode: Step 2 - Work Email
   if (state.mode === "capture_email") {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(rawTrimmed)) {
@@ -227,9 +339,7 @@ export function handleChatMessage(
   }
 
   // A. Lead Capture Mode: Step 1 - Full Name
-  // Matches if mode is capture_name OR if visitor is currently at the handoff node
   if (state.mode === "capture_name" || state.currentNode === "handoff") {
-    // If the visitor just clicked handoff or typed a human keyword again, prompt clearly for name
     if (
       normalized === "6" ||
       normalized === "handoff" ||
@@ -291,7 +401,7 @@ export function handleChatMessage(
     });
   }
 
-  // 3. Contextual Sub-Menu Handlers (e.g. In Services: 1 -> Assessment, 2 -> Lead Capture)
+  // 3. Contextual Sub-Menu Handlers
   if (state.currentNode === "services") {
     if (
       normalized === "2" ||
@@ -310,6 +420,25 @@ export function handleChatMessage(
     }
     if (normalized === "1" || normalized === "assessment" || normalized === "request assessment") {
       return formatNodeOutput(tree.assessment || CHAT_MENU_TREE.assessment, state);
+    }
+  }
+
+  // 3.5. Direct Website Navigation Pattern Match
+  for (const nav of NAVIGATION_RULES) {
+    if (nav.patterns.some((p) => p.test(normalized))) {
+      return {
+        reply: nav.reply,
+        quickReplies: [
+          { label: `${nav.label} →`, action: `nav_${nav.url}`, url: nav.url },
+          { label: "Book Assessment", action: "assessment", url: "/assessment" },
+          { label: "Main Menu", action: "main" },
+        ],
+        navigationLink: {
+          label: `${nav.label} →`,
+          url: nav.url,
+        },
+        nextState: { ...state, fallbackCount: 0, mode: "menu" },
+      };
     }
   }
 
@@ -358,7 +487,8 @@ export function handleChatMessage(
     }
   }
 
-  // 7. Keyword Match against Menu Items (Whole-word boundary)
+
+  // 9. Keyword Match against Menu Items (Whole-word boundary)
   for (const node of Object.values(CHAT_MENU_TREE)) {
     if (
       node.keywords.some((kw) => {
@@ -370,18 +500,30 @@ export function handleChatMessage(
     }
   }
 
-  // 8. Keyword Overlap against Q&A Bank (Whole-word boundary)
+  // 10. Keyword & Synonyms Overlap against Q&A Bank
   let bestQA: QABankItem | null = null;
   let maxScore = 0;
 
   for (const qa of qaBank) {
     let score = 0;
+
+    // Check direct synonym phrases
+    if (qa.synonyms) {
+      for (const syn of qa.synonyms) {
+        if (normalized.includes(syn.toLowerCase())) {
+          score += 3;
+        }
+      }
+    }
+
+    // Check keywords
     for (const kw of qa.keywords) {
       const regex = new RegExp(`\\b${kw}\\b`, "i");
       if (regex.test(normalized)) {
         score += 1;
       }
     }
+
     if (score > maxScore) {
       maxScore = score;
       bestQA = qa;
@@ -389,19 +531,37 @@ export function handleChatMessage(
   }
 
   if (bestQA && maxScore >= 1) {
+    const quickReplies: { label: string; action: string; url?: string }[] = [];
+
+    if (bestQA.destination_url) {
+      quickReplies.push({
+        label: `View ${bestQA.source_page || "Section"} →`,
+        action: `nav_${bestQA.destination_url}`,
+        url: bestQA.destination_url,
+      });
+    }
+
+    quickReplies.push(
+      { label: "Request Assessment", action: "assessment", url: "/assessment" },
+      { label: "Main Menu", action: "main" },
+      { label: "Talk to Human", action: "handoff" }
+    );
+
     return {
       reply: `${bestQA.answer}\n\n(Source: ${bestQA.source_page})`,
-      quickReplies: [
-        { label: "Request Assessment", action: "assessment" },
-        { label: "Main Menu", action: "main" },
-        { label: "Talk to Human", action: "handoff" },
-      ],
+      quickReplies,
+      navigationLink: bestQA.destination_url
+        ? {
+            label: `Explore ${bestQA.source_page} →`,
+            url: bestQA.destination_url,
+          }
+        : undefined,
       nextState: { ...state, fallbackCount: 0, mode: "qa" },
       intent: "qa",
     };
   }
 
-  // 9. Fallback Ladder
+  // 11. Fallback Ladder
   const newFallback = state.fallbackCount + 1;
   const reply =
     newFallback >= 2
@@ -421,15 +581,15 @@ export function handleChatMessage(
   };
 }
 
-function getMainQuickReplies(): { label: string; action: string }[] {
+function getMainQuickReplies(): { label: string; action: string; url?: string }[] {
   return [
-    { label: "1. Services", action: "services" },
-    { label: "2. Industries", action: "industries" },
-    { label: "3. Assessment", action: "assessment" },
+    { label: "1. Services", action: "services", url: "/services" },
+    { label: "2. Industries", action: "industries", url: "/industries" },
+    { label: "3. Assessment", action: "assessment", url: "/assessment" },
     { label: "4. FAQs", action: "faqs" },
-    { label: "5. Approach", action: "approach" },
+    { label: "5. Approach", action: "approach", url: "/approach" },
     { label: "6. Talk to Human", action: "handoff" },
-    { label: "7. Track Request", action: "track" },
+    { label: "7. Track Request", action: "track", url: "/track" },
   ];
 }
 
@@ -437,31 +597,31 @@ function formatNodeOutput(
   node: ChatMenuItemNode,
   currentState: ChatSessionState
 ): ChatEngineOutput {
-  const quickReplies: { label: string; action: string }[] = [];
+  const quickReplies: { label: string; action: string; url?: string }[] = [];
   const isHandoff = node.key === "handoff";
 
   if (node.key === "main") {
     quickReplies.push(...getMainQuickReplies());
   } else if (node.key === "services") {
     quickReplies.push(
-      { label: "1. Request Assessment", action: "assessment" },
+      { label: "1. Request Assessment", action: "assessment", url: "/assessment" },
       { label: "2. Speak to Engineer", action: "handoff" },
       { label: "Main Menu", action: "main" }
     );
   } else if (node.key === "industries") {
     quickReplies.push(
-      { label: "Book Assessment", action: "assessment" },
+      { label: "Book Assessment", action: "assessment", url: "/assessment" },
       { label: "Main Menu", action: "main" },
       { label: "Talk to Human", action: "handoff" }
     );
   } else if (node.key === "handoff") {
     quickReplies.push(
       { label: "Cancel", action: "main" },
-      { label: "Book Assessment", action: "assessment" }
+      { label: "Book Assessment", action: "assessment", url: "/assessment" }
     );
   } else if (node.key === "track") {
     quickReplies.push(
-      { label: "Open Tracking Portal", action: "open_portal" },
+      { label: "Open Tracking Portal", action: "open_portal", url: "/track" },
       { label: "Main Menu", action: "main" },
       { label: "Talk to Human", action: "handoff" }
     );
@@ -482,6 +642,12 @@ function formatNodeOutput(
   return {
     reply: node.text,
     quickReplies,
+    navigationLink: node.url
+      ? {
+          label: `Open ${node.label} →`,
+          url: node.url,
+        }
+      : undefined,
     nextState,
     intent: node.action as any,
   };

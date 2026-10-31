@@ -5,35 +5,74 @@ import {
   CHAT_MENU_TREE,
   ChatMenuItemNode,
 } from "@/lib/chatbot/engine";
-import { chatQABankSeed, QABankItem } from "@/content/seed/chatbot";
+import { chatRepository } from "@/lib/chat/repository";
+import {
+  resolveVisitorSession,
+  signVisitorToken,
+  verifyVisitorToken,
+} from "@/lib/auth/visitor";
 import { calculateLeadScore } from "@/lib/leads/scoring";
 import { sendAssessmentNotificationEmails } from "@/lib/email/resend";
-import { createServiceRoleClient } from "@/lib/supabase/service";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { sessionId, input, state, action, leadData } = body;
+    const {
+      conversationId: clientConvId,
+      sessionId,
+      input,
+      state,
+      action,
+      leadData,
+      visitorToken: clientVisitorToken,
+      deviceType = "desktop",
+    } = body;
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const isSupabaseConfigured = Boolean(
-      supabaseUrl &&
-      serviceKey &&
-      !supabaseUrl.includes("your-project") &&
-      !supabaseUrl.includes("dummy") &&
-      !serviceKey.includes("your-service-role") &&
-      !serviceKey.includes("dummy") &&
-      supabaseUrl.startsWith("https://")
-    );
+    // 1. Resolve secure visitor identity
+    let visitorUuid: string;
+    let currentToken: string;
 
-    // Handle explicit lead dispatch
+    if (clientVisitorToken) {
+      const verified = await verifyVisitorToken(clientVisitorToken);
+      if (verified?.visitorUuid) {
+        visitorUuid = verified.visitorUuid;
+        currentToken = clientVisitorToken;
+      } else {
+        const session = await resolveVisitorSession();
+        visitorUuid = session.visitorUuid;
+        currentToken = session.token;
+      }
+    } else {
+      const session = await resolveVisitorSession();
+      visitorUuid = session.visitorUuid;
+      currentToken = session.token;
+    }
+
+    const userAgent = req.headers.get("user-agent") || undefined;
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || undefined;
+
+    // 2. Look up or create persistent visitor record
+    const visitor = await chatRepository.getOrCreateVisitor(visitorUuid, {
+      deviceType,
+      userAgent,
+      clientIp,
+    });
+
+    // 3. Resolve active conversation
+    let conversation = clientConvId || sessionId
+      ? await chatRepository.getConversationById(clientConvId || sessionId)
+      : null;
+
+    if (!conversation || conversation.visitor_id !== visitor.id) {
+      conversation = await chatRepository.getOrCreateConversation(visitor, {
+        pageUrl: state?.currentNode ? `/${state.currentNode}` : "/",
+        userAgent,
+      });
+    }
+
+    // 4. Handle explicit lead dispatch
     if (action === "lead" || leadData) {
       const data = leadData || {};
-      const currentYear = new Date().getFullYear();
-      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-      const shortId = `EX-${currentYear}-${randomSuffix}`;
-
       const { score, priority } = calculateLeadScore({
         email: data.email || "",
         sector: "General Industrial / Chatbot Inquirer",
@@ -43,9 +82,25 @@ export async function POST(req: Request) {
         source: "handoff",
       });
 
-      // Dispatch notification emails asynchronously
+      const lead = await chatRepository.recordLead({
+        visitorId: visitor.id,
+        conversationId: conversation.id,
+        name: data.name || visitor.name || "Chat Visitor",
+        email: data.email || visitor.email || "",
+        company: data.company || "Not specified",
+        requirements: data.note || "Chat handoff consultation",
+        inquiryCategory: "Industrial Engineering Consultation",
+      });
+
+      if (data.name || data.email) {
+        await chatRepository.updateVisitorProfile(visitor.id, {
+          name: data.name,
+          email: data.email,
+        });
+      }
+
       sendAssessmentNotificationEmails({
-        shortId,
+        shortId: lead.id,
         name: data.name || "Inquirer",
         email: data.email || "",
         company: data.company || "Not provided",
@@ -57,101 +112,76 @@ export async function POST(req: Request) {
         priority,
       }).catch((err) => console.error("[CHAT LEAD EMAIL ERROR]", err));
 
-      if (isSupabaseConfigured) {
-        try {
-          const supabase = createServiceRoleClient();
-          await supabase.from("leads").insert({
-            short_id: shortId,
-            source: "handoff",
-            status: "new",
-            full_name: data.name || "Chat Visitor",
-            email: data.email || "",
-            company: data.company || "Not provided",
-            sector: "Industrial Operations",
-            service_interest: ["Thermodynamic Consultation"],
-            main_challenge: data.note || null,
-            score,
-            priority,
-            chat_session_id: sessionId && sessionId.length === 36 ? sessionId : null,
-          });
+      const res = NextResponse.json({
+        success: true,
+        conversationId: conversation.id,
+        visitorUuid: visitor.visitor_uuid,
+        visitorToken: currentToken,
+        shortId: lead.id,
+      });
 
-          if (sessionId && sessionId.length === 36) {
-            await supabase.from("chat_sessions").upsert({
-              id: sessionId,
-              status: "needs_human",
-              visitor_name: data.name,
-              visitor_email: data.email,
-              company_name: data.company,
-              last_message_at: new Date().toISOString(),
-            });
-          }
-        } catch (dbErr) {
-          console.warn("[CHAT DB ERROR]", dbErr);
-        }
-      }
+      res.cookies.set("exergy_visitor_token", currentToken, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 86400 * 365,
+        secure: process.env.NODE_ENV === "production",
+      });
 
-      return NextResponse.json({ success: true, shortId });
+      return res;
     }
 
-    // Normal message handling
+    // 5. Normal chat message processing
     const currentState: ChatSessionState = state || {
       currentNode: "main",
       mode: "menu",
       fallbackCount: 0,
     };
 
-    // Query active chat_menu_items and chat_qa_bank from Supabase if connected
-    let dbMenuTree = CHAT_MENU_TREE;
-    let dbQABank: QABankItem[] = chatQABankSeed;
-
-    if (isSupabaseConfigured) {
-      try {
-        const supabase = createServiceRoleClient();
-        const [menuRes, qaRes] = await Promise.all([
-          supabase.from("chat_menu_items").select("*").eq("is_active", true),
-          supabase.from("chat_qa_bank").select("*").eq("is_active", true),
-        ]);
-
-        if (menuRes.data && menuRes.data.length > 0) {
-          const tree: Record<string, ChatMenuItemNode> = { ...CHAT_MENU_TREE };
-          for (const item of menuRes.data) {
-            tree[item.node_key] = {
-              key: item.node_key,
-              parent: item.parent_key || undefined,
-              position: item.position ?? 0,
-              label: item.label,
-              text: item.body || "",
-              keywords: item.keywords || [],
-              action: item.action || undefined,
-            };
-          }
-          dbMenuTree = tree;
-        }
-
-        if (qaRes.data && qaRes.data.length > 0) {
-          dbQABank = qaRes.data.map((item) => ({
-            id: item.id,
-            question: item.question,
-            answer: item.answer,
-            keywords: item.keywords || [],
-            category: item.category || "general",
-            source_page: item.source_page || "Home",
-          }));
-        }
-      } catch (dbErr) {
-        console.warn("[CHAT DB RETRIEVAL WARNING]", dbErr);
-      }
+    // Save visitor message in database
+    if (input && input.trim()) {
+      await chatRepository.addMessage({
+        conversationId: conversation.id,
+        senderType: "visitor",
+        messageContent: input.trim(),
+        messageType: "text",
+        senderId: visitor.visitor_uuid,
+      });
     }
 
-    const output = handleChatMessage(currentState, input || "", dbQABank, dbMenuTree);
+    // Retrieve active dynamic knowledge base
+    const dynamicKnowledge = await chatRepository.getKnowledgeList();
+    const qaItems = dynamicKnowledge.map((k) => ({
+      id: k.id,
+      question: k.question,
+      answer: k.answer,
+      keywords: k.keywords,
+      synonyms: k.synonyms,
+      category: k.category,
+      source_page: k.source_page || "General",
+      destination_url: k.destination_url,
+      priority: k.priority,
+      is_active: k.is_active,
+    }));
 
-    // If intent is lead_captured, also trigger lead creation and notifications
+    const output = handleChatMessage(currentState, input || "", qaItems, CHAT_MENU_TREE);
+
+    // Save bot reply in database
+    await chatRepository.addMessage({
+      conversationId: conversation.id,
+      senderType: "bot",
+      messageContent: output.reply,
+      messageType: output.navigationLink ? "navigation" : "text",
+      metadata: {
+        quickReplies: output.quickReplies,
+        navigationLink: output.navigationLink,
+        intent: output.intent,
+      },
+    });
+
+    // Handle lead capture intent
     if (output.intent === "lead_captured" && output.leadPayload) {
       const payload = output.leadPayload;
-      const currentYear = new Date().getFullYear();
-      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-      const shortId = `EX-${currentYear}-${randomSuffix}`;
-
       const { score, priority } = calculateLeadScore({
         email: payload.email,
         sector: "Industrial Operations",
@@ -161,8 +191,25 @@ export async function POST(req: Request) {
         source: "handoff",
       });
 
+      await chatRepository.recordLead({
+        visitorId: visitor.id,
+        conversationId: conversation.id,
+        name: payload.name,
+        email: payload.email,
+        company: payload.company,
+        requirements: payload.note,
+        inquiryCategory: "Industrial Engineering Review",
+      });
+
+      await chatRepository.updateVisitorProfile(visitor.id, {
+        name: payload.name,
+        email: payload.email,
+      });
+
+      await chatRepository.updateConversationStatus(conversation.id, "needs_human");
+
       sendAssessmentNotificationEmails({
-        shortId,
+        shortId: `CHAT-${conversation.id.slice(0, 8).toUpperCase()}`,
         name: payload.name,
         email: payload.email,
         company: payload.company,
@@ -173,57 +220,27 @@ export async function POST(req: Request) {
         score,
         priority,
       }).catch((err) => console.error("[CHAT EMAIL DISPATCH ERROR]", err));
-
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-      const isConfigured = Boolean(
-        supabaseUrl &&
-        serviceKey &&
-        !supabaseUrl.includes("your-project") &&
-        !supabaseUrl.includes("dummy") &&
-        !serviceKey.includes("your-service-role") &&
-        !serviceKey.includes("dummy")
-      );
-
-      if (isConfigured) {
-        try {
-          const supabase = createServiceRoleClient();
-          await supabase.from("leads").insert({
-            short_id: shortId,
-            source: "handoff",
-            status: "new",
-            full_name: payload.name,
-            email: payload.email,
-            company: payload.company,
-            sector: "Industrial Operations",
-            service_interest: ["Plant Optimization Review"],
-            main_challenge: payload.note || null,
-            score,
-            priority,
-            chat_session_id: sessionId && sessionId.length === 36 ? sessionId : null,
-          });
-
-          if (sessionId && sessionId.length === 36) {
-            await supabase.from("chat_sessions").upsert({
-              id: sessionId,
-              status: "needs_human",
-              visitor_name: payload.name,
-              visitor_email: payload.email,
-              company_name: payload.company,
-              last_message_at: new Date().toISOString(),
-            });
-          }
-        } catch (dbErr) {
-          console.warn("[CHAT PERSIST DB ERROR]", dbErr);
-        }
-      }
     }
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
+      conversationId: conversation.id,
+      visitorUuid: visitor.visitor_uuid,
+      visitorToken: currentToken,
       output,
     });
+
+    res.cookies.set("exergy_visitor_token", currentToken, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 86400 * 365,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return res;
   } catch (error: any) {
+    console.error("[API CHAT ERROR]", error);
     return NextResponse.json(
       { success: false, error: error.message || "Failed to process chat message" },
       { status: 500 }
