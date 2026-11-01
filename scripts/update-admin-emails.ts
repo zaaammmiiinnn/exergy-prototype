@@ -101,7 +101,7 @@ async function updateEmails() {
       value: {
         address: "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
         email: "info@exergy-solutions.com",
-        phone: "+971 50 123 4567",
+        phone: "+971 50 645 1274",
         admin_contact: "sarfraz@exergy-solutions.com",
       },
     })

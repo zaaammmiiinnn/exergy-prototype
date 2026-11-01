@@ -114,7 +114,7 @@ export function Footer() {
                 </a>
 
                 <a
-                  href="https://wa.me/971501234567"
+                  href="https://wa.me/971506451274"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-slate-300 hover:text-white px-3.5 py-1.5 border border-slate-700/80 rounded-full bg-white/5 hover:bg-[#25D366]/20 hover:border-[#25D366] transition-all"
@@ -181,8 +181,8 @@ export function Footer() {
               </div>
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-[#0c758d] shrink-0 mt-0.5" />
-                <a href="tel:+971501234567" className="hover:text-white transition-colors">
-                  +971 50 123 4567 (UAE Engineering Desk)
+                <a href="tel:+971506451274" className="hover:text-white transition-colors">
+                  +971 50 645 1274 (UAE Engineering Desk)
                 </a>
               </div>
               <div className="flex items-start gap-2.5">

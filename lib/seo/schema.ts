@@ -14,7 +14,7 @@ export function getOrganizationSchema() {
     description:
       "Specialist engineering consultancy applying Second-Law thermodynamics and exergy analysis to reduce capex and opex across energy- and water-intensive industrial assets. Guaranteed turnkey implementation.",
     email: "info@support.exergy-solutions.com",
-    telephone: "+971501234567",
+    telephone: "+971506451274",
     address: {
       "@type": "PostalAddress",
       streetAddress: "334/6D Al Wasl Street DM199 Al Satwa",
@@ -49,7 +49,7 @@ export function getOrganizationSchema() {
     contactPoint: [
       {
         "@type": "ContactPoint",
-        telephone: "+971501234567",
+        telephone: "+971506451274",
         contactType: "customer service",
         areaServed: ["AE", "SA", "QA", "OM", "KW", "BH"],
         availableLanguage: ["en", "ar"],

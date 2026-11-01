@@ -3,6 +3,7 @@ export interface SiteSettingsSeed {
   tagline: string;
   address: string;
   email: string;
+  phone?: string;
   notify_emails: string[];
   linkedin_url: string;
   stats: {
@@ -26,6 +27,7 @@ export const siteSettingsSeed: SiteSettingsSeed = {
   tagline: "Turn wasted energy and water into profit",
   address: "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
   email: "info@support.exergy-solutions.com",
+  phone: "+971 50 645 1274",
   notify_emails: ["sarfraz@exergy-solutions.com", "info@support.exergy-solutions.com"],
   linkedin_url: "https://www.linkedin.com/company/135328489/",
   stats: {

@@ -70,7 +70,7 @@ function getDefaultProfileDefaults(email: string, role: string, fullName: string
   return {
     job_title: "Head of Systems & Energy Operations",
     department: "Operations & Digital Infrastructure",
-    phone: "+971 50 123 4567",
+    phone: "+971 50 645 1274",
     location: "Dubai Operations Hub, UAE",
     bio: "Supervising real-time lead assessment queues, telemetry integrations, client audit directives, and enterprise cloud database orchestration.",
     employee_id: "EX-ADM-042",

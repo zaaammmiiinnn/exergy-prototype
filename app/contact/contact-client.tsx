@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { siteSettingsSeed } from "@/content/seed/settings";
 import { MotionDiv } from "@/components/site/motion";
-import { MapPin, Mail, Clock, Send, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react";
+import { MapPin, Mail, Phone, Clock, Send, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react";
 
 export function ContactClient() {
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -85,6 +85,16 @@ export function ContactClient() {
                     </a>
                     <a href="mailto:info@support.exergy-solutions.com" className="text-slate-600 hover:text-teal-800 transition-colors block text-xs">
                       info@support.exergy-solutions.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 shadow-xs">
+                  <Phone className="w-5 h-5 text-teal-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <span className="text-xs font-mono text-slate-500 uppercase block font-semibold">Direct Phone & WhatsApp</span>
+                    <a href="tel:+971506451274" className="text-teal-700 hover:text-teal-800 transition-colors block text-sm font-medium">
+                      +971 50 645 1274 (UAE Engineering Desk)
                     </a>
                   </div>
                 </div>
@@ -192,7 +202,7 @@ export function ContactClient() {
                           type="tel"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder="+971 50 000 0000"
+                          placeholder="+971 50 645 1274"
                           className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-xs"
                         />
                       </div>

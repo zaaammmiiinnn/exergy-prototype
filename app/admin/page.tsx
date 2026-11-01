@@ -66,7 +66,7 @@ const MOCK_LEADS: MockLead[] = [
     status: "new",
     createdAt: "Just now",
     rawCreatedAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
-    phone: "+971 50 123 4567",
+    phone: "+971 50 645 1274",
     services: ["Cooling Optimization", "Waste Heat Recovery", "Pinch Analysis"],
     timeline: "immediate",
     notes: "Thermal fluid integration assessment for 4.2 MW continuous batch reactor line. Looking for turnkey performance guarantee.",

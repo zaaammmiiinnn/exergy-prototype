@@ -5,7 +5,7 @@ import React from "react";
 export function WhatsAppLauncher() {
   return (
     <a
-      href="https://wa.me/971501234567"
+      href="https://wa.me/971506451274"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Contact Exergy Solutions on WhatsApp"
