@@ -13,17 +13,17 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { getWebPageSchema } from "@/lib/seo/schema";
 
 export const metadata: Metadata = constructMetadata({
-  title: "Exergy Solutions | Industrial Thermodynamic Optimization & Energy Efficiency Dubai",
+  title: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
   description:
-    "Cut capex and opex across energy- and water-intensive industrial operations. Second-Law thermodynamic modeling, pinch analysis, and guaranteed turnkey implementation across Dubai and the GCC.",
+    "We map where energy and water quality are truly lost. Utilizing advanced second-law exergy analysis to expose inefficiencies and drive sustainability.",
   path: "/",
 });
 
 export default function HomePage() {
   const pageSchema = getWebPageSchema({
-    title: "Exergy Solutions | Industrial Thermodynamic Optimization & Energy Efficiency",
+    title: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
     description:
-      "Cut capex and opex across energy- and water-intensive industrial operations. Second-Law thermodynamic modeling, pinch analysis, and guaranteed turnkey implementation.",
+      "We map where energy and water quality are truly lost. Utilizing advanced second-law exergy analysis to expose inefficiencies and drive sustainability.",
     url: "/",
     type: "WebPage",
   });

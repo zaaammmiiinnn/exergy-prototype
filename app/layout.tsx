@@ -37,11 +37,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Exergy Solutions | Turn Wasted Energy and Water into Profit",
+    default: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
     template: "%s | Exergy Solutions",
   },
   description:
-    "We apply thermodynamics and exergy analysis to slash the capex and opex of energy- and water-intensive operations — delivered as guaranteed, turnkey implementation.",
+    "We map where energy and water quality are truly lost. Utilizing advanced second-law exergy analysis to expose inefficiencies and drive sustainability.",
   applicationName: "Exergy Solutions",
   authors: [{ name: "Exergy Solutions FZE", url: SITE_URL }],
   creator: "Exergy Solutions",
@@ -59,9 +59,9 @@ export const metadata: Metadata = {
     apple: "/logo.png",
   },
   openGraph: {
-    title: "Exergy Solutions | Turn Wasted Energy and Water into Profit",
+    title: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
     description:
-      "We apply thermodynamics and exergy analysis to slash the capex and opex of energy- and water-intensive operations — delivered as guaranteed, turnkey implementation.",
+      "We map where energy and water quality are truly lost. Utilizing advanced second-law exergy analysis to expose inefficiencies and drive sustainability.",
     url: SITE_URL,
     siteName: "Exergy Solutions",
     locale: "en_US",
@@ -71,15 +71,15 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "Exergy Solutions - Industrial Energy & Water Thermodynamic Optimization",
+        alt: "Exergy Solutions - Advanced Energy & Water Efficiency Analysis",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Exergy Solutions | Turn Wasted Energy and Water into Profit",
+    title: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
     description:
-      "We apply thermodynamics and exergy analysis to slash the capex and opex of energy- and water-intensive operations — delivered as guaranteed, turnkey implementation.",
+      "We map where energy and water quality are truly lost. Utilizing advanced second-law exergy analysis to expose inefficiencies and drive sustainability.",
     site: "@exergysolutions",
     creator: "@exergysolutions",
     images: [`${SITE_URL}/og-image.png`],
