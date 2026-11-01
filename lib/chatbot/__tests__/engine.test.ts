@@ -29,6 +29,15 @@ describe("Deterministic Chatbot Engine", () => {
     assert.strictEqual(r3.nextState.currentNode, "assessment");
     assert.ok(r3.reply.includes("performance guarantee"));
 
+    // 4 -> FAQs
+    const r4 = handleChatMessage(state, "4");
+    assert.strictEqual(r4.nextState.currentNode, "faqs");
+    assert.ok(r4.reply.includes("Frequently Asked Questions & Answers"));
+    assert.ok(r4.reply.includes("Q: What is exergy analysis?"));
+    assert.ok(r4.reply.includes("A: Most audits count kilowatt-hours"));
+    assert.ok(r4.reply.includes("Q: What does guaranteed turnkey mean?"));
+    assert.ok(r4.reply.includes("A: We don't merely supply consulting reports"));
+
     // 6 -> Handoff
     const r6 = handleChatMessage(state, "6");
     assert.strictEqual(r6.nextState.currentNode, "handoff");

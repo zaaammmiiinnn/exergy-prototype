@@ -79,7 +79,16 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     parent: "main",
     position: 4,
     label: "FAQs",
-    text: "Frequently Asked Questions:\n\n• What is exergy analysis?\n• How is this different from a normal energy audit?\n• What does guaranteed turnkey mean?\n• How much can we save? (Typical: 25–30% cut)",
+    text:
+      "Frequently Asked Questions & Answers:\n\n" +
+      "Q: What is exergy analysis?\n" +
+      "A: Most audits count kilowatt-hours (first law). We measure exergy — the useful work energy can actually do (second law). That distinction reveals savings conventional methods overlook.\n\n" +
+      "Q: How is this different from a normal energy audit?\n" +
+      "A: First-law audits assume energy is conserved. Exergy analysis reveals where useful work potential is destroyed, enabling 25–30% typical resource cuts.\n\n" +
+      "Q: What does guaranteed turnkey mean?\n" +
+      "A: We don't merely supply consulting reports. We engineer, procure, and install the complete solution, backing our results with contractual performance guarantees against baseline instrumentation.\n\n" +
+      "Q: How much can we save?\n" +
+      "A: Typical industrial facilities achieve 25–30% net energy and water reductions with 12–24 month payback periods.",
     keywords: ["faq", "faqs", "question", "questions", "answers"],
   },
   approach: {
@@ -611,6 +620,13 @@ function formatNodeOutput(
   } else if (node.key === "industries") {
     quickReplies.push(
       { label: "Book Assessment", action: "assessment", url: "/assessment" },
+      { label: "Main Menu", action: "main" },
+      { label: "Talk to Human", action: "handoff" }
+    );
+  } else if (node.key === "faqs") {
+    quickReplies.push(
+      { label: "Book Assessment", action: "assessment", url: "/assessment" },
+      { label: "Services Overview", action: "services" },
       { label: "Main Menu", action: "main" },
       { label: "Talk to Human", action: "handoff" }
     );
