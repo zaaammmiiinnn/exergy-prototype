@@ -96,7 +96,7 @@ const INITIAL_FALLBACK_LEADS: AdminLeadItem[] = [
 
 export default function AdminLeadsPage() {
   const router = useRouter();
-  const [leads, setLeads] = useState<AdminLeadItem[]>(INITIAL_FALLBACK_LEADS);
+  const [leads, setLeads] = useState<AdminLeadItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -109,7 +109,7 @@ export default function AdminLeadsPage() {
     setLoading(true);
     try {
       const res = await fetchAdminLeads();
-      if (res.success && res.leads && res.leads.length > 0) {
+      if (res.success && res.leads) {
         setLeads(res.leads);
       }
     } catch (err) {

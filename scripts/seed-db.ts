@@ -154,15 +154,16 @@ async function seedData() {
   const settings = [
     {
       key: "notify_emails",
-      value: ["neuralwaves.official@gmail.com", "support@neuralwaves.in"],
+      value: ["sarfraz@exergy-solutions.com", "info@support.exergy-solutions.com"],
     },
     {
       key: "contact",
       value: {
         company_name: "Exergy Solutions",
         address: "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
-        email: "support@neuralwaves.in",
-        admin_contact: "neuralwaves.official@gmail.com",
+        phone: "+971 50 645 1274",
+        email: "sarfraz@exergy-solutions.com",
+        admin_contact: "sarfraz@exergy-solutions.com",
         linkedin_url: "https://www.linkedin.com/company/135328489/",
       },
     },

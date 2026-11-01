@@ -26,107 +26,6 @@ export interface DatabaseTask {
 const SETTINGS_KEY = "assigned_engineering_tasks";
 
 /**
- * Generate default tasks synced with real leads in Supabase
- */
-async function generateInitialTasks(supabase: any): Promise<DatabaseTask[]> {
-  // Fetch real leads from Supabase leads table
-  const { data: leads } = await supabase.from("leads").select("*").limit(5);
-  const primaryLead = leads && leads.length > 0 ? leads[0] : null;
-
-  const leadId = primaryLead?.short_id || "EX-2026-6253";
-  const clientName = primaryLead?.full_name || "NeuralWaves Ai";
-  const company = primaryLead?.company || "NeuralWaves Labs";
-  const sector = primaryLead?.sector ? `${primaryLead.sector.toUpperCase()} & Continuous Processing` : "Paper & Continuous Processing";
-  const leadCreatedAt = primaryLead?.created_at || new Date().toISOString();
-
-  // Due times dynamically anchored to current date/time
-  const now = new Date();
-  const todayEod = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0, 0);
-  const tomorrowNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 12, 0, 0);
-  const inThreeDays = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 3, 16, 0, 0);
-  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 18, 0, 0);
-
-  return [
-    {
-      id: "TASK-101",
-      title: "Perform Thermodynamic Pinch Analysis",
-      description:
-        "Model hot & cold stream pinch temperatures on 4.2 MW continuous reactor line. Calculate minimum thermal utility demand and heat exchanger network retrofits.",
-      leadId,
-      clientName,
-      company,
-      sector,
-      priority: "urgent",
-      status: "in_progress",
-      dueAt: todayEod.toISOString(),
-      dueDateDisplay: "Today, 5:00 PM (Mandatory)",
-      assigneeName: "Staff Engineer",
-      assigneeEmail: "employee@exergy.com",
-      assignedBy: "Head of Engineering",
-      lockedDirective: true,
-      createdAt: leadCreatedAt,
-    },
-    {
-      id: "TASK-102",
-      title: "Chilled Water Baseline & Lift Cycle Audit",
-      description:
-        "Audit primary/secondary pumping loops and verify condenser approach temperatures across GCC regional chiller modules.",
-      leadId: "EX-2026-1054",
-      clientName: "Neural Waves Support & Ops",
-      company: "Neural Waves Facilities Operations",
-      sector: "Cooling & Regional Districts",
-      priority: "high",
-      status: "in_progress",
-      dueAt: tomorrowNoon.toISOString(),
-      dueDateDisplay: "Tomorrow, 12:00 PM",
-      assigneeName: "Rashid Al-Falasi (Lead Thermodynamicist)",
-      assigneeEmail: "r.falasi@exergy.solutions",
-      assignedBy: "Operations Desk",
-      lockedDirective: false,
-      createdAt: new Date(now.getTime() - 86400 * 1000 * 2).toISOString(),
-    },
-    {
-      id: "TASK-103",
-      title: "P&ID Mass & Energy Balance Verification",
-      description:
-        "Cross-reference plant telemetry P&ID data sheets with ultrasonic flow meter logs for accurate 2nd-Law irreversibility accounting.",
-      leadId: "EX-2026-1042",
-      clientName: "Tariq Mansoor",
-      company: "Gulf Paper Mills FZCO",
-      sector: "Paper & Packaging",
-      priority: "medium",
-      status: "completed",
-      dueAt: yesterday.toISOString(),
-      dueDateDisplay: "Completed Yesterday",
-      assigneeName: "Sara Mansoor (Chiller & HVAC Specialist)",
-      assigneeEmail: "s.mansoor@exergy.solutions",
-      assignedBy: "Audit Team",
-      lockedDirective: false,
-      createdAt: new Date(now.getTime() - 86400 * 1000 * 5).toISOString(),
-    },
-    {
-      id: "TASK-104",
-      title: "Submit Commercial Energy Saving Guarantee Document",
-      description:
-        "Draft turnkey EPC agreement guaranteeing a minimum 25% electricity reduction on the client's continuous dewatering line.",
-      leadId: "EX-2026-1038",
-      clientName: "Dr. Hamad Al-Qasimi",
-      company: "Crescent Chemical Technologies",
-      sector: "Chemical Refining",
-      priority: "high",
-      status: "pending",
-      dueAt: inThreeDays.toISOString(),
-      dueDateDisplay: "In 3 days",
-      assigneeName: "Elena Rostov (Pinch Specialist)",
-      assigneeEmail: "e.rostov@exergy.solutions",
-      assignedBy: "Founder Desk",
-      lockedDirective: true,
-      createdAt: new Date(now.getTime() - 86400 * 1000 * 7).toISOString(),
-    },
-  ];
-}
-
-/**
  * Fetch all assigned tasks directly from Supabase PostgreSQL
  */
 export async function fetchAdminTasksAction(): Promise<{
@@ -150,7 +49,7 @@ export async function fetchAdminTasksAction(): Promise<{
       return { success: false, tasks: [], isDatabaseConnected: false, error: error.message };
     }
 
-    if (data?.value && Array.isArray(data.value) && data.value.length > 0) {
+    if (data?.value && Array.isArray(data.value)) {
       // Re-hydrate dynamic relative times
       const hydrated: DatabaseTask[] = data.value.map((t: DatabaseTask) => {
         const timeInfo = t.dueAt ? formatDynamicTime(t.dueAt) : null;
@@ -162,14 +61,13 @@ export async function fetchAdminTasksAction(): Promise<{
       return { success: true, tasks: hydrated, isDatabaseConnected: true };
     }
 
-    // Initialize default seed into Supabase PostgreSQL
-    const initialTasks = await generateInitialTasks(supabase);
+    // Initialize clean empty task queue into Supabase PostgreSQL
     await supabase.from("site_settings").upsert({
       key: SETTINGS_KEY,
-      value: initialTasks,
+      value: [],
     });
 
-    return { success: true, tasks: initialTasks, isDatabaseConnected: true };
+    return { success: true, tasks: [], isDatabaseConnected: true };
   } catch (err: any) {
     console.warn("[FETCH TASKS SERVER ERROR]", err);
     return { success: false, tasks: [], isDatabaseConnected: false, error: err?.message };

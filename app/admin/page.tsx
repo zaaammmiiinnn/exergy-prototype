@@ -148,6 +148,7 @@ export default function AdminDashboardPage() {
   const [statusSaveFeedback, setStatusSaveFeedback] = useState<string | null>(null);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [openChatCount, setOpenChatCount] = useState<number>(0);
   const [currentSession, setCurrentSession] = useState<{ role: string; email: string } | null>(null);
 
   useEffect(() => {
@@ -269,6 +270,15 @@ export default function AdminDashboardPage() {
             return item;
           });
         setLeads(activeLeads);
+
+        // Fetch live chat inquiries count
+        try {
+          const chatRes = await fetch("/api/admin/chats");
+          const chatData = await chatRes.json();
+          if (chatData.success && Array.isArray(chatData.conversations)) {
+            setOpenChatCount(chatData.conversations.length);
+          }
+        } catch {}
       } else {
         setIsSupabaseConnected(false);
         setLeads([]);
@@ -496,7 +506,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
             <div className="text-3xl font-heading font-extrabold text-[#0c758d] tracking-tight">
-              0
+              {isLoading ? "..." : openChatCount}
             </div>
             <p className="mt-2 text-[11px] text-teal-700 font-mono">
               Deterministic Q&A engine active
@@ -630,17 +640,10 @@ export default function AdminDashboardPage() {
                   filteredLeads.map((lead) => (
                     <tr
                       key={lead.id}
-                      className={`hover:bg-slate-50/80 transition-colors ${
-                        lead.email.includes("neuralwaves") ? "bg-teal-50/30" : ""
-                      }`}
+                      className="hover:bg-slate-50/80 transition-colors"
                     >
                       <td className="py-4 px-6 font-mono font-semibold text-[#0c758d]">
                         {lead.id}
-                        {lead.email.includes("neuralwaves") && (
-                          <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-teal-100 text-teal-800 border border-teal-300 font-bold uppercase">
-                            Verified
-                          </span>
-                        )}
                       </td>
                       <td className="py-4 px-6">
                         <div className="font-semibold text-[#12232b]">{lead.name}</div>

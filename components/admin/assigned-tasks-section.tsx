@@ -37,7 +37,7 @@ import { formatDynamicTime } from "@/lib/time-utils";
 
 export type EmployeeTask = DatabaseTask;
 
-const STORAGE_KEY = "exergy_employee_tasks_v3";
+const STORAGE_KEY = "exergy_assigned_tasks_v4";
 
 interface AssignedTasksSectionProps {
   onSelectLeadId?: (leadId: string) => void;
@@ -113,12 +113,19 @@ export function AssignedTasksSection({
   const loadTasks = useCallback(async () => {
     setIsLoading(true);
     try {
+      // Clear legacy mock storage keys
+      try {
+        localStorage.removeItem("exergy_employee_tasks_v3");
+        localStorage.removeItem("exergy_employee_tasks_v2");
+        localStorage.removeItem("exergy_employee_tasks");
+      } catch {}
+
       const res = await fetchAdminTasksAction();
-      if (res.success && res.tasks.length > 0) {
-        setTasks(res.tasks);
+      if (res.success) {
+        setTasks(res.tasks || []);
         setIsDatabaseConnected(res.isDatabaseConnected);
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(res.tasks));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(res.tasks || []));
           if (typeof window !== "undefined") {
             window.dispatchEvent(new Event("exergy-tasks-updated"));
           }
@@ -136,7 +143,7 @@ export function AssignedTasksSection({
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           setTasks(parsed);
           if (typeof window !== "undefined") {
             window.dispatchEvent(new Event("exergy-tasks-updated"));
@@ -868,7 +875,7 @@ export function AssignedTasksSection({
                   type="text"
                   value={newCompany}
                   onChange={(e) => setNewCompany(e.target.value)}
-                  placeholder="e.g. NeuralWaves Labs / Gulf Paper"
+                  placeholder="e.g. Gulf Paper Mills / Dubai Holdings"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c758d]/20 focus:bg-white"
                 />
               </div>

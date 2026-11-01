@@ -74,49 +74,11 @@ export const chatRepository = {
     const now = new Date().toISOString();
     const cleanUuid = visitorUuid.trim();
 
-    if (isSupabaseReady()) {
-      try {
-        const supabase = createServiceRoleClient();
-        const { data: existing } = await supabase
-          .from("visitors")
-          .select("*")
-          .eq("visitor_uuid", cleanUuid)
-          .maybeSingle();
-
-        if (existing) {
-          await supabase
-            .from("visitors")
-            .update({ last_seen_at: now, updated_at: now })
-            .eq("id", existing.id);
-          return existing as VisitorRecord;
-        }
-
-        const { data: created, error } = await supabase
-          .from("visitors")
-          .insert({
-            visitor_uuid: cleanUuid,
-            device_type: metadata?.deviceType || "desktop",
-            first_seen_at: now,
-            last_seen_at: now,
-            created_at: now,
-            updated_at: now,
-          })
-          .select()
-          .single();
-
-        if (!error && created) {
-          return created as VisitorRecord;
-        }
-      } catch (err) {
-        console.warn("[CHAT REPO] Supabase visitor query failed, falling back to local store:", err);
-      }
-    }
-
-    // Memory fallback
+    // Memory store
     let visitor = globalStore.visitors.get(cleanUuid);
     if (!visitor) {
       visitor = {
-        id: crypto.randomUUID(),
+        id: cleanUuid,
         visitor_uuid: cleanUuid,
         user_id: null,
         name: null,
@@ -182,37 +144,36 @@ export const chatRepository = {
     if (isSupabaseReady()) {
       try {
         const supabase = createServiceRoleClient();
-        // Check for existing open or pending conversation for this visitor
+        // Check for existing session for this visitor in chat_sessions
         const { data: existing } = await supabase
           .from("chat_sessions")
           .select("*")
-          .or(`visitor_id.eq.${visitor.id},token_hash.eq.${visitor.visitor_uuid}`)
-          .in("status", ["bot", "needs_human", "human_active", "open", "pending"])
-          .order("last_message_at", { ascending: false })
-          .limit(1)
+          .eq("token_hash", visitor.visitor_uuid)
           .maybeSingle();
 
         if (existing) {
-          return {
+          const convRecord: ConversationRecord = {
             id: existing.id,
-            visitor_id: existing.visitor_id || visitor.id,
-            conversation_title: existing.conversation_title || "Customer Support Session",
-            status: existing.status as ConversationStatus,
-            current_node: existing.current_node || "main",
-            mode: existing.mode || "menu",
-            assigned_admin_id: existing.assigned_to || null,
-            last_message_at: existing.last_message_at,
-            unread_by_visitor: existing.unread_by_visitor || false,
-            unread_by_admin: existing.unread_by_admin || false,
-            page_url: existing.page_url,
-            ip_hash: existing.ip_hash,
-            user_agent: existing.user_agent,
-            visitor_name: existing.visitor_name || visitor.name,
-            visitor_email: existing.visitor_email || visitor.email,
-            company_name: existing.company_name,
+            visitor_id: existing.token_hash,
+            conversation_title: "Customer Support Session",
+            status: (existing.status as ConversationStatus) || "bot",
+            current_node: "main",
+            mode: "menu",
+            assigned_admin_id: null,
+            last_message_at: existing.created_at,
+            unread_by_visitor: false,
+            unread_by_admin: false,
+            page_url: options?.pageUrl || "/",
+            ip_hash: options?.ipHash,
+            user_agent: options?.userAgent,
+            visitor_name: visitor.name,
+            visitor_email: visitor.email,
+            company_name: null,
             created_at: existing.created_at,
-            updated_at: existing.updated_at || existing.created_at,
+            updated_at: existing.created_at,
           };
+          globalStore.conversations.set(existing.id, convRecord);
+          return convRecord;
         }
 
         const newId = crypto.randomUUID();
@@ -221,41 +182,33 @@ export const chatRepository = {
           .insert({
             id: newId,
             token_hash: visitor.visitor_uuid,
-            visitor_id: visitor.id,
             status: "bot",
-            current_node: "main",
-            mode: "menu",
-            page_url: options?.pageUrl || "/",
-            user_agent: options?.userAgent,
-            ip_hash: options?.ipHash,
-            visitor_name: visitor.name,
-            visitor_email: visitor.email,
-            conversation_title: "Customer Support Session",
-            last_message_at: now,
             created_at: now,
-            updated_at: now,
           })
           .select()
           .single();
 
         if (!error && created) {
-          return {
+          const convRecord: ConversationRecord = {
             id: created.id,
-            visitor_id: visitor.id,
-            conversation_title: created.conversation_title || "Customer Support Session",
+            visitor_id: visitor.visitor_uuid,
+            conversation_title: "Customer Support Session",
             status: created.status as ConversationStatus,
-            current_node: created.current_node,
-            mode: created.mode,
-            assigned_admin_id: created.assigned_to,
-            last_message_at: created.last_message_at,
+            current_node: "main",
+            mode: "menu",
+            assigned_admin_id: null,
+            last_message_at: created.created_at,
             unread_by_visitor: false,
             unread_by_admin: false,
-            page_url: created.page_url,
-            visitor_name: created.visitor_name,
-            visitor_email: created.visitor_email,
+            page_url: options?.pageUrl || "/",
+            user_agent: options?.userAgent,
+            visitor_name: visitor.name,
+            visitor_email: visitor.email,
             created_at: created.created_at,
-            updated_at: created.updated_at,
+            updated_at: created.created_at,
           };
+          globalStore.conversations.set(created.id, convRecord);
+          return convRecord;
         }
       } catch (err) {
         console.warn("[CHAT REPO] Supabase conversation lookup failed, using local store:", err);
@@ -265,7 +218,7 @@ export const chatRepository = {
     // Memory fallback
     for (const [, conv] of globalStore.conversations) {
       if (
-        conv.visitor_id === visitor.id &&
+        (conv.visitor_id === visitor.id || conv.visitor_id === visitor.visitor_uuid) &&
         conv.status !== "closed" &&
         conv.status !== "resolved"
       ) {
@@ -276,7 +229,7 @@ export const chatRepository = {
     const conversationId = crypto.randomUUID();
     const newConv: ConversationRecord = {
       id: conversationId,
-      visitor_id: visitor.id,
+      visitor_id: visitor.visitor_uuid || visitor.id,
       conversation_title: "Customer Support Session",
       status: "open",
       current_node: "main",
@@ -304,32 +257,59 @@ export const chatRepository = {
     if (isSupabaseReady()) {
       try {
         const supabase = createServiceRoleClient();
-        const { data } = await supabase
+        let { data } = await supabase
           .from("chat_sessions")
-          .select("*")
+          .select("*, chat_messages(id, body, created_at, sender)")
           .eq("id", conversationId)
           .maybeSingle();
 
+        if (!data) {
+          const { data: byToken } = await supabase
+            .from("chat_sessions")
+            .select("*, chat_messages(id, body, created_at, sender)")
+            .eq("token_hash", conversationId)
+            .maybeSingle();
+          data = byToken;
+        }
+
         if (data) {
+          const msgs = (data.chat_messages || []).sort(
+            (a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+          const latest = msgs[msgs.length - 1];
+
+          let extractedEmail: string | undefined;
+          let extractedName: string | undefined;
+
+          for (const m of msgs) {
+            const body = m.body || "";
+            const emailMatch = body.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/);
+            if (emailMatch && !extractedEmail) extractedEmail = emailMatch[0];
+            if (m.sender === "bot") {
+              const meetMatch = body.match(/Nice to meet you,\s*([A-Za-z\s]+?)[.?!]/i);
+              if (meetMatch && !extractedName) extractedName = meetMatch[1].trim();
+            }
+          }
+
           return {
             id: data.id,
-            visitor_id: data.visitor_id || data.token_hash,
-            conversation_title: data.conversation_title || "Customer Support Session",
-            status: data.status as ConversationStatus,
-            current_node: data.current_node,
-            mode: data.mode,
-            assigned_admin_id: data.assigned_to,
-            last_message_at: data.last_message_at,
-            unread_by_visitor: data.unread_by_visitor || false,
-            unread_by_admin: data.unread_by_admin || false,
-            page_url: data.page_url,
-            ip_hash: data.ip_hash,
-            user_agent: data.user_agent,
-            visitor_name: data.visitor_name,
-            visitor_email: data.visitor_email,
-            company_name: data.company_name,
+            visitor_id: data.token_hash,
+            conversation_title: extractedName ? `${extractedName} (Visitor)` : "Customer Support Session",
+            status: (data.status as ConversationStatus) || "bot",
+            current_node: "main",
+            mode: "menu",
+            assigned_admin_id: null,
+            last_message_at: latest?.created_at || data.created_at,
+            unread_by_visitor: latest?.sender === "admin",
+            unread_by_admin: latest?.sender === "visitor",
+            page_url: "/",
+            ip_hash: undefined,
+            user_agent: undefined,
+            visitor_name: extractedName,
+            visitor_email: extractedEmail,
+            company_name: undefined,
             created_at: data.created_at,
-            updated_at: data.updated_at || data.created_at,
+            updated_at: latest?.created_at || data.created_at,
           };
         }
       } catch (err) {
@@ -361,7 +341,7 @@ export const chatRepository = {
         let query = supabase
           .from("chat_sessions")
           .select("*, chat_messages(id, body, created_at, sender)")
-          .order("last_message_at", { ascending: false });
+          .order("created_at", { ascending: false });
 
         if (statusFilter && statusFilter !== "all") {
           query = query.eq("status", statusFilter);
@@ -375,25 +355,39 @@ export const chatRepository = {
             );
             const latest = msgs[msgs.length - 1];
 
+            let extractedEmail: string | undefined;
+            let extractedName: string | undefined;
+
+            for (const m of msgs) {
+              const body = m.body || "";
+              const emailMatch = body.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/);
+              if (emailMatch && !extractedEmail) extractedEmail = emailMatch[0];
+
+              if (m.sender === "bot") {
+                const meetMatch = body.match(/Nice to meet you,\s*([A-Za-z\s]+?)[.?!]/i);
+                if (meetMatch && !extractedName) extractedName = meetMatch[1].trim();
+              }
+            }
+
             return {
               id: item.id,
-              visitor_id: item.visitor_id || item.token_hash,
-              conversation_title: item.conversation_title || "Customer Support Session",
-              status: (item.status as ConversationStatus) || "open",
-              current_node: item.current_node,
-              mode: item.mode,
-              assigned_admin_id: item.assigned_to,
-              last_message_at: item.last_message_at,
-              unread_by_visitor: item.unread_by_visitor || false,
-              unread_by_admin: item.unread_by_admin || false,
-              page_url: item.page_url,
-              ip_hash: item.ip_hash,
-              user_agent: item.user_agent,
-              visitor_name: item.visitor_name,
-              visitor_email: item.visitor_email,
-              company_name: item.company_name,
+              visitor_id: item.token_hash,
+              conversation_title: extractedName ? `${extractedName} (Visitor)` : `Visitor ${item.token_hash?.slice(-6) || "Guest"}`,
+              status: (item.status as ConversationStatus) || "bot",
+              current_node: "main",
+              mode: "menu",
+              assigned_admin_id: null,
+              last_message_at: latest?.created_at || item.created_at,
+              unread_by_visitor: latest?.sender === "admin",
+              unread_by_admin: latest?.sender === "visitor",
+              page_url: "/",
+              ip_hash: undefined,
+              user_agent: undefined,
+              visitor_name: extractedName || (item.token_hash ? `Visitor ${item.token_hash.slice(-6)}` : "Visitor"),
+              visitor_email: extractedEmail,
+              company_name: undefined,
               created_at: item.created_at,
-              updated_at: item.updated_at || item.created_at,
+              updated_at: latest?.created_at || item.created_at,
               latestMessage: latest?.body || "No messages yet",
               messageCount: msgs.length,
             };
@@ -485,25 +479,19 @@ export const chatRepository = {
     if (isSupabaseReady()) {
       try {
         const supabase = createServiceRoleClient();
-        await Promise.all([
-          supabase.from("chat_messages").insert({
-            id: msgId,
-            session_id: payload.conversationId,
-            sender: payload.senderType === "visitor" ? "visitor" : payload.senderType === "admin" ? "admin" : "bot",
-            body: payload.messageContent,
-            message_type: payload.messageType || "text",
-            sender_id: payload.senderId || null,
-            node_key: payload.nodeKey || null,
-            meta: payload.metadata || {},
-            created_at: now,
-          }),
-          supabase.from("chat_sessions").update({
-            last_message_at: now,
-            unread_by_visitor: payload.senderType === "admin",
-            unread_by_admin: payload.senderType === "visitor",
-            status: payload.senderType === "admin" ? "human_active" : undefined,
-          }).eq("id", payload.conversationId),
-        ]);
+        await supabase.from("chat_messages").insert({
+          id: msgId,
+          session_id: payload.conversationId,
+          sender: payload.senderType === "visitor" ? "visitor" : payload.senderType === "admin" ? "admin" : "bot",
+          body: payload.messageContent,
+          created_at: now,
+        });
+
+        if (payload.senderType === "admin") {
+          await supabase.from("chat_sessions").update({
+            status: "human_active",
+          }).eq("id", payload.conversationId);
+        }
       } catch (err) {
         console.warn("[CHAT REPO] Supabase addMessage failed, saved to memory:", err);
       }
@@ -615,7 +603,7 @@ export const chatRepository = {
         const supabase = createServiceRoleClient();
         await supabase
           .from("chat_sessions")
-          .update({ status, updated_at: now })
+          .update({ status })
           .eq("id", conversationId);
       } catch (err) {
         console.warn("[CHAT REPO] Supabase update status failed:", err);
@@ -693,8 +681,8 @@ export const chatRepository = {
           sector: payload.inquiryCategory || "Industrial Support",
           service_interest: ["Thermodynamic Consultation"],
           main_challenge: payload.requirements || null,
-          chat_session_id: payload.conversationId || null,
-          visitor_id: payload.visitorId || null,
+          score: 85,
+          priority: "hot",
           created_at: now,
           updated_at: now,
         });
@@ -716,8 +704,7 @@ export const chatRepository = {
         const supabase = createServiceRoleClient();
         const { data, error } = await supabase
           .from("chat_qa_bank")
-          .select("*")
-          .order("priority", { ascending: false });
+          .select("*");
 
         if (!error && data && data.length > 0) {
           return data.map((d: any) => ({
