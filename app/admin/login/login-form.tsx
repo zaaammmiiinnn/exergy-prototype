@@ -19,28 +19,42 @@ export default function AdminLoginForm() {
     setError(null);
 
     try {
-      // 1. Try Server Action first
+      const cleanEmail = email.trim();
+      const cleanPassword = password.trim();
+
+      // 1. Primary: Direct API authentication route (guaranteed on Cloudflare Workers)
       let res: {
         success: boolean;
         requiresPasswordChange?: boolean;
         session?: any;
         error?: string;
       } | null = null;
+
       try {
-        res = await adminLoginAction(email, password);
-      } catch (actionErr) {
-        console.warn("[SERVER ACTION FAILED, TRYING API FALLBACK]", actionErr);
+        const apiFetch = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: cleanEmail, password: cleanPassword }),
+        });
+        const data = await apiFetch.json().catch(() => null);
+        if (data && typeof data === "object") {
+          res = data;
+        }
+      } catch (fetchErr) {
+        console.warn("[API LOGIN FETCH FAILED, TRYING SERVER ACTION]", fetchErr);
       }
 
-      // 2. Fallback to API route if Server Action failed or hit stale build mismatch
+      // 2. Fallback: Server Action
       if (!res || !res.success) {
-        if (!res) {
-          const apiFetch = await fetch("/api/admin/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          });
-          res = await apiFetch.json();
+        try {
+          const actionRes = await adminLoginAction(cleanEmail, cleanPassword);
+          if (actionRes?.success) {
+            res = actionRes;
+          } else if (!res) {
+            res = actionRes;
+          }
+        } catch (actionErr) {
+          console.warn("[SERVER ACTION FAILED]", actionErr);
         }
       }
 

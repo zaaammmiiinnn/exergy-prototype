@@ -116,10 +116,13 @@ export async function adminLoginAction(
     const { data: adminUser, error: dbError } = await supabase
       .from("admin_users")
       .select("*")
-      .eq("email", normalizedEmail)
-      .single();
+      .ilike("email", normalizedEmail)
+      .maybeSingle();
 
     if (dbError || !adminUser) {
+      if (dbError) {
+        console.warn("[ADMIN LOGIN DB ERROR]", dbError.message || dbError);
+      }
       return {
         success: false,
         error: "Access denied. Administrator account not found in database.",
