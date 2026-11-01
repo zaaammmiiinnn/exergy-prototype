@@ -33,7 +33,7 @@ const nextConfig = {
         ],
       },
       {
-        source: "/(logo.png|og-image.png|llms.txt|llms-full.txt)",
+        source: "/(logo.png|og-image.png|llms.txt|llms-full.txt|favicon.ico|icon.png|icon-192.png|apple-touch-icon.png|favicon-48.png|manifest.webmanifest)",
         headers: [
           {
             key: "Cache-Control",
