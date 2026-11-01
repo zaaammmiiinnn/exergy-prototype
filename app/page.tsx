@@ -8,9 +8,11 @@ import { ImpactMetrics } from "@/components/site/impact-metrics";
 import { IndustriesSection } from "@/components/site/industries-section";
 import { CaseStudyTeaser } from "@/components/site/case-study-teaser";
 import { AssessmentCTA } from "@/components/site/assessment-cta";
+import { FAQSection } from "@/components/site/faq-section";
 import { constructMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/json-ld";
-import { getWebPageSchema } from "@/lib/seo/schema";
+import { getWebPageSchema, getFAQPageSchema } from "@/lib/seo/schema";
+import { homeFAQs } from "@/content/seed/faqs";
 
 export const metadata: Metadata = constructMetadata({
   title: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
@@ -28,9 +30,12 @@ export default function HomePage() {
     type: "WebPage",
   });
 
+  const faqSchema = getFAQPageSchema(homeFAQs, "/");
+
   return (
     <div className="flex flex-col bg-[hsl(190,30%,98%)] min-h-screen text-[#12232b]">
       <JsonLd data={pageSchema} />
+      <JsonLd data={faqSchema} />
 
       {/* 1. Hero (Step 2) */}
       <Hero />
@@ -53,7 +58,10 @@ export default function HomePage() {
       {/* 7. Case Study Teaser: Paper Mill 42% Steam Reduction (Step 8) */}
       <CaseStudyTeaser />
 
-      {/* 8. Assessment CTA: Multi-Step Facility Audit Form (Step 9) */}
+      {/* 8. Frequently Asked Questions (AEO & GEO Rich Snippets) */}
+      <FAQSection />
+
+      {/* 9. Assessment CTA: Multi-Step Facility Audit Form (Step 9) */}
       <AssessmentCTA />
     </div>
   );

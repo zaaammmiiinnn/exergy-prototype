@@ -106,4 +106,24 @@ describe("Technical SEO Metadata & Schema Architecture", () => {
     assert.ok(wildcard?.disallow?.includes("/portal"));
     assert.ok(wildcard?.disallow?.includes("/assessment/thank-you"));
   });
+
+  it("8. getFAQPageSchema produces valid Schema.org FAQPage JSON-LD for AEO & GEO", () => {
+    const { getFAQPageSchema } = require("../schema");
+    const faqSchema = getFAQPageSchema([
+      {
+        question: "What is exergy analysis?",
+        answer: "Second-law thermodynamic work potential measurement.",
+      },
+    ]);
+
+    assert.equal(faqSchema["@context"], "https://schema.org");
+    assert.equal(faqSchema["@type"], "FAQPage");
+    assert.ok(Array.isArray(faqSchema.mainEntity));
+    assert.equal(faqSchema.mainEntity[0]["@type"], "Question");
+    assert.equal(faqSchema.mainEntity[0].name, "What is exergy analysis?");
+    assert.equal(
+      faqSchema.mainEntity[0].acceptedAnswer.text,
+      "Second-law thermodynamic work potential measurement."
+    );
+  });
 });

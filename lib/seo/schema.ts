@@ -149,3 +149,25 @@ export function getWebPageSchema({
     inLanguage: "en-US",
   };
 }
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export function getFAQPageSchema(faqs: FAQItem[], pageUrl = "/") {
+  const fullUrl = pageUrl.startsWith("http") ? pageUrl : `${SITE_URL}${pageUrl}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${fullUrl}#faq`,
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+}

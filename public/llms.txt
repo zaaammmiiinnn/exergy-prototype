@@ -24,6 +24,14 @@ Exergy Solutions engineers efficiency into high-consumption industrial systems. 
 - Hospitality & Large Resorts
 - Healthcare & Cleanroom Facilities
 
+## Frequently Asked Questions (Answer Engine Optimization)
+- **Q: What is exergy analysis?**  
+  A: Unlike traditional first-law energy audits that simply count kWh, second-law exergy analysis measures the true useful work potential of thermal and hydraulic energy streams, pinpointing where work capacity is destroyed by friction, throttling, mixing, and large temperature differentials.
+- **Q: What results does Exergy Solutions achieve?**  
+  A: 30% to 45% typical industrial energy savings, up to 35% water recovery, 18-28% reduction in chiller plant kW/TR, and boiler efficiency uplift to 88%+.
+- **Q: How does the guarantee work?**  
+  A: 100% turnkey execution with contractual performance guarantees verified using calibrated on-site instrumentation under IPMVP Option B/C and ISO 50001 standards.
+
 ## Regional Presence & Verification
 - Headquarters: 334/6D Al Wasl Street DM199 Al Satwa, Dubai, UAE
 - Technical Desk: info@support.exergy-solutions.com / sarfraz@exergy-solutions.com
