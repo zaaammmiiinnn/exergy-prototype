@@ -9,7 +9,7 @@ export function getOrganizationSchema() {
     name: "Exergy Solutions",
     legalName: "Exergy Solutions FZE",
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}/icon.png`,
     image: `${SITE_URL}/og-image.png`,
     description:
       "Specialist engineering consultancy applying Second-Law thermodynamics and exergy analysis to reduce capex and opex across energy- and water-intensive industrial assets. Guaranteed turnkey implementation.",
