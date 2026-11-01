@@ -1,9 +1,20 @@
 # Project Progress & Status Tracker
 
 **Current Phase:** Live Custom Domain Active & Production Deployed (`https://exergy-solutions.com`)  
-**Last Updated:** 2026-10-29
+**Last Updated:** 2026-11-01
 
 ---
+
+- **Phase 16 (Client Portal Mock Lead Elimination & Zero-Request Empty State)**:
+  - **Issue Resolved**: When users signed into the client portal (`/portal`) without having submitted an assessment request, the portal previously generated and displayed a fake intake receipt (`EX-2026-6253`) for a "Continuous Processing & Chilling Plant" with active pipeline tracking ("Intake Verified").
+  - **Mock Data Elimination**: Removed the fallback demo lead generation block from `app/actions/customer-auth.ts`. Lead queries are now strictly scoped to the authenticated customer's email (`eq("email", email)`), returning an authentic empty array `requests: []` when no requests have been submitted.
+  - **Authentic Zero-Request Empty State**: Updated `app/portal/page.tsx` so that when `requests.length === 0`:
+    - Shows an "Account Active • Intake Ready" status badge with zero active requests.
+    - Features a clear call-to-action inviting the client to benchmark their industrial facility with a direct link to the assessment wizard (`/assessment`).
+    - Provides a 3-step technical workflow guide explaining how thermodynamic assessments are modeled and executed.
+    - Displays direct contact channels (email, phone, WhatsApp) to reach the assigned engineering desk in Dubai.
+    - Retains full 5-stage tracking pipeline exclusively when real assessment requests exist.
+  - **Verification & Deployment**: Zero TypeScript errors (`npx tsc --noEmit`), passed test suite (18/18 tests), built with OpenNext, and deployed live to Cloudflare Workers.
 
 - **Phase 15 (Plain-Text Password Preservation & Automatic Hash Upgrade Elimination)**:
   - **Issue Resolved**: Identified that `adminLoginAction` in `app/actions/admin-auth.ts` contained an automatic "legacy password upgrade" routine that re-hashed any plain password using PBKDF2 WebCrypto and updated `admin_users.password_hash` in Supabase upon every successful administrator login, causing the long salt:hash string (`1fa6a283a3d7953e...`) to overwrite readable passwords.

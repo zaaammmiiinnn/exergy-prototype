@@ -110,7 +110,10 @@ export default function CustomerPortalPage() {
   if (!data) return null;
 
   const { customer, companyReachStatus, assignedTeam, requests } = data;
-  const activeRequest = requests.find((r) => r.shortId === activeRequestTab) || requests[0];
+  const hasRequests = requests.length > 0;
+  const activeRequest = hasRequests
+    ? requests.find((r) => r.shortId === activeRequestTab) || requests[0]
+    : null;
 
   const getStatusBadge = (status: CustomerRequestItem["status"]) => {
     switch (status) {
@@ -173,9 +176,188 @@ export default function CustomerPortalPage() {
 
       {/* Main Dashboard Body */}
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 -mt-10 relative z-20 space-y-8">
-        {/* 1. "Did we reach the company?" Intake & Receipt Verification Card */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-[#0c758d]" />
+        {!hasRequests ? (
+          /* Empty State: Account Active with No Assessment Requests Yet */
+          <div className="space-y-8">
+            {/* Primary Action & Overview Card */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-[#0c758d] to-sky-600" />
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Left Description & Call-to-Action (7 cols) */}
+                <div className="lg:col-span-7 space-y-5">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-teal-50 text-[#0c758d] border border-teal-200">
+                      <Sparkles className="w-3.5 h-3.5 text-[#0c758d]" />
+                      <span>Account Active • Intake Ready</span>
+                    </span>
+                    <span className="text-xs font-mono text-slate-400">
+                      0 Active Requests
+                    </span>
+                  </div>
+
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                      Ready to Benchmark Your Industrial Facility?
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed font-sans">
+                      You are signed in as <strong className="text-slate-900 font-semibold">{customer.name}</strong> ({customer.company}). You have not submitted an engineering assessment intake yet. Start your preliminary assessment to identify thermodynamic irreversibilities, minimize utility lift, and calculate potential energy and water cost reductions.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+                    <Link
+                      href="/assessment"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0c758d] hover:bg-[#095f73] text-white font-heading font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer"
+                    >
+                      <PlusCircle className="w-4 h-4" />
+                      <span>Start Facility Assessment</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+
+                    <Link
+                      href="/services"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-sans font-semibold text-xs transition-colors cursor-pointer"
+                    >
+                      <span>Explore Engineering Solutions</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                    </Link>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2 border-t border-slate-100">
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-0.5">
+                      <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold">
+                        Engineering Intake Desk
+                      </span>
+                      <div className="font-semibold text-slate-800 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#0c758d] shrink-0" />
+                        <span>{companyReachStatus.officeLocation}</span>
+                      </div>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-0.5">
+                      <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold">
+                        Intake Guarantee
+                      </span>
+                      <div className="font-semibold text-teal-800 flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-[#0c758d]" />
+                        <span>Review within 1 business day upon submission</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Assigned Technical Support Box (5 cols) */}
+                <div className="lg:col-span-5 bg-gradient-to-br from-teal-50 to-sky-50 border border-teal-200 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#0c758d] text-white flex items-center justify-center font-bold text-base font-heading shadow-sm">
+                      EA
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-teal-800 font-bold block">
+                        Assigned Technical Lead
+                      </span>
+                      <h4 className="font-bold text-slate-900 text-sm">
+                        {assignedTeam.leadEngineer}
+                      </h4>
+                      <p className="text-xs text-slate-500 font-sans">{assignedTeam.role}</p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                    Need technical guidance or have plant P&amp;ID diagrams? Reach out directly to our engineering desk in Dubai.
+                  </p>
+
+                  <div className="space-y-2 text-xs">
+                    <a
+                      href={`mailto:${assignedTeam.email}`}
+                      className="flex items-center gap-2 p-2.5 rounded-lg bg-white/80 hover:bg-white text-slate-700 transition-colors border border-teal-200/60 font-mono text-[11px]"
+                    >
+                      <Mail className="w-3.5 h-3.5 text-[#0c758d]" />
+                      <span>{assignedTeam.email}</span>
+                    </a>
+
+                    <a
+                      href={`tel:${assignedTeam.phone.replace(/\s+/g, "")}`}
+                      className="flex items-center gap-2 p-2.5 rounded-lg bg-white/80 hover:bg-white text-slate-700 transition-colors border border-teal-200/60 font-mono text-[11px]"
+                    >
+                      <Phone className="w-3.5 h-3.5 text-[#0c758d]" />
+                      <span>{assignedTeam.phone} (Dubai Direct)</span>
+                    </a>
+
+                    <a
+                      href={`https://wa.me/${assignedTeam.whatsapp.replace(/[^0-9]/g, "")}?text=Hello%2C%20I%20am%20signed%20in%20to%20the%20portal%20and%20would%20like%20to%20inquire%20about%20starting%20an%20assessment.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors font-semibold text-xs shadow-xs"
+                    >
+                      <div className="flex items-center gap-2">
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>WhatsApp Technical Desk</span>
+                      </div>
+                      <ExternalLink className="w-3 h-3 text-white/80" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3 Steps: How the Assessment Works */}
+            <div className="space-y-4">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-[#0c758d] font-bold block">
+                  Thermodynamic Workflow
+                </span>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                  How Your Assessment is Processed
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-2">
+                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#0c758d] font-mono font-bold text-xs flex items-center justify-center border border-teal-200">
+                    01
+                  </div>
+                  <h4 className="font-heading font-bold text-sm text-slate-900">
+                    2-Minute Facility Scope
+                  </h4>
+                  <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                    Provide your facility type (chilling, steam, drying, or processing) and operating parameters via our structured assessment wizard.
+                  </p>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-2">
+                  <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-700 font-mono font-bold text-xs flex items-center justify-center border border-sky-200">
+                    02
+                  </div>
+                  <h4 className="font-heading font-bold text-sm text-slate-900">
+                    Thermodynamic Modeling
+                  </h4>
+                  <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                    Our Dubai engineers model your hot/cold streams and determine minimum utility duties and exergy destruction points.
+                  </p>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-2">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 font-mono font-bold text-xs flex items-center justify-center border border-emerald-200">
+                    03
+                  </div>
+                  <h4 className="font-heading font-bold text-sm text-slate-900">
+                    Guaranteed Turnkey Execution
+                  </h4>
+                  <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                    Receive a comprehensive engineering proposal with contractual energy and water reduction guarantees with zero upfront risk.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Active Pipeline State: Rendered when client has real submitted assessments */
+          <>
+            {/* 1. "Did we reach the company?" Intake & Receipt Verification Card */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-[#0c758d]" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Status (7 cols) */}
@@ -507,7 +689,9 @@ export default function CustomerPortalPage() {
             </div>
           )}
         </div>
-      </main>
+      </>
+    )}
+  </main>
     </div>
   );
 }

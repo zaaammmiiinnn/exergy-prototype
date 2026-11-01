@@ -329,7 +329,7 @@ export async function getCustomerDashboardAction(): Promise<{
       const { data: dbLeads, error } = await supabase
         .from("leads")
         .select("*")
-        .or(`email.eq.${email},company.ilike.%${session.company}%`)
+        .eq("email", email)
         .order("created_at", { ascending: false });
 
       if (!error && dbLeads && dbLeads.length > 0) {
@@ -383,48 +383,20 @@ export async function getCustomerDashboardAction(): Promise<{
       console.warn("[CUSTOMER DASHBOARD SUPABASE FETCH WARNING]", err);
     }
 
-    // 2. If no leads in DB yet (e.g. testing with sarfraz@exergy-solutions.com), provide demo lead
-    if (requests.length === 0) {
-      const now = new Date().toISOString();
-      const status: CustomerRequestItem["status"] = "new";
-      const { stageIndex, stageTitle, stageDescription } = getStageDetails(status);
-
-      requests.push({
-        id: "demo-lead-1",
-        shortId: "EX-2026-6253",
-        name: session.name,
-        company: session.company,
-        email: session.email,
-        phone: session.phone || "+971 50 123 4567",
-        sector: session.sector || "Continuous Processing",
-        facilityType: "Continuous Processing & Chilling Plant",
-        services: ["Cooling Optimization", "Pinch Analysis", "Waste Heat Recovery"],
-        timeline: "Immediate",
-        notes: "Thermal fluid integration assessment with 100% turnkey performance guarantee.",
-        score: 92,
-        priority: "hot",
-        status: "new",
-        stageIndex,
-        stageTitle,
-        stageDescription,
-        createdAt: "Just now",
-        updatedAt: "Just now",
-        rawCreatedAt: now,
-        rawUpdatedAt: now,
-      });
-    }
-
-    const latestReq = requests[0];
+    const hasRequests = requests.length > 0;
+    const latestReq = hasRequests ? requests[0] : null;
 
     const dashboardData: CustomerDashboardData = {
       customer: session,
       companyReachStatus: {
-        reached: true,
-        acknowledgedAt: latestReq?.createdAt || "Today",
+        reached: hasRequests,
+        acknowledgedAt: latestReq?.createdAt || "",
         deskName: "Exergy Solutions Dubai Engineering Intake Desk",
         officeLocation: "334/6D Al Wasl Street, DM199 Al Satwa, Dubai, UAE",
-        responseSla: "Within 1 business day (by tomorrow 12:00 PM GST)",
-        intakeReference: latestReq?.shortId || "EX-2026-6253",
+        responseSla: hasRequests
+          ? "Within 1 business day (by tomorrow 12:00 PM GST)"
+          : "Within 1 business day upon assessment submission",
+        intakeReference: latestReq?.shortId || "",
       },
       assignedTeam: {
         leadEngineer: "Eng. Farhan Al-Maktoum",
