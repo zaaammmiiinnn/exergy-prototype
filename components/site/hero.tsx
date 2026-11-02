@@ -45,7 +45,7 @@ export function Hero() {
             >
               <span className="text-[#30a66a]">💧</span>
               <span className="uppercase tracking-wider text-[11px] font-semibold text-white/95">
-                EXERGY OPTIMIZED SOLUTIONS &amp; WATER SOLUTIONS
+                EXERGY OPTIMIZED &amp; WATER SOLUTIONS
               </span>
             </motion.div>
 

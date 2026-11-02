@@ -256,6 +256,13 @@
   - Built with `@opennextjs/cloudflare` and deployed live to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `905efcf4-fe0a-4981-9233-420e899137fb`).
   - Committed and pushed to `main` (`0f0442e`).
 
+- **Phase 22 (Hero Badge Text Refinement & Cloudflare Deploy)**:
+  - Updated hero pill badge in [`components/site/hero.tsx`](file:///Volumes/Zamin/exergy-prototype/components/site/hero.tsx) from `EXERGY OPTIMIZED SOLUTIONS & WATER SOLUTIONS` to `EXERGY OPTIMIZED & WATER SOLUTIONS`, removing the redundant "SOLUTIONS" repetition.
+  - Aligned page SEO title and Open Graph metadata in [`app/page.tsx`](file:///Volumes/Zamin/exergy-prototype/app/page.tsx) to match (`Exergy Solutions | Exergy Optimized & Water Solutions Dubai`).
+  - Validated type safety with `npx tsc --noEmit` and verified test suite passing (36/36 tests).
+  - Built with `@opennextjs/cloudflare` and deployed to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `e9dbb603-f36d-4f68-bb2c-a7454013e4fd`).
+  - Committed and pushed to `origin/main`.
+
 ---
 
 ## What Is Next
