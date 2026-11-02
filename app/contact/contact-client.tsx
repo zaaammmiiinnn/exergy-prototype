@@ -17,14 +17,45 @@ export function ContactClient() {
     message: "",
   });
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
-    // Simulated lead capture action (in Phase 3 connects to Supabase/Resend)
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setLoading(false);
-    setFormSubmitted(true);
+    try {
+      const res = await fetch("/api/assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || undefined,
+          company: formData.company || "Direct General Inquiry",
+          sector: "Water & Energy Engineering",
+          facilityType: "Direct Contact Form",
+          country: "United Arab Emirates",
+          services: ["Engineering Design and Consultancy Services for Water, Wastewater and Desalination Systems"],
+          timeline: "immediate",
+          mainChallenge: formData.message || "Contact form message submitted from website",
+          consent: true,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to submit inquiry. Please try again.");
+      }
+
+      setFormSubmitted(true);
+    } catch (err: any) {
+      console.error("[CONTACT_SUBMIT_ERROR]", err);
+      // Even if network or validation error, notify user gracefully
+      setError(err?.message || "An error occurred while sending your message. Please reach out via WhatsApp or email directly.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -149,6 +180,11 @@ export function ContactClient() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
+                    {error && (
+                      <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl">
+                        {error}
+                      </div>
+                    )}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-xs font-mono uppercase text-slate-700 font-semibold mb-2">
