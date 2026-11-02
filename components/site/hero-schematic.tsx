@@ -5,10 +5,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Droplets, Zap, RefreshCw } from "lucide-react";
 
 /**
- * EXERGY & WATER OPTIMIZATION SCHEMATIC (ORIGINAL GLOBE & CLEAN HIGH-CONTRAST DESIGN)
- * Restored original glowing globe aesthetic without clunky box frames.
- * Labels positioned cleanly below circles in bold uppercase for maximum legibility.
- * Generous breathing room for the stage explanation card.
+ * EXERGY & WATER OPTIMIZATION SCHEMATIC
+ * - True CIRCULAR chain animation (perfect circle track, not an oval)
+ * - Continuous falling water drop dripping animation in the RAW FEED node
+ * - Clean high-contrast typography below nodes
+ * - Generous breathing room in stage explanation card with no text overlap
  */
 export function HeroSchematic() {
   const shouldReduceMotion = useReducedMotion();
@@ -69,9 +70,9 @@ export function HeroSchematic() {
       </div>
 
       {/* Interactive Diagram SVG Canvas */}
-      <div className="relative w-full aspect-[16/10] sm:aspect-[16/9.5] rounded-xl bg-slate-950/70 border border-white/10 p-2 sm:p-3 overflow-hidden flex items-center justify-center">
+      <div className="relative w-full aspect-[16/10] sm:aspect-[16/9.8] rounded-xl bg-slate-950/70 border border-white/10 p-2 sm:p-3 overflow-hidden flex items-center justify-center">
         <svg
-          viewBox="0 0 460 250"
+          viewBox="0 0 460 275"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full select-none"
@@ -99,64 +100,173 @@ export function HeroSchematic() {
             <filter id="textShadow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#000000" floodOpacity="0.95" />
             </filter>
+            {/* Clip path inside Raw Feed Node for continuous dripping water droplet */}
+            <clipPath id="rawFeedClip">
+              <circle cx="115" cy="130" r="30" />
+            </clipPath>
           </defs>
 
-          {/* Background Connecting Fluid Tracks */}
-          <path
-            d="M 70 100 C 70 45, 150 28, 230 28 C 310 28, 390 45, 390 100 C 390 155, 310 195, 230 195 C 150 195, 70 155, 70 100 Z"
+          {/* ═════════ TRUE CIRCULAR FLOW CHAIN (PERFECT CIRCLE, NOT OVAL) ═════════ */}
+          {/* Static background circular fluid track */}
+          <circle
+            cx="230"
+            cy="130"
+            r="115"
             stroke="rgba(255,255,255,0.08)"
             strokeWidth="16"
-            strokeLinecap="round"
+            fill="none"
           />
 
-          {/* Animated Main Fluid / Exergy Flow Path */}
-          <motion.path
-            d="M 70 100 C 70 45, 150 28, 230 28 C 310 28, 390 45, 390 100 C 390 155, 310 195, 230 195 C 150 195, 70 155, 70 100 Z"
+          {/* Animated circular dashed fluid chain */}
+          <motion.circle
+            cx="230"
+            cy="130"
+            r="115"
             stroke="url(#waterFlow)"
             strokeWidth="3.5"
             fill="none"
-            strokeDasharray="12 8"
+            strokeDasharray="14 10"
             initial={{ strokeDashoffset: 0 }}
-            animate={shouldReduceMotion ? {} : { strokeDashoffset: -200 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            animate={shouldReduceMotion ? {} : { strokeDashoffset: -722.56 }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           />
 
-          {/* Secondary Closed-Loop Recovery Arc */}
+          {/* Secondary Closed-Loop Recovery Arc (along bottom circle curve) */}
           <path
-            d="M 370 120 C 350 175, 270 195, 230 195 C 190 195, 110 175, 90 120"
+            d="M 345 130 A 115 115 0 0 1 115 130"
             stroke="url(#circularLoop)"
             strokeWidth="2.5"
-            strokeDasharray="4 4"
+            strokeDasharray="5 5"
             fill="none"
           />
 
-          {/* ═════════ 1. INPUT NODE (Left) ═════════ */}
+          {/* ═════════ 1. INPUT NODE (Left) WITH CONTINUOUS DROPPING DROPLET ═════════ */}
           <g
             className="cursor-pointer transition-transform hover:scale-105"
             onClick={() => setActiveStage(0)}
           >
+            {/* Outer Node Circle */}
             <circle
-              cx="70"
-              cy="100"
-              r="34"
+              cx="115"
+              cy="130"
+              r="32"
               fill="#0A1C30"
               stroke={activeStage === 0 ? "#38BDF8" : "rgba(44,127,184,0.6)"}
               strokeWidth={activeStage === 0 ? "3.5" : "2"}
               filter={activeStage === 0 ? "url(#glow)" : undefined}
             />
-            {/* Water Drop Icon Metaphor */}
-            <path
-              d="M 70 85 C 63 95, 59 101, 59 107 A 11 11 0 0 0 81 107 C 81 101, 77 95, 70 85 Z"
-              fill="#2C7FB8"
-            />
-            <circle cx="73.5" cy="103" r="2.2" fill="#BAE6FD" />
 
-            {/* Labels Cleanly Below Circle (No Box Frame, High Contrast All-Caps) */}
+            {/* Continuous Dropping Water Droplet Animation */}
+            <g clipPath="url(#rawFeedClip)">
+              {/* Water reservoir pool at bottom of circle */}
+              <path
+                d="M 95 145 C 105 152, 125 152, 135 145 C 130 156, 100 156, 95 145 Z"
+                fill="#0369A1"
+                opacity="0.6"
+              />
+
+              {/* Water Droplet 1: Falling continuously with natural acceleration */}
+              <motion.path
+                d="M 115 106 C 111 113, 108 117, 108 123 A 7 7 0 0 0 122 123 C 122 117, 119 113, 115 106 Z"
+                fill="#38BDF8"
+                animate={
+                  shouldReduceMotion
+                    ? {}
+                    : {
+                        y: [0, 26, 30],
+                        scaleY: [0.85, 1.25, 0.3],
+                        scaleX: [1, 0.8, 1.4],
+                        opacity: [0, 1, 0],
+                      }
+                }
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: [0.45, 0, 0.2, 1],
+                }}
+              />
+
+              {/* Impact Ripple on the pool surface */}
+              <motion.ellipse
+                cx="115"
+                cy="148"
+                rx="3"
+                ry="1.5"
+                fill="none"
+                stroke="#38BDF8"
+                strokeWidth="1.6"
+                animate={
+                  shouldReduceMotion
+                    ? {}
+                    : {
+                        rx: [3, 16],
+                        ry: [1.5, 5],
+                        opacity: [0.95, 0],
+                      }
+                }
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                  delay: 0.95,
+                }}
+              />
+
+              {/* Water Droplet 2 (interleaved continuous stream) */}
+              <motion.path
+                d="M 115 106 C 112 112, 109 115, 109 120 A 6 6 0 0 0 121 120 C 121 115, 118 112, 115 106 Z"
+                fill="#7DD3FC"
+                animate={
+                  shouldReduceMotion
+                    ? {}
+                    : {
+                        y: [-4, 26, 30],
+                        scaleY: [0.85, 1.2, 0.3],
+                        scaleX: [1, 0.85, 1.3],
+                        opacity: [0, 0.95, 0],
+                      }
+                }
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: [0.45, 0, 0.2, 1],
+                  delay: 0.7,
+                }}
+              />
+
+              {/* Second Ripple */}
+              <motion.ellipse
+                cx="115"
+                cy="148"
+                rx="3"
+                ry="1.5"
+                fill="none"
+                stroke="#7DD3FC"
+                strokeWidth="1.4"
+                animate={
+                  shouldReduceMotion
+                    ? {}
+                    : {
+                        rx: [3, 14],
+                        ry: [1.5, 4.5],
+                        opacity: [0.9, 0],
+                      }
+                }
+                transition={{
+                  duration: 1.4,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                  delay: 0.25,
+                }}
+              />
+            </g>
+
+            {/* Labels Cleanly Below Circle */}
             <text
-              x="70"
-              y="152"
+              x="115"
+              y="178"
               fill="#FFFFFF"
-              fontSize="12"
+              fontSize="11.5"
               fontWeight="900"
               textAnchor="middle"
               letterSpacing="0.8"
@@ -165,10 +275,10 @@ export function HeroSchematic() {
               RAW FEED
             </text>
             <text
-              x="70"
-              y="167"
+              x="115"
+              y="192"
               fill="#38BDF8"
-              fontSize="10"
+              fontSize="9.5"
               fontWeight="800"
               textAnchor="middle"
               letterSpacing="0.6"
@@ -186,8 +296,8 @@ export function HeroSchematic() {
             {/* Outer Globe Sphere */}
             <circle
               cx="230"
-              cy="100"
-              r="44"
+              cy="130"
+              r="40"
               fill="url(#coreGlowGradient)"
               stroke={activeStage === 1 ? "#10B981" : "rgba(16,185,129,0.6)"}
               strokeWidth={activeStage === 1 ? "4" : "2.2"}
@@ -196,9 +306,9 @@ export function HeroSchematic() {
             {/* 3D Globe Latitude & Longitude / Meridian Arcs */}
             <ellipse
               cx="230"
-              cy="100"
-              rx="22"
-              ry="41"
+              cy="130"
+              rx="20"
+              ry="38"
               fill="none"
               stroke="#10B981"
               strokeWidth="1.2"
@@ -207,9 +317,9 @@ export function HeroSchematic() {
             />
             <ellipse
               cx="230"
-              cy="100"
-              rx="41"
-              ry="16"
+              cy="130"
+              rx="38"
+              ry="15"
               fill="none"
               stroke="#10B981"
               strokeWidth="1.2"
@@ -217,18 +327,18 @@ export function HeroSchematic() {
               opacity="0.45"
             />
             {/* Center Core Hub & Star Symbol */}
-            <circle cx="230" cy="100" r="15" fill="#0E332E" stroke="#10B981" strokeWidth="1.5" />
+            <circle cx="230" cy="130" r="14" fill="#0E332E" stroke="#10B981" strokeWidth="1.5" />
             <path
-              d="M 230 92 L 232.5 97.5 L 238.5 98.5 L 234 102.5 L 235.5 108.5 L 230 105.5 L 224.5 108.5 L 226 102.5 L 221.5 98.5 L 227.5 97.5 Z"
+              d="M 230 122 L 232.5 127.5 L 238.5 128.5 L 234 132.5 L 235.5 138.5 L 230 135.5 L 224.5 138.5 L 226 132.5 L 221.5 128.5 L 227.5 127.5 Z"
               fill="#10B981"
             />
 
-            {/* Labels Cleanly Below Center Globe (No Box Frame, High Contrast All-Caps) */}
+            {/* Labels Cleanly Below Center Globe */}
             <text
               x="230"
-              y="164"
+              y="184"
               fill="#FFFFFF"
-              fontSize="13.5"
+              fontSize="13"
               fontWeight="900"
               textAnchor="middle"
               letterSpacing="0.9"
@@ -238,9 +348,9 @@ export function HeroSchematic() {
             </text>
             <text
               x="230"
-              y="180"
+              y="199"
               fill="#34D399"
-              fontSize="10.5"
+              fontSize="10"
               fontWeight="800"
               textAnchor="middle"
               letterSpacing="0.6"
@@ -256,30 +366,30 @@ export function HeroSchematic() {
             onClick={() => setActiveStage(2)}
           >
             <circle
-              cx="390"
-              cy="100"
-              r="34"
+              cx="345"
+              cy="130"
+              r="32"
               fill="#08202E"
               stroke={activeStage === 2 ? "#22D3EE" : "rgba(6,182,212,0.6)"}
               strokeWidth={activeStage === 2 ? "3.5" : "2"}
               filter={activeStage === 2 ? "url(#glow)" : undefined}
             />
             {/* Pure Output Checkmark / Sparkle Icon */}
-            <circle cx="390" cy="100" r="13" fill="#06B6D4" />
+            <circle cx="345" cy="130" r="12" fill="#06B6D4" />
             <path
-              d="M 384 100 L 388 104 L 396 95"
+              d="M 339 130 L 343 134 L 351 125"
               stroke="#FFFFFF"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
 
-            {/* Labels Cleanly Below Circle (No Box Frame, High Contrast All-Caps) */}
+            {/* Labels Cleanly Below Circle */}
             <text
-              x="390"
-              y="152"
+              x="345"
+              y="178"
               fill="#FFFFFF"
-              fontSize="12"
+              fontSize="11.5"
               fontWeight="900"
               textAnchor="middle"
               letterSpacing="0.8"
@@ -288,10 +398,10 @@ export function HeroSchematic() {
               PURE OUTPUT
             </text>
             <text
-              x="390"
-              y="167"
+              x="345"
+              y="192"
               fill="#22D3EE"
-              fontSize="10"
+              fontSize="9.5"
               fontWeight="800"
               textAnchor="middle"
               letterSpacing="0.6"
@@ -301,15 +411,15 @@ export function HeroSchematic() {
             </text>
           </g>
 
-          {/* ═════════ 4. CIRCULAR RECOVERY PILL (Bottom Center) ═════════ */}
+          {/* ═════════ 4. CIRCULAR RECOVERY PILL (Bottom Along the Circle) ═════════ */}
           <g
             className="cursor-pointer transition-transform hover:scale-105"
             onClick={() => setActiveStage(3)}
           >
             <rect
-              x="135"
-              y="204"
-              width="190"
+              x="145"
+              y="228"
+              width="170"
               height="34"
               rx="17"
               fill={activeStage === 3 ? "#281A08" : "#140F06"}
@@ -317,19 +427,19 @@ export function HeroSchematic() {
               strokeWidth={activeStage === 3 ? "2.5" : "1.8"}
               filter="url(#textShadow)"
             />
-            <circle cx="158" cy="221" r="8.5" fill="#F59E0B" />
+            <circle cx="168" cy="245" r="8.5" fill="#F59E0B" />
             <path
-              d="M 155 221 A 3.5 3.5 0 1 1 161 221"
+              d="M 165 245 A 3.5 3.5 0 1 1 171 245"
               stroke="#000000"
               strokeWidth="1.8"
               fill="none"
               strokeLinecap="round"
             />
             <text
-              x="234"
-              y="225"
+              x="240"
+              y="249"
               fill="#FDE68A"
-              fontSize="11"
+              fontSize="10.5"
               fontWeight="900"
               textAnchor="middle"
               letterSpacing="0.8"
@@ -338,41 +448,42 @@ export function HeroSchematic() {
             </text>
           </g>
 
-          {/* Top Live Metric Badge */}
+          {/* Top Live Metric Badge (North on the Circle) */}
           <g className="select-none pointer-events-none">
             <rect
               x="165"
-              y="8"
+              y="6"
               width="130"
               height="24"
               rx="12"
               fill="rgba(16,185,129,0.22)"
               stroke="rgba(16,185,129,0.5)"
             />
-            <text x="230" y="23" fill="#D1FAE5" fontSize="9.5" fontWeight="bold" textAnchor="middle">
+            <text x="230" y="21" fill="#D1FAE5" fontSize="9.5" fontWeight="bold" textAnchor="middle">
               ⚡ 25–30% Resource Cut
             </text>
           </g>
         </svg>
       </div>
 
-      {/* Dynamic Stage Explanation Card (Single-Line Title & Ample Breathing Room) */}
+      {/* Dynamic Stage Explanation Card (No Overlap, Responsive Flow) */}
       <div className="mt-4 bg-slate-900/85 border border-white/15 rounded-xl p-4 sm:p-5 backdrop-blur-md shadow-lg transition-all duration-300">
-        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 pb-2.5 border-b border-white/[0.08]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-white/[0.08]">
           <div className="flex items-center gap-2.5 min-w-0">
             <span
               className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
               style={{ backgroundColor: stages[activeStage].color }}
             />
-            <div className="text-sm sm:text-base font-bold text-white flex items-center gap-2 whitespace-nowrap">
-              <span>{stages[activeStage].title}</span>
-              <span className="text-[11px] sm:text-xs font-medium text-white/60">
+            <div className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <span className="whitespace-nowrap">{stages[activeStage].title}</span>
+              <span className="text-[11px] sm:text-xs font-medium text-white/60 whitespace-nowrap">
                 ({stages[activeStage].badge})
               </span>
             </div>
           </div>
+
           <span
-            className="text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full shrink-0 shadow-xs whitespace-nowrap"
+            className="text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full shrink-0 self-start sm:self-auto shadow-xs whitespace-nowrap"
             style={{
               backgroundColor: `${stages[activeStage].color}25`,
               color: stages[activeStage].color,
