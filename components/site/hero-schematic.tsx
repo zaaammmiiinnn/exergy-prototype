@@ -98,17 +98,17 @@ export function HeroSchematic() {
 
           {/* Background Connecting Fluid Tracks */}
           <path
-            d="M 70 135 C 70 75, 150 48, 210 48 C 270 48, 350 75, 350 135 C 350 195, 270 225, 210 225 C 150 225, 70 195, 70 135 Z"
+            d="M 70 128 C 70 70, 150 44, 210 44 C 270 44, 350 70, 350 128 C 350 186, 270 216, 210 216 C 150 216, 70 186, 70 128 Z"
             stroke="rgba(255,255,255,0.08)"
-            strokeWidth="18"
+            strokeWidth="16"
             strokeLinecap="round"
           />
 
           {/* Animated Main Fluid / Exergy Flow Path */}
           <motion.path
-            d="M 70 135 C 70 75, 150 48, 210 48 C 270 48, 350 75, 350 135 C 350 195, 270 225, 210 225 C 150 225, 70 195, 70 135 Z"
+            d="M 70 128 C 70 70, 150 44, 210 44 C 270 44, 350 70, 350 128 C 350 186, 270 216, 210 216 C 150 216, 70 186, 70 128 Z"
             stroke="url(#waterFlow)"
-            strokeWidth="4"
+            strokeWidth="3.5"
             fill="none"
             strokeDasharray="12 8"
             initial={{ strokeDashoffset: 0 }}
@@ -118,7 +118,7 @@ export function HeroSchematic() {
 
           {/* Secondary Closed-Loop Recovery Arc */}
           <path
-            d="M 330 155 C 310 210, 230 218, 180 205"
+            d="M 330 148 C 310 200, 230 210, 180 198"
             stroke="url(#circularLoop)"
             strokeWidth="2.5"
             strokeDasharray="4 4"
@@ -132,25 +132,35 @@ export function HeroSchematic() {
           >
             <circle
               cx="70"
-              cy="135"
-              r="32"
+              cy="126"
+              r="30"
               fill="#0A1C30"
-              stroke={activeStage === 0 ? "#2C7FB8" : "rgba(44,127,184,0.5)"}
-              strokeWidth={activeStage === 0 ? "3" : "1.8"}
+              stroke={activeStage === 0 ? "#2C7FB8" : "rgba(44,127,184,0.6)"}
+              strokeWidth={activeStage === 0 ? "3" : "2"}
               filter={activeStage === 0 ? "url(#glow)" : undefined}
             />
             {/* Water Drop Icon Metaphor */}
             <path
-              d="M 70 120 C 64 129, 60 134, 60 140 A 10 10 0 0 0 80 140 C 80 134, 76 129, 70 120 Z"
+              d="M 70 112 C 64 121, 60 126, 60 131 A 10 10 0 0 0 80 131 C 80 126, 76 121, 70 112 Z"
               fill="#2C7FB8"
             />
-            <circle cx="73" cy="136" r="2" fill="#BAE6FD" />
+            <circle cx="73" cy="127" r="2" fill="#BAE6FD" />
 
-            {/* TEXT CLEARLY BELOW CIRCLE (High Visibility & Legibility) */}
-            <text x="70" y="184" fill="#FFFFFF" fontSize="10.5" fontWeight="bold" textAnchor="middle" letterSpacing="0.3">
+            {/* High-Contrast Badge Shield & Text (100% Crisp & Legible) */}
+            <rect
+              x="16"
+              y="166"
+              width="108"
+              height="38"
+              rx="8"
+              fill={activeStage === 0 ? "#0C233C" : "#081829"}
+              stroke={activeStage === 0 ? "#38BDF8" : "rgba(44,127,184,0.7)"}
+              strokeWidth={activeStage === 0 ? "2" : "1.2"}
+            />
+            <text x="70" y="181" fill="#FFFFFF" fontSize="12" fontWeight="bold" textAnchor="middle" letterSpacing="0.4">
               RAW FEED
             </text>
-            <text x="70" y="197" fill="#93C5FD" fontSize="8.5" fontWeight="600" textAnchor="middle">
+            <text x="70" y="196" fill="#7DD3FC" fontSize="10" fontWeight="bold" textAnchor="middle">
               Water &amp; Energy
             </text>
           </g>
@@ -162,26 +172,36 @@ export function HeroSchematic() {
           >
             <circle
               cx="210"
-              cy="135"
-              r="40"
+              cy="126"
+              r="38"
               fill="#082226"
-              stroke={activeStage === 1 ? "#10B981" : "rgba(16,185,129,0.5)"}
+              stroke={activeStage === 1 ? "#10B981" : "rgba(16,185,129,0.6)"}
               strokeWidth={activeStage === 1 ? "3.5" : "2"}
               filter={activeStage === 1 ? "url(#glow)" : undefined}
             />
             {/* Core Globe Graphic & Star Icon */}
-            <circle cx="210" cy="135" r="26" fill="#0E332E" stroke="#10B981" strokeWidth="1" strokeDasharray="3 3" />
+            <circle cx="210" cy="126" r="24" fill="#0E332E" stroke="#10B981" strokeWidth="1" strokeDasharray="3 3" />
             <path
-              d="M 210 122 L 215 131 L 225 133 L 217 140 L 219 150 L 210 145 L 201 150 L 203 140 L 195 133 L 205 131 Z"
+              d="M 210 114 L 215 122 L 224 124 L 217 131 L 219 140 L 210 135 L 201 140 L 203 131 L 196 124 L 205 122 Z"
               fill="#10B981"
               opacity="0.95"
             />
 
-            {/* TEXT CLEARLY BELOW GLOBE (Not On Top of the Globe Graphics) */}
-            <text x="210" y="188" fill="#FFFFFF" fontSize="11.5" fontWeight="bold" textAnchor="middle" letterSpacing="0.4">
+            {/* High-Contrast Badge Shield & Text (100% Crisp & Legible) */}
+            <rect
+              x="146"
+              y="172"
+              width="128"
+              height="38"
+              rx="8"
+              fill={activeStage === 1 ? "#0A2D25" : "#071E1A"}
+              stroke={activeStage === 1 ? "#34D399" : "rgba(16,185,129,0.7)"}
+              strokeWidth={activeStage === 1 ? "2" : "1.2"}
+            />
+            <text x="210" y="187" fill="#FFFFFF" fontSize="12" fontWeight="bold" textAnchor="middle" letterSpacing="0.4">
               EXERGY CORE
             </text>
-            <text x="210" y="202" fill="#6EE7B7" fontSize="9" fontWeight="600" textAnchor="middle">
+            <text x="210" y="202" fill="#6EE7B7" fontSize="10" fontWeight="bold" textAnchor="middle">
               Optimized Process
             </text>
           </g>
@@ -193,22 +213,32 @@ export function HeroSchematic() {
           >
             <circle
               cx="350"
-              cy="135"
-              r="32"
+              cy="126"
+              r="30"
               fill="#08202E"
-              stroke={activeStage === 2 ? "#06B6D4" : "rgba(6,182,212,0.5)"}
-              strokeWidth={activeStage === 2 ? "3" : "1.8"}
+              stroke={activeStage === 2 ? "#06B6D4" : "rgba(6,182,212,0.6)"}
+              strokeWidth={activeStage === 2 ? "3" : "2"}
               filter={activeStage === 2 ? "url(#glow)" : undefined}
             />
             {/* Sparkle / Purity check icon inside */}
-            <circle cx="350" cy="135" r="12" fill="#06B6D4" />
-            <path d="M 345 135 L 348 138 L 355 131" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="350" cy="126" r="12" fill="#06B6D4" />
+            <path d="M 345 126 L 348 129 L 355 122" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
 
-            {/* TEXT CLEARLY BELOW CIRCLE (High Visibility & Legibility) */}
-            <text x="350" y="184" fill="#FFFFFF" fontSize="10.5" fontWeight="bold" textAnchor="middle" letterSpacing="0.3">
+            {/* High-Contrast Badge Shield & Text (100% Crisp & Legible) */}
+            <rect
+              x="296"
+              y="166"
+              width="108"
+              height="38"
+              rx="8"
+              fill={activeStage === 2 ? "#09293B" : "#061B27"}
+              stroke={activeStage === 2 ? "#22D3EE" : "rgba(6,182,212,0.7)"}
+              strokeWidth={activeStage === 2 ? "2" : "1.2"}
+            />
+            <text x="350" y="181" fill="#FFFFFF" fontSize="12" fontWeight="bold" textAnchor="middle" letterSpacing="0.4">
               PURE OUTPUT
             </text>
-            <text x="350" y="197" fill="#67E8F9" fontSize="8.5" fontWeight="600" textAnchor="middle">
+            <text x="350" y="196" fill="#67E8F9" fontSize="10" fontWeight="bold" textAnchor="middle">
               Potable &amp; Work
             </text>
           </g>
@@ -219,24 +249,24 @@ export function HeroSchematic() {
             onClick={() => setActiveStage(3)}
           >
             <rect
-              x="135"
-              y="224"
-              width="150"
-              height="28"
-              rx="14"
-              fill="#181711"
-              stroke={activeStage === 3 ? "#F0A431" : "rgba(240,164,49,0.6)"}
-              strokeWidth={activeStage === 3 ? "2" : "1.2"}
+              x="128"
+              y="222"
+              width="164"
+              height="34"
+              rx="17"
+              fill={activeStage === 3 ? "#24180A" : "#16120B"}
+              stroke={activeStage === 3 ? "#F59E0B" : "rgba(240,164,49,0.8)"}
+              strokeWidth={activeStage === 3 ? "2" : "1.4"}
             />
-            <circle cx="152" cy="238" r="7" fill="#F0A431" />
+            <circle cx="148" cy="239" r="8" fill="#F0A431" />
             <path
-              d="M 149 238 A 3 3 0 1 1 155 238"
+              d="M 145 239 A 3 3 0 1 1 151 239"
               stroke="#000000"
               strokeWidth="1.5"
               fill="none"
               strokeLinecap="round"
             />
-            <text x="215" y="242" fill="#FDE68A" fontSize="9" fontWeight="bold" textAnchor="middle">
+            <text x="216" y="243" fill="#FDE68A" fontSize="10.5" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">
               CIRCULAR RECOVERY
             </text>
           </g>
@@ -244,35 +274,36 @@ export function HeroSchematic() {
           {/* Floating Live Metric Badges */}
           <g className="select-none pointer-events-none">
             {/* Top Metric */}
-            <rect x="150" y="12" width="120" height="22" rx="11" fill="rgba(16,185,129,0.18)" stroke="rgba(16,185,129,0.4)" />
-            <text x="210" y="26" fill="#A7F3D0" fontSize="8.5" fontWeight="bold" textAnchor="middle">
+            <rect x="145" y="10" width="130" height="24" rx="12" fill="rgba(16,185,129,0.22)" stroke="rgba(16,185,129,0.5)" />
+            <text x="210" y="25" fill="#D1FAE5" fontSize="9.5" fontWeight="bold" textAnchor="middle">
               ⚡ 25–30% Resource Cut
             </text>
           </g>
         </svg>
 
-        {/* Dynamic Stage Explanation Card */}
-        <div className="bg-white/5 border border-white/10 rounded-lg p-2.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 min-w-0">
+        {/* Dynamic Stage Explanation Card (Non-Truncating & Full High Contrast) */}
+        <div className="bg-slate-900/90 border border-white/15 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 backdrop-blur-md mt-2">
+          <div className="flex items-start sm:items-center gap-3 min-w-0">
             <span
-              className="w-2.5 h-2.5 rounded-full shrink-0"
+              className="w-3 h-3 rounded-full shrink-0 mt-0.5 sm:mt-0 shadow-sm"
               style={{ backgroundColor: stages[activeStage].color }}
             />
-            <div className="truncate">
-              <div className="text-xs font-bold text-white truncate">
-                {stages[activeStage].title}
+            <div>
+              <div className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                <span>{stages[activeStage].title}</span>
+                <span className="text-[10px] font-medium text-white/70">({stages[activeStage].badge})</span>
               </div>
-              <div className="text-[11px] text-white/80 truncate">
+              <p className="text-xs text-white/90 font-normal leading-snug mt-0.5">
                 {stages[activeStage].desc}
-              </div>
+              </p>
             </div>
           </div>
           <span
-            className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
+            className="text-[11px] font-bold px-2.5 py-1 rounded-full shrink-0 self-start sm:self-center shadow-xs whitespace-nowrap"
             style={{
-              backgroundColor: `${stages[activeStage].color}22`,
+              backgroundColor: `${stages[activeStage].color}25`,
               color: stages[activeStage].color,
-              border: `1px solid ${stages[activeStage].color}44`,
+              border: `1px solid ${stages[activeStage].color}60`,
             }}
           >
             {stages[activeStage].metric}
