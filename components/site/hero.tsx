@@ -9,21 +9,21 @@ import { HeroSchematic } from "./hero-schematic";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[hsl(200,65%,7%)] text-white pt-16 pb-24 md:pt-24 md:pb-32 border-b border-white/[0.08]">
-      {/* Original Crawled Hero Image Background with Ambient Blend */}
+    <section className="relative overflow-hidden bg-slate-950 text-white pt-16 pb-24 md:pt-24 md:pb-32 border-b border-white/[0.08]">
+      {/* Original Crawled Hero Image Background - Vibrant and Dramatic like the Reference Screenshot */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
           src="https://images.hostinger.com/7953796b-93b0-49f3-8314-6db64a5896f2.png"
           alt="Exergy and thermodynamic water energy convergence background"
           fill
           priority
-          className="object-cover object-right lg:object-center opacity-30 lg:opacity-40 scale-105 transition-opacity"
+          className="object-cover object-center opacity-80 md:opacity-90 scale-100 transition-opacity"
           sizes="100vw"
         />
-        {/* Directional gradient overlay: darker on the left for crisp text contrast, softer on the right for image visibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(200,65%,7%)] via-[hsl(200,65%,7%)]/80 to-[hsl(200,65%,7%)]/30" />
-        {/* Top and bottom subtle vignettes for seamless blending */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(200,65%,7%)]/80 via-transparent to-[hsl(200,65%,7%)]" />
+        {/* Soft directional gradient: dark on the left behind the text for crystal clear contrast, clear on the right so the fiery vortex and water swirl shine */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/20" />
+        {/* Subtle top/bottom edge feathering */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/80" />
       </div>
 
       {/* Background ambient lighting */}

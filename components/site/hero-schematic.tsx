@@ -94,6 +94,9 @@ export function HeroSchematic() {
               <feGaussianBlur stdDeviation="4" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
+            <filter id="badgeShadow" x="-15%" y="-15%" width="130%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="3.5" floodColor="#000000" floodOpacity="0.85" />
+            </filter>
           </defs>
 
           {/* Background Connecting Fluid Tracks */}
@@ -132,36 +135,37 @@ export function HeroSchematic() {
           >
             <circle
               cx="70"
-              cy="126"
+              cy="124"
               r="30"
               fill="#0A1C30"
-              stroke={activeStage === 0 ? "#2C7FB8" : "rgba(44,127,184,0.6)"}
-              strokeWidth={activeStage === 0 ? "3" : "2"}
+              stroke={activeStage === 0 ? "#2C7FB8" : "rgba(44,127,184,0.7)"}
+              strokeWidth={activeStage === 0 ? "3.5" : "2"}
               filter={activeStage === 0 ? "url(#glow)" : undefined}
             />
             {/* Water Drop Icon Metaphor */}
             <path
-              d="M 70 112 C 64 121, 60 126, 60 131 A 10 10 0 0 0 80 131 C 80 126, 76 121, 70 112 Z"
+              d="M 70 110 C 64 119, 60 124, 60 129 A 10 10 0 0 0 80 129 C 80 124, 76 119, 70 110 Z"
               fill="#2C7FB8"
             />
-            <circle cx="73" cy="127" r="2" fill="#BAE6FD" />
+            <circle cx="73" cy="125" r="2" fill="#BAE6FD" />
 
-            {/* High-Contrast Badge Shield & Text (100% Crisp & Legible) */}
+            {/* High-Contrast Badge Shield & ALL-CAPS Text (100% Bold & Visible) */}
             <rect
-              x="16"
-              y="166"
-              width="108"
-              height="38"
-              rx="8"
-              fill={activeStage === 0 ? "#0C233C" : "#081829"}
-              stroke={activeStage === 0 ? "#38BDF8" : "rgba(44,127,184,0.7)"}
-              strokeWidth={activeStage === 0 ? "2" : "1.2"}
+              x="6"
+              y="164"
+              width="128"
+              height="44"
+              rx="9"
+              fill={activeStage === 0 ? "#08223B" : "#041424"}
+              stroke={activeStage === 0 ? "#38BDF8" : "rgba(56,189,248,0.8)"}
+              strokeWidth={activeStage === 0 ? "2.5" : "1.8"}
+              filter="url(#badgeShadow)"
             />
-            <text x="70" y="181" fill="#FFFFFF" fontSize="12" fontWeight="bold" textAnchor="middle" letterSpacing="0.4">
+            <text x="70" y="180" fill="#FFFFFF" fontSize="12.5" fontWeight="900" textAnchor="middle" letterSpacing="0.8">
               RAW FEED
             </text>
-            <text x="70" y="196" fill="#7DD3FC" fontSize="10" fontWeight="bold" textAnchor="middle">
-              Water &amp; Energy
+            <text x="70" y="197" fill="#38BDF8" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.7">
+              WATER &amp; ENERGY
             </text>
           </g>
 
@@ -172,37 +176,38 @@ export function HeroSchematic() {
           >
             <circle
               cx="210"
-              cy="126"
+              cy="124"
               r="38"
               fill="#082226"
-              stroke={activeStage === 1 ? "#10B981" : "rgba(16,185,129,0.6)"}
-              strokeWidth={activeStage === 1 ? "3.5" : "2"}
+              stroke={activeStage === 1 ? "#10B981" : "rgba(16,185,129,0.7)"}
+              strokeWidth={activeStage === 1 ? "4" : "2.2"}
               filter={activeStage === 1 ? "url(#glow)" : undefined}
             />
             {/* Core Globe Graphic & Star Icon */}
-            <circle cx="210" cy="126" r="24" fill="#0E332E" stroke="#10B981" strokeWidth="1" strokeDasharray="3 3" />
+            <circle cx="210" cy="124" r="24" fill="#0E332E" stroke="#10B981" strokeWidth="1.2" strokeDasharray="3 3" />
             <path
-              d="M 210 114 L 215 122 L 224 124 L 217 131 L 219 140 L 210 135 L 201 140 L 203 131 L 196 124 L 205 122 Z"
+              d="M 210 112 L 215 120 L 224 122 L 217 129 L 219 138 L 210 133 L 201 138 L 203 129 L 196 122 L 205 120 Z"
               fill="#10B981"
               opacity="0.95"
             />
 
-            {/* High-Contrast Badge Shield & Text (100% Crisp & Legible) */}
+            {/* High-Contrast Badge Shield & ALL-CAPS Text (100% Bold & Visible) */}
             <rect
-              x="146"
-              y="172"
-              width="128"
-              height="38"
-              rx="8"
-              fill={activeStage === 1 ? "#0A2D25" : "#071E1A"}
-              stroke={activeStage === 1 ? "#34D399" : "rgba(16,185,129,0.7)"}
-              strokeWidth={activeStage === 1 ? "2" : "1.2"}
+              x="138"
+              y="170"
+              width="144"
+              height="44"
+              rx="9"
+              fill={activeStage === 1 ? "#062A22" : "#031C16"}
+              stroke={activeStage === 1 ? "#34D399" : "rgba(52,211,153,0.8)"}
+              strokeWidth={activeStage === 1 ? "2.5" : "1.8"}
+              filter="url(#badgeShadow)"
             />
-            <text x="210" y="187" fill="#FFFFFF" fontSize="12" fontWeight="bold" textAnchor="middle" letterSpacing="0.4">
+            <text x="210" y="186" fill="#FFFFFF" fontSize="13" fontWeight="900" textAnchor="middle" letterSpacing="0.8">
               EXERGY CORE
             </text>
-            <text x="210" y="202" fill="#6EE7B7" fontSize="10" fontWeight="bold" textAnchor="middle">
-              Optimized Process
+            <text x="210" y="203" fill="#34D399" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.7">
+              OPTIMIZED PROCESS
             </text>
           </g>
 
@@ -213,33 +218,34 @@ export function HeroSchematic() {
           >
             <circle
               cx="350"
-              cy="126"
+              cy="124"
               r="30"
               fill="#08202E"
-              stroke={activeStage === 2 ? "#06B6D4" : "rgba(6,182,212,0.6)"}
-              strokeWidth={activeStage === 2 ? "3" : "2"}
+              stroke={activeStage === 2 ? "#06B6D4" : "rgba(6,182,212,0.7)"}
+              strokeWidth={activeStage === 2 ? "3.5" : "2"}
               filter={activeStage === 2 ? "url(#glow)" : undefined}
             />
             {/* Sparkle / Purity check icon inside */}
-            <circle cx="350" cy="126" r="12" fill="#06B6D4" />
-            <path d="M 345 126 L 348 129 L 355 122" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="350" cy="124" r="12" fill="#06B6D4" />
+            <path d="M 345 124 L 348 127 L 355 120" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
 
-            {/* High-Contrast Badge Shield & Text (100% Crisp & Legible) */}
+            {/* High-Contrast Badge Shield & ALL-CAPS Text (100% Bold & Visible) */}
             <rect
-              x="296"
-              y="166"
-              width="108"
-              height="38"
-              rx="8"
-              fill={activeStage === 2 ? "#09293B" : "#061B27"}
-              stroke={activeStage === 2 ? "#22D3EE" : "rgba(6,182,212,0.7)"}
-              strokeWidth={activeStage === 2 ? "2" : "1.2"}
+              x="286"
+              y="164"
+              width="128"
+              height="44"
+              rx="9"
+              fill={activeStage === 2 ? "#07293B" : "#031826"}
+              stroke={activeStage === 2 ? "#22D3EE" : "rgba(34,211,238,0.8)"}
+              strokeWidth={activeStage === 2 ? "2.5" : "1.8"}
+              filter="url(#badgeShadow)"
             />
-            <text x="350" y="181" fill="#FFFFFF" fontSize="12" fontWeight="bold" textAnchor="middle" letterSpacing="0.4">
+            <text x="350" y="180" fill="#FFFFFF" fontSize="12.5" fontWeight="900" textAnchor="middle" letterSpacing="0.8">
               PURE OUTPUT
             </text>
-            <text x="350" y="196" fill="#67E8F9" fontSize="10" fontWeight="bold" textAnchor="middle">
-              Potable &amp; Work
+            <text x="350" y="197" fill="#22D3EE" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.7">
+              POTABLE &amp; WORK
             </text>
           </g>
 
@@ -249,24 +255,25 @@ export function HeroSchematic() {
             onClick={() => setActiveStage(3)}
           >
             <rect
-              x="128"
+              x="115"
               y="222"
-              width="164"
-              height="34"
-              rx="17"
-              fill={activeStage === 3 ? "#24180A" : "#16120B"}
-              stroke={activeStage === 3 ? "#F59E0B" : "rgba(240,164,49,0.8)"}
-              strokeWidth={activeStage === 3 ? "2" : "1.4"}
+              width="190"
+              height="36"
+              rx="18"
+              fill={activeStage === 3 ? "#281A08" : "#140F06"}
+              stroke={activeStage === 3 ? "#F59E0B" : "rgba(240,164,49,0.85)"}
+              strokeWidth={activeStage === 3 ? "2.5" : "1.8"}
+              filter="url(#badgeShadow)"
             />
-            <circle cx="148" cy="239" r="8" fill="#F0A431" />
+            <circle cx="138" cy="240" r="9" fill="#F0A431" />
             <path
-              d="M 145 239 A 3 3 0 1 1 151 239"
+              d="M 135 240 A 3.5 3.5 0 1 1 141 240"
               stroke="#000000"
-              strokeWidth="1.5"
+              strokeWidth="1.8"
               fill="none"
               strokeLinecap="round"
             />
-            <text x="216" y="243" fill="#FDE68A" fontSize="10.5" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">
+            <text x="214" y="244" fill="#FDE68A" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.8">
               CIRCULAR RECOVERY
             </text>
           </g>
