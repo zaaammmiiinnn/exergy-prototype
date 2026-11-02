@@ -50,7 +50,7 @@ export function HeroSchematic() {
   ];
 
   return (
-    <div className="relative w-full max-w-[550px] mx-auto bg-gradient-to-b from-[#091522]/95 via-[#0A1A2F]/95 to-[#07111E]/95 border border-white/15 rounded-2xl p-5 sm:p-6 shadow-2xl backdrop-blur-md overflow-hidden text-white">
+    <div className="relative w-full max-w-[580px] mx-auto bg-gradient-to-b from-[#091522]/95 via-[#0A1A2F]/95 to-[#07111E]/95 border border-white/15 rounded-2xl p-5 sm:p-6 shadow-2xl backdrop-blur-md overflow-hidden text-white">
       {/* Soft Ambient Background Glows */}
       <div className="absolute -top-16 -left-16 w-52 h-52 bg-[#2C7FB8]/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-16 -right-16 w-52 h-52 bg-[#10B981]/20 rounded-full blur-3xl pointer-events-none" />
@@ -356,28 +356,23 @@ export function HeroSchematic() {
         </svg>
       </div>
 
-      {/* Dynamic Stage Explanation Card (Generous Padding & Ample Breathing Room) */}
-      <div className="mt-4 bg-slate-900/85 border border-white/15 rounded-xl p-4 sm:p-4.5 backdrop-blur-md shadow-lg transition-all duration-300">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-start gap-3 min-w-0">
+      {/* Dynamic Stage Explanation Card (Single-Line Title & Ample Breathing Room) */}
+      <div className="mt-4 bg-slate-900/85 border border-white/15 rounded-xl p-4 sm:p-5 backdrop-blur-md shadow-lg transition-all duration-300">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 pb-2.5 border-b border-white/[0.08]">
+          <div className="flex items-center gap-2.5 min-w-0">
             <span
-              className="w-3.5 h-3.5 rounded-full shrink-0 mt-1 sm:mt-0.5 shadow-sm"
+              className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
               style={{ backgroundColor: stages[activeStage].color }}
             />
-            <div className="space-y-1">
-              <div className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                <span>{stages[activeStage].title}</span>
-                <span className="text-[11px] font-medium text-white/60">
-                  ({stages[activeStage].badge})
-                </span>
-              </div>
-              <p className="text-xs sm:text-[13px] text-white/85 font-normal leading-relaxed">
-                {stages[activeStage].desc}
-              </p>
+            <div className="text-sm sm:text-base font-bold text-white flex items-center gap-2 whitespace-nowrap">
+              <span>{stages[activeStage].title}</span>
+              <span className="text-[11px] sm:text-xs font-medium text-white/60">
+                ({stages[activeStage].badge})
+              </span>
             </div>
           </div>
           <span
-            className="text-xs font-bold px-3 py-1.5 rounded-full shrink-0 self-start sm:self-center shadow-xs whitespace-nowrap"
+            className="text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full shrink-0 shadow-xs whitespace-nowrap"
             style={{
               backgroundColor: `${stages[activeStage].color}25`,
               color: stages[activeStage].color,
@@ -387,6 +382,11 @@ export function HeroSchematic() {
             {stages[activeStage].metric}
           </span>
         </div>
+
+        {/* Description Below with Relaxed Typography */}
+        <p className="text-xs sm:text-[13px] text-white/85 font-normal leading-relaxed pt-2.5">
+          {stages[activeStage].desc}
+        </p>
       </div>
 
       {/* 3 Interactive KPI Stat Pills Below Diagram */}
