@@ -2,13 +2,30 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ChevronRight, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import { HeroSchematic } from "./hero-schematic";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[hsl(200,65%,7%)]/95 via-[hsl(200,60%,10%)]/90 to-[hsl(190,55%,14%)]/75 text-white pt-16 pb-24 md:pt-24 md:pb-32 border-b border-white/[0.08]">
+    <section className="relative overflow-hidden bg-[hsl(200,65%,7%)] text-white pt-16 pb-24 md:pt-24 md:pb-32 border-b border-white/[0.08]">
+      {/* Original Crawled Hero Image Background with Ambient Blend */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <Image
+          src="https://images.hostinger.com/7953796b-93b0-49f3-8314-6db64a5896f2.png"
+          alt="Exergy and thermodynamic water energy convergence background"
+          fill
+          priority
+          className="object-cover object-right lg:object-center opacity-30 lg:opacity-40 scale-105 transition-opacity"
+          sizes="100vw"
+        />
+        {/* Directional gradient overlay: darker on the left for crisp text contrast, softer on the right for image visibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(200,65%,7%)] via-[hsl(200,65%,7%)]/80 to-[hsl(200,65%,7%)]/30" />
+        {/* Top and bottom subtle vignettes for seamless blending */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(200,65%,7%)]/80 via-transparent to-[hsl(200,65%,7%)]" />
+      </div>
+
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#0c758d]/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-[#30a66a]/15 rounded-full blur-3xl pointer-events-none" />
