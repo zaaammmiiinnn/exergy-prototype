@@ -20,7 +20,7 @@ export async function sendAssessmentNotificationEmails(
   const gmailPass = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASSWORD;
   const gmailUser = process.env.GMAIL_USER || "sarfraz@exergy-solutions.com";
   const apiKey = process.env.RESEND_API_KEY;
-  let adminNotifyRaw = process.env.ADMIN_NOTIFY_EMAILS || "sarfraz@exergy-solutions.com, info@support.exergy-solutions.com";
+  let adminNotifyRaw = process.env.ADMIN_NOTIFY_EMAILS || "sarfraz@exergy-solutions.com, aon.naqvi@exergy-solutions.com, info@support.exergy-solutions.com";
   let adminRecipients = adminNotifyRaw.split(",").map((s) => s.trim()).filter(Boolean);
 
   // Check site_settings.notify_emails in Supabase

@@ -28,7 +28,7 @@ export const siteSettingsSeed: SiteSettingsSeed = {
   address: "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
   email: "info@support.exergy-solutions.com",
   phone: "+971 50 645 1274",
-  notify_emails: ["sarfraz@exergy-solutions.com", "info@support.exergy-solutions.com"],
+  notify_emails: ["sarfraz@exergy-solutions.com", "aon.naqvi@exergy-solutions.com", "info@support.exergy-solutions.com"],
   linkedin_url: "https://www.linkedin.com/company/135328489/",
   stats: {
     stat_well_designed: "5–10%",

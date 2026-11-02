@@ -154,7 +154,7 @@ async function seedData() {
   const settings = [
     {
       key: "notify_emails",
-      value: ["sarfraz@exergy-solutions.com", "info@support.exergy-solutions.com"],
+      value: ["sarfraz@exergy-solutions.com", "aon.naqvi@exergy-solutions.com", "info@support.exergy-solutions.com"],
     },
     {
       key: "contact",
