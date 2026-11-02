@@ -10,20 +10,20 @@ import { HeroSchematic } from "./hero-schematic";
 export function Hero() {
   return (
     <section className="relative overflow-hidden bg-slate-950 text-white pt-16 pb-24 md:pt-24 md:pb-32 border-b border-white/[0.08]">
-      {/* Original Crawled Hero Image Background - Vibrant and Dramatic like the Reference Screenshot */}
+      {/* Original Crawled Hero Image Background - Vibrant, Bright and Dramatic */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
           src="https://images.hostinger.com/7953796b-93b0-49f3-8314-6db64a5896f2.png"
           alt="Exergy and thermodynamic water energy convergence background"
           fill
           priority
-          className="object-cover object-center opacity-80 md:opacity-90 scale-100 transition-opacity"
+          className="object-cover object-center opacity-100 scale-100 transition-opacity"
           sizes="100vw"
         />
-        {/* Soft directional gradient: dark on the left behind the text for crystal clear contrast, clear on the right so the fiery vortex and water swirl shine */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/20" />
-        {/* Subtle top/bottom edge feathering */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/80" />
+        {/* Soft, lightened directional gradient: leaves the fiery vortex and water swirl bright and vivid */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/70 via-slate-950/30 to-transparent" />
+        {/* Gentle top/bottom edge feathering */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/35 via-transparent to-slate-950/45" />
       </div>
 
       {/* Background ambient lighting */}
@@ -31,21 +31,21 @@ export function Hero() {
       <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-[#30a66a]/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-14 items-center">
           
-          {/* LEFT COLUMN: Headings, Badge, CTAs, Stats */}
-          <div className="lg:col-span-7 space-y-7 order-2 lg:order-1">
+          {/* LEFT COLUMN: Headings, Badge, CTAs, Stats - Aligned to the left */}
+          <div className="lg:col-span-7 space-y-7 order-2 lg:order-1 text-left lg:-ml-2 xl:-ml-6">
             
             {/* Pill Badge */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-white/15 bg-white/5 rounded-full text-white/90 text-xs font-medium backdrop-blur-xs"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-white/20 bg-slate-950/60 rounded-full text-white/95 text-xs font-medium backdrop-blur-md shadow-md"
             >
               <span className="text-[#30a66a]">💧</span>
-              <span className="uppercase tracking-wider text-[11px] font-semibold text-white/90">
-                EXERGY OPTIMIZED SOLUTIONS & WATER SOLUTIONS
+              <span className="uppercase tracking-wider text-[11px] font-semibold text-white/95">
+                EXERGY OPTIMIZED SOLUTIONS &amp; WATER SOLUTIONS
               </span>
             </motion.div>
 
@@ -55,7 +55,7 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <h1 className="font-heading text-4xl sm:text-6xl lg:text-[68px] xl:text-[76px] font-bold tracking-tight text-white leading-[1.05] max-w-2xl">
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-[68px] xl:text-[76px] font-bold tracking-tight text-white leading-[1.05] drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] max-w-3xl">
                 Turn wasted energy and water into{" "}
                 <span className="relative inline-block text-white">
                   profit
@@ -83,7 +83,7 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <p className="text-base sm:text-lg text-white/85 font-normal leading-relaxed max-w-xl">
+              <p className="text-base sm:text-lg text-white/90 font-normal leading-relaxed max-w-2xl drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
                 We apply thermodynamics and exergy analysis to slash the capex and opex of energy- and water-intensive operations — delivered as guaranteed, turnkey implementation.
               </p>
             </motion.div>
@@ -124,14 +124,14 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="pt-8 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg"
+              className="pt-8 border-t border-white/15 grid grid-cols-3 gap-6 max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
             >
               {/* Stat 1 */}
               <div>
                 <div className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-white">
                   30–45%
                 </div>
-                <div className="text-xs text-white/70 mt-1 leading-snug">
+                <div className="text-xs text-white/80 mt-1 leading-snug">
                   Typical energy saved
                 </div>
               </div>
@@ -141,8 +141,8 @@ export function Hero() {
                 <div className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-[#30a66a]">
                   100%
                 </div>
-                <div className="text-xs text-white/70 mt-1 leading-snug">
-                  Turnkey & guaranteed
+                <div className="text-xs text-white/80 mt-1 leading-snug">
+                  Turnkey &amp; guaranteed
                 </div>
               </div>
 
@@ -151,7 +151,7 @@ export function Hero() {
                 <div className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-white">
                   6
                 </div>
-                <div className="text-xs text-white/70 mt-1 leading-snug">
+                <div className="text-xs text-white/80 mt-1 leading-snug">
                   Industries served
                 </div>
               </div>
