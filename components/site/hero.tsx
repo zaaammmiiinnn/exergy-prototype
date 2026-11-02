@@ -20,8 +20,8 @@ export function Hero() {
           className="object-cover object-center opacity-100 scale-100 brightness-135 contrast-110 saturate-120 transition-opacity"
           sizes="100vw"
         />
-        {/* Localized dark backdrop on far-left for text contrast; center is 100% open, vivid & luminous */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/65 via-transparent via-30% to-transparent" />
+        {/* Deep dark backdrop on far-left for text contrast; center is 100% open, vivid & luminous */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 via-38% to-transparent to-55%" />
         {/* Soft bottom edge feathering only */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/25" />
       </div>
@@ -150,15 +150,17 @@ export function Hero() {
               </h1>
             </motion.div>
 
-            {/* Subtitle */}
+            {/* Subtitle with Dark Frosted Glass Backing for Maximum Contrast & Readability */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <p className="text-base sm:text-lg text-white/90 font-normal leading-relaxed max-w-xl drop-shadow-[0_1px_8px_rgba(0,0,0,0.95)]">
-                We apply thermodynamics and exergy analysis to slash the capex and opex of energy- and water-intensive operations — delivered as guaranteed, turnkey implementation.
-              </p>
+              <div className="bg-slate-950/65 border border-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-2xl max-w-xl">
+                <p className="text-base sm:text-lg text-white font-medium leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                  We apply thermodynamics and exergy analysis to slash the capex and opex of energy- and water-intensive operations — delivered as guaranteed, turnkey implementation.
+                </p>
+              </div>
             </motion.div>
 
             {/* CTAs: Emerald Primary Pill + White Ghost Pill */}

@@ -300,6 +300,14 @@
   - Built with `@opennextjs/cloudflare` and deployed live to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `e5cd1acf-1b17-46bb-a134-67118072c3c4`).
   - Committed and pushed to `origin/main`.
 
+- **Phase 27 (Hero Subtitle Contrast & Dark Frosted Backdrop Integration)**:
+  - Deepened the far-left dark gradient overlay in [`components/site/hero.tsx`](file:///Volumes/Zamin/exergy-prototype/components/site/hero.tsx#L23) from `65%` to `from-slate-950/95 via-slate-950/80 via-38% to-transparent to-55%`, ensuring solid dark coverage behind the entire left text column while leaving the central vortex open and vivid.
+  - Wrapped the subtitle paragraph in a sleek dark frosted glass card (`bg-slate-950/65 border border-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-2xl`), eliminating any visual washout caused by the bright cyan/green fluid swirls behind the text.
+  - Increased typography weight to `font-medium` with a strong drop shadow (`drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]`).
+  - Validated type safety with `npx tsc --noEmit` and verified test suite passing (36/36 tests).
+  - Built with `@opennextjs/cloudflare` and deployed live to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `7dcdd263-96f1-42d1-a0a2-22cbb188f03a`).
+  - Committed and pushed to `origin/main`.
+
 ---
 
 ## What Is Next
