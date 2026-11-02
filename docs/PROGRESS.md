@@ -5,6 +5,18 @@
 
 ---
 
+- **Phase 21 (Hero Schematic Line Collision Elimination & Protective Text Shields)**:
+  - **Issue Resolved**: The circular dashed flow line and recovery path intersected across the bottom of the node labels (`OPTIMIZED PROCESS`, `WATER & ENERGY`, `POTABLE & WORK`), reducing readability.
+  - **Geometry Re-architected**: Raised center globe and satellite node centers (`cy=105` and `cy=115`), positioning all text labels between `y=158` and `y=174`. The bottom circular chain and `CIRCULAR RECOVERY` badge run at `y=212` to `y=233`, creating over 38 pixels of clear air space.
+  - **Protective Text Shields**: Added subtle protective dark backdrops (`fill="#07111E"`, `rx="6"`) behind all node label groups to prevent any trajectory line from intersecting the text.
+  - **Deployment**: Passed 36/36 unit & integration tests, compiled clean, and deployed to Cloudflare Workers (Version ID: `10b66fff-e73b-4695-890e-de6c7651caa5`).
+
+- **Phase 20 (Continuous Dripping Water Droplet & True Circular Flow Chain)**:
+  - **Continuous Dripping Water Droplet**: Replaced static drop icon inside `RAW FEED` with an animated continuous water dripping simulation using dual interleaved Framer Motion droplets, gravitational acceleration, and expanding ripple impact waves in an infinite loop.
+  - **Circular Flow Chain**: Replaced the flattened oval track with a true circular orbit (`r=110`), with all 4 stations (North metric, East output, South recovery, West raw feed) aligned symmetrically around the central `EXERGY CORE` globe.
+  - **Stage Card Overlap Fixed**: Updated responsive layout of the stage explanation card so that `2. Exergy & Water Core (Smart Optimization)` and `[Max Work Potential]` never collide on any screen size.
+  - **Deployment**: Passed 36/36 unit & integration tests, compiled clean, and deployed to Cloudflare Workers (Version ID: `0e75174e-7a40-44c0-95ef-b40dce7b719b`).
+
 - **Phase 19 (Hero Interactive Schematic & Glowing Globe Aesthetic Restoration)**:
   - **Issue Resolved**: The schematic visual in the hero section had heavy rectangular border shields enclosing the node labels, shrinking the central core and cramping the stage description card (`2. Exergy & Water Core...`).
   - **Aesthetic Restoration**: Restored the original glowing 3D thermodynamic globe with latitude/meridian arcs and exergy star icon (`r=44`). Removed rectangular box frames from around node labels.
