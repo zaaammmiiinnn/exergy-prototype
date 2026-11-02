@@ -100,105 +100,7 @@ export function HeroSchematic() {
             <filter id="textShadow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#000000" floodOpacity="0.95" />
             </filter>
-            {/* Clip path inside Raw Feed Node for continuous dripping water droplet */}
-            <clipPath id="rawFeedClip">
-              <circle cx="105" cy="115" r="28" />
-            </clipPath>
           </defs>
-
-          {/* Continuous Water Dripping CSS Keyframes */}
-          <style>{`
-            @keyframes waterDripCycle1 {
-              0% {
-                transform: translateY(0px) scale(0.7, 0.75);
-                opacity: 0;
-              }
-              15% {
-                transform: translateY(3px) scale(0.9, 1.05);
-                opacity: 1;
-              }
-              65% {
-                transform: translateY(22px) scale(0.85, 1.35);
-                opacity: 1;
-              }
-              88% {
-                transform: translateY(28px) scale(1.3, 0.4);
-                opacity: 0.9;
-              }
-              100% {
-                transform: translateY(30px) scale(1.6, 0.1);
-                opacity: 0;
-              }
-            }
-            @keyframes waterDripCycle2 {
-              0% {
-                transform: translateY(0px) scale(0.7, 0.75);
-                opacity: 0;
-              }
-              15% {
-                transform: translateY(3px) scale(0.9, 1.05);
-                opacity: 1;
-              }
-              65% {
-                transform: translateY(22px) scale(0.85, 1.35);
-                opacity: 1;
-              }
-              88% {
-                transform: translateY(28px) scale(1.3, 0.4);
-                opacity: 0.9;
-              }
-              100% {
-                transform: translateY(30px) scale(1.6, 0.1);
-                opacity: 0;
-              }
-            }
-            @keyframes waterRippleCycle1 {
-              0%, 65% {
-                transform: scale(0.15);
-                opacity: 0;
-              }
-              75% {
-                transform: scale(0.4);
-                opacity: 1;
-              }
-              100% {
-                transform: scale(1.5);
-                opacity: 0;
-              }
-            }
-            @keyframes waterRippleCycle2 {
-              0%, 65% {
-                transform: scale(0.15);
-                opacity: 0;
-              }
-              75% {
-                transform: scale(0.4);
-                opacity: 1;
-              }
-              100% {
-                transform: scale(1.5);
-                opacity: 0;
-              }
-            }
-            .animate-drip-1 {
-              animation: waterDripCycle1 1.4s cubic-bezier(0.45, 0, 0.25, 1) infinite;
-              transform-origin: 105px 100px;
-            }
-            .animate-drip-2 {
-              animation: waterDripCycle2 1.4s cubic-bezier(0.45, 0, 0.25, 1) infinite;
-              animation-delay: 0.7s;
-              transform-origin: 105px 100px;
-            }
-            .animate-ripple-1 {
-              animation: waterRippleCycle1 1.4s ease-out infinite;
-              transform-origin: 105px 132px;
-            }
-            .animate-ripple-2 {
-              animation: waterRippleCycle2 1.4s ease-out infinite;
-              animation-delay: 0.7s;
-              transform-origin: 105px 132px;
-            }
-          `}</style>
 
           {/* ═════════ TRUE CIRCULAR FLOW CHAIN (PERFECT CIRCLE, NOT OVAL) ═════════ */}
           {/* Static background circular fluid track */}
@@ -234,7 +136,7 @@ export function HeroSchematic() {
             fill="none"
           />
 
-          {/* ═════════ 1. INPUT NODE (Left) WITH CONTINUOUS DROPPING DROPLET ═════════ */}
+          {/* ═════════ 1. INPUT NODE (Left) ═════════ */}
           <g
             className="cursor-pointer transition-transform hover:scale-105"
             onClick={() => setActiveStage(0)}
@@ -250,53 +152,13 @@ export function HeroSchematic() {
               filter={activeStage === 0 ? "url(#glow)" : undefined}
             />
 
-            {/* Continuous Dropping Water Droplet Animation (Pure High-Performance CSS) */}
-            <g clipPath="url(#rawFeedClip)">
-              {/* Water reservoir pool at bottom of circle */}
-              <ellipse cx="105" cy="133" rx="16" ry="5" fill="#0369A1" opacity="0.65" />
-
-              {/* Water Droplet 1: Falling continuously with natural acceleration */}
-              <g className="animate-drip-1">
-                <path
-                  d="M 105 95 C 101 101, 98 105, 98 111 A 7 7 0 0 0 112 111 C 112 105, 109 101, 105 95 Z"
-                  fill="#38BDF8"
-                />
-                <circle cx="107.5" cy="110" r="1.8" fill="#FFFFFF" opacity="0.9" />
-              </g>
-
-              {/* Impact Ripple 1 on pool surface */}
-              <ellipse
-                cx="105"
-                cy="133"
-                rx="14"
-                ry="4.5"
-                fill="none"
-                stroke="#38BDF8"
-                strokeWidth="1.8"
-                className="animate-ripple-1"
-              />
-
-              {/* Water Droplet 2 (interleaved continuous stream) */}
-              <g className="animate-drip-2">
-                <path
-                  d="M 105 95 C 101.5 101, 99 104, 99 109 A 6 6 0 0 0 111 109 C 111 104, 108.5 101, 105 95 Z"
-                  fill="#7DD3FC"
-                />
-                <circle cx="107" cy="108" r="1.5" fill="#FFFFFF" opacity="0.9" />
-              </g>
-
-              {/* Second Ripple */}
-              <ellipse
-                cx="105"
-                cy="133"
-                rx="14"
-                ry="4.5"
-                fill="none"
-                stroke="#7DD3FC"
-                strokeWidth="1.6"
-                className="animate-ripple-2"
-              />
-            </g>
+            {/* Static Water Droplet Icon in Raw Feed */}
+            <path
+              d="M 105 101 C 100 108, 96 113, 96 119 A 9 9 0 0 0 114 119 C 114 113, 110 108, 105 101 Z"
+              fill="#38BDF8"
+            />
+            <circle cx="108" cy="117" r="2.2" fill="#FFFFFF" opacity="0.9" />
+            <ellipse cx="105" cy="129" rx="14" ry="4" fill="#0369A1" opacity="0.4" />
 
             {/* Protective Backdrop to guarantee zero line overlap */}
             <rect

@@ -274,6 +274,15 @@
   - Built with `@opennextjs/cloudflare` and deployed to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `f5b3bfd9-c9fe-4beb-b291-8b9496bdde72`).
   - Committed and pushed to `origin/main`.
 
+- **Phase 24 (Schematic Droplet Freeze, Hero Section Upward Shift, Badge Droplet Dripping Animation & Brightness Boost)**:
+  - Stopped the continuous droplet dripping inside the `RAW FEED` circle node in [`components/site/hero-schematic.tsx`](file:///Volumes/Zamin/exergy-prototype/components/site/hero-schematic.tsx) and restored the clean, static water droplet with calm pool.
+  - Moved the hero section up (`pt-8 sm:pt-10 md:pt-12 lg:pt-14` and `lg:-mt-6 xl:-mt-8`) so it covers the empty black area at the top of the background.
+  - Created a pure SVG/CSS continuous dripping water droplet animation with droplet acceleration and landing ripple right in the hero pill badge (`💧 EXERGY OPTIMIZED & WATER SOLUTIONS`) in [`components/site/hero.tsx`](file:///Volumes/Zamin/exergy-prototype/components/site/hero.tsx).
+  - Maximized background image brightness (`brightness-135 contrast-110 saturate-120`) and added a central screen-blend radial glow (`mix-blend-screen`).
+  - Validated type safety with `npx tsc --noEmit` and verified test suite passing (36/36 tests).
+  - Built with `@opennextjs/cloudflare` and deployed to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `d3105dcd-67dd-46ad-835f-7a62fc900caa`).
+  - Committed and pushed to `origin/main`.
+
 ---
 
 ## What Is Next
