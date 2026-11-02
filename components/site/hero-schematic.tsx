@@ -382,16 +382,35 @@ export function HeroSchematic() {
 
           {/* Top Live Metric Badge (North on the Circle) */}
           <g className="select-none pointer-events-none">
+            {/* Opaque protective backdrop to completely block the dashed track line underneath */}
             <rect
-              x="165"
-              y="4"
-              width="130"
-              height="24"
-              rx="12"
-              fill="rgba(16,185,129,0.22)"
-              stroke="rgba(16,185,129,0.5)"
+              x="158"
+              y="2"
+              width="144"
+              height="26"
+              rx="13"
+              fill="#07111E"
             />
-            <text x="230" y="19" fill="#D1FAE5" fontSize="9.5" fontWeight="bold" textAnchor="middle">
+            {/* Styled pill badge with emerald border and soft translucent tint */}
+            <rect
+              x="158"
+              y="2"
+              width="144"
+              height="26"
+              rx="13"
+              fill="rgba(16,185,129,0.2)"
+              stroke="#10B981"
+              strokeWidth="1.4"
+            />
+            <text
+              x="230"
+              y="18.5"
+              fill="#D1FAE5"
+              fontSize="10"
+              fontWeight="bold"
+              textAnchor="middle"
+              filter="url(#textShadow)"
+            >
               ⚡ 25–30% Resource Cut
             </text>
           </g>

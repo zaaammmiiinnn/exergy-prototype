@@ -292,6 +292,14 @@
   - Built with `@opennextjs/cloudflare` and deployed live to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `d21027da-b23d-4848-854a-5a7243473031`).
   - Committed and pushed to `origin/main`.
 
+- **Phase 26 (Top Metric Badge Overlap & Dashed Track Line Shielding)**:
+  - Fixed overwritten text on the top schematic metric badge (`⚡ 25–30% Resource Cut`) in [`components/site/hero-schematic.tsx`](file:///Volumes/Zamin/exergy-prototype/components/site/hero-schematic.tsx).
+  - Added an opaque `#07111E` protective backdrop rect underneath the badge pill, completely shielding the text from the circular fluid track and moving dashed cyan water flow line passing at $y=5$.
+  - Styled the pill with crisp emerald stroke (`#10B981`) and drop shadow, ensuring 100% legibility and zero visual collision.
+  - Validated type safety with `npx tsc --noEmit` and verified test suite passing (36/36 tests).
+  - Built with `@opennextjs/cloudflare` and deployed live to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `e5cd1acf-1b17-46bb-a134-67118072c3c4`).
+  - Committed and pushed to `origin/main`.
+
 ---
 
 ## What Is Next
