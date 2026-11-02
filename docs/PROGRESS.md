@@ -221,12 +221,18 @@
     - Collapsed 32px line icons and interactive hover indicators in [components/site/services-accordion.tsx](file:///Volumes/Zamin/exergy-prototype/components/site/services-accordion.tsx) updated to `#2C7FB8` with active amber state `#F0A431`.
   - Verified 100% clean typecheck (`npx tsc --noEmit`) and visual verification in browser.
 
+- **Phase 16 (Hero Section Background Image Integration & Cloudflare Deploy)**:
+  - Accessed original crawled hero artwork from `content/crawl/exergy_crawl.json` (`https://images.hostinger.com/7953796b-93b0-49f3-8314-6db64a5896f2.png` — *Symbolic composition of thermal, water, electric, and renewable energy converging around a glowing entropy vortex*).
+  - Integrated the image into [`components/site/hero.tsx`](file:///Volumes/Zamin/exergy-prototype/components/site/hero.tsx) with directional gradient vignettes (dark navy on the left for maximum WCAG text legibility and soft transparency on the right to let the vibrant entropy vortex glow behind the interactive schematic).
+  - Validated type safety with `npx tsc --noEmit` and full test suite pass (36/36 tests).
+  - Built with `@opennextjs/cloudflare` and deployed live to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `905efcf4-fe0a-4981-9233-420e899137fb`).
+  - Committed and pushed to `main` (`0f0442e`).
+
 ---
 
 ## What Is Next
-1. User review of the code and live screenshots for the extracted logo palette on Tier 1 and Tier 2.
-2. Upon approval, proceed to build Tier 3 (Methodology visuals: 5 diagrams) and Tier 4 (Industry icons: 6 icons) using the identical logo palette.
-3. Commit, push to GitHub, and deploy to Cloudflare Workers.
+1. Verify live visual rendering on desktop and mobile (`https://exergy-solutions.com`).
+2. Provide handover summary to user.
 
 
 
