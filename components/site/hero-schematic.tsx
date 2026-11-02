@@ -106,6 +106,100 @@ export function HeroSchematic() {
             </clipPath>
           </defs>
 
+          {/* Continuous Water Dripping CSS Keyframes */}
+          <style>{`
+            @keyframes waterDripCycle1 {
+              0% {
+                transform: translateY(0px) scale(0.7, 0.75);
+                opacity: 0;
+              }
+              15% {
+                transform: translateY(3px) scale(0.9, 1.05);
+                opacity: 1;
+              }
+              65% {
+                transform: translateY(22px) scale(0.85, 1.35);
+                opacity: 1;
+              }
+              88% {
+                transform: translateY(28px) scale(1.3, 0.4);
+                opacity: 0.9;
+              }
+              100% {
+                transform: translateY(30px) scale(1.6, 0.1);
+                opacity: 0;
+              }
+            }
+            @keyframes waterDripCycle2 {
+              0% {
+                transform: translateY(0px) scale(0.7, 0.75);
+                opacity: 0;
+              }
+              15% {
+                transform: translateY(3px) scale(0.9, 1.05);
+                opacity: 1;
+              }
+              65% {
+                transform: translateY(22px) scale(0.85, 1.35);
+                opacity: 1;
+              }
+              88% {
+                transform: translateY(28px) scale(1.3, 0.4);
+                opacity: 0.9;
+              }
+              100% {
+                transform: translateY(30px) scale(1.6, 0.1);
+                opacity: 0;
+              }
+            }
+            @keyframes waterRippleCycle1 {
+              0%, 65% {
+                transform: scale(0.15);
+                opacity: 0;
+              }
+              75% {
+                transform: scale(0.4);
+                opacity: 1;
+              }
+              100% {
+                transform: scale(1.5);
+                opacity: 0;
+              }
+            }
+            @keyframes waterRippleCycle2 {
+              0%, 65% {
+                transform: scale(0.15);
+                opacity: 0;
+              }
+              75% {
+                transform: scale(0.4);
+                opacity: 1;
+              }
+              100% {
+                transform: scale(1.5);
+                opacity: 0;
+              }
+            }
+            .animate-drip-1 {
+              animation: waterDripCycle1 1.4s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+              transform-origin: 105px 100px;
+            }
+            .animate-drip-2 {
+              animation: waterDripCycle2 1.4s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+              animation-delay: 0.7s;
+              transform-origin: 105px 100px;
+            }
+            .animate-ripple-1 {
+              animation: waterRippleCycle1 1.4s ease-out infinite;
+              transform-origin: 105px 132px;
+            }
+            .animate-ripple-2 {
+              animation: waterRippleCycle2 1.4s ease-out infinite;
+              animation-delay: 0.7s;
+              transform-origin: 105px 132px;
+            }
+          `}</style>
+
           {/* ═════════ TRUE CIRCULAR FLOW CHAIN (PERFECT CIRCLE, NOT OVAL) ═════════ */}
           {/* Static background circular fluid track */}
           <circle
@@ -156,108 +250,51 @@ export function HeroSchematic() {
               filter={activeStage === 0 ? "url(#glow)" : undefined}
             />
 
-            {/* Continuous Dropping Water Droplet Animation */}
+            {/* Continuous Dropping Water Droplet Animation (Pure High-Performance CSS) */}
             <g clipPath="url(#rawFeedClip)">
               {/* Water reservoir pool at bottom of circle */}
-              <path
-                d="M 85 130 C 95 137, 115 137, 125 130 C 120 141, 90 141, 85 130 Z"
-                fill="#0369A1"
-                opacity="0.6"
-              />
+              <ellipse cx="105" cy="133" rx="16" ry="5" fill="#0369A1" opacity="0.65" />
 
               {/* Water Droplet 1: Falling continuously with natural acceleration */}
-              <motion.path
-                d="M 105 93 C 101 100, 98 104, 98 110 A 7 7 0 0 0 112 110 C 112 104, 109 100, 105 93 Z"
-                fill="#38BDF8"
-                animate={
-                  shouldReduceMotion
-                    ? {}
-                    : {
-                        y: [0, 24, 28],
-                        scaleY: [0.85, 1.25, 0.3],
-                        scaleX: [1, 0.8, 1.4],
-                        opacity: [0, 1, 0],
-                      }
-                }
-                transition={{
-                  duration: 1.4,
-                  repeat: Infinity,
-                  ease: [0.45, 0, 0.2, 1],
-                }}
-              />
+              <g className="animate-drip-1">
+                <path
+                  d="M 105 95 C 101 101, 98 105, 98 111 A 7 7 0 0 0 112 111 C 112 105, 109 101, 105 95 Z"
+                  fill="#38BDF8"
+                />
+                <circle cx="107.5" cy="110" r="1.8" fill="#FFFFFF" opacity="0.9" />
+              </g>
 
-              {/* Impact Ripple on the pool surface */}
-              <motion.ellipse
+              {/* Impact Ripple 1 on pool surface */}
+              <ellipse
                 cx="105"
                 cy="133"
-                rx="3"
-                ry="1.5"
+                rx="14"
+                ry="4.5"
                 fill="none"
                 stroke="#38BDF8"
-                strokeWidth="1.6"
-                animate={
-                  shouldReduceMotion
-                    ? {}
-                    : {
-                        rx: [3, 15],
-                        ry: [1.5, 5],
-                        opacity: [0.95, 0],
-                      }
-                }
-                transition={{
-                  duration: 1.4,
-                  repeat: Infinity,
-                  ease: "easeOut",
-                  delay: 0.95,
-                }}
+                strokeWidth="1.8"
+                className="animate-ripple-1"
               />
 
               {/* Water Droplet 2 (interleaved continuous stream) */}
-              <motion.path
-                d="M 105 93 C 102 99, 99 102, 99 107 A 6 6 0 0 0 111 107 C 111 102, 108 99, 105 93 Z"
-                fill="#7DD3FC"
-                animate={
-                  shouldReduceMotion
-                    ? {}
-                    : {
-                        y: [-4, 24, 28],
-                        scaleY: [0.85, 1.2, 0.3],
-                        scaleX: [1, 0.85, 1.3],
-                        opacity: [0, 0.95, 0],
-                      }
-                }
-                transition={{
-                  duration: 1.4,
-                  repeat: Infinity,
-                  ease: [0.45, 0, 0.2, 1],
-                  delay: 0.7,
-                }}
-              />
+              <g className="animate-drip-2">
+                <path
+                  d="M 105 95 C 101.5 101, 99 104, 99 109 A 6 6 0 0 0 111 109 C 111 104, 108.5 101, 105 95 Z"
+                  fill="#7DD3FC"
+                />
+                <circle cx="107" cy="108" r="1.5" fill="#FFFFFF" opacity="0.9" />
+              </g>
 
               {/* Second Ripple */}
-              <motion.ellipse
+              <ellipse
                 cx="105"
                 cy="133"
-                rx="3"
-                ry="1.5"
+                rx="14"
+                ry="4.5"
                 fill="none"
                 stroke="#7DD3FC"
-                strokeWidth="1.4"
-                animate={
-                  shouldReduceMotion
-                    ? {}
-                    : {
-                        rx: [3, 13],
-                        ry: [1.5, 4.5],
-                        opacity: [0.9, 0],
-                      }
-                }
-                transition={{
-                  duration: 1.4,
-                  repeat: Infinity,
-                  ease: "easeOut",
-                  delay: 0.25,
-                }}
+                strokeWidth="1.6"
+                className="animate-ripple-2"
               />
             </g>
 
