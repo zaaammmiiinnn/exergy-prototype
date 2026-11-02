@@ -2,430 +2,340 @@
 
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { Compass, Filter, Sparkles, Waves, Recycle, Building2, CheckCircle2, ArrowRight } from "lucide-react";
 
 interface SchematicProps {
   className?: string;
 }
 
 /**
- * EXACT EXERGY SOLUTIONS LOGO COLOR PALETTE
- * Extracted directly from public/logo.png:
- * - Primary Brand Color:   #2C7FB8 (Electric Cerulean Blue)
- * - Secondary Brand Color: #0E4A4F (Deep Marine Teal)
- * - Accent Brand Color:    #F0A431 (Thermodynamic Golden Amber)
+ * BRAND PALETTE:
+ * Primary Cerulean Blue: #2C7FB8
+ * Deep Marine Teal:      #0E4A4F
+ * Emerald Green:         #10B981 / #30a66a
+ * Golden Amber Accent:   #F0A431
  */
-export const LOGO_COLORS = {
-  primary: "#2C7FB8",
-  secondary: "#0E4A4F",
-  accent: "#F0A431",
-  muted: "#94A3B8",
-  dark: "#0A1628",
-  light: "#F1F5F9",
-};
-
-const drawTransition = (delay = 0) => ({
-  duration: 1.2,
-  delay,
-  ease: [0.16, 1, 0.3, 1],
-});
 
 // ═════════════════════════════════════════════════════════════════════════
-// 1. COOLING SCHEMATIC: Chilled-water loop (Chiller, Tower, AHU, Pump, ΔT)
+// 1. ENGINEERING DESIGN & CONSULTANCY SCHEMATIC
 // ═════════════════════════════════════════════════════════════════════════
-export function CoolingSchematic({ className = "" }: SchematicProps) {
+export function EngineeringDesignSchematic({ className = "" }: SchematicProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className={`w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono ${className}`}>
-      {/* Corner crosshairs (Primary Logo Color) */}
-      <span className="absolute top-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute top-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-
-      {/* Header Bar */}
-      <div className="flex items-center justify-between text-[9px] text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#2C7FB8] font-semibold tracking-wider">SCHEMATIC: CHILLED-WATER LOOP & VPF</span>
-        <span>FIG 02.A // REV 2.1</span>
+    <div className={`w-full bg-slate-900/90 border border-slate-700/60 p-4 sm:p-5 rounded-xl shadow-lg relative overflow-hidden text-slate-100 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-700/60 pb-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Compass className="w-4 h-4 text-[#2C7FB8]" />
+          <span className="text-xs font-bold tracking-wide text-white">FEED & Digital-Twin Simulation</span>
+        </div>
+        <span className="text-[10px] font-semibold text-cyan-300 bg-cyan-950/60 border border-cyan-700/50 px-2 py-0.5 rounded-full">
+          Pre-Construction Advisory
+        </span>
       </div>
 
-      <svg viewBox="0 0 340 190" fill="none" className="w-full h-auto text-slate-300">
-        <style>{`
-          @media (max-width: 767px) {
-            .sublabel { display: none !important; }
-          }
-        `}</style>
-        {/* Background gridlines */}
-        <g stroke="rgba(255,255,255,0.03)" strokeWidth="1" strokeDasharray="2 3">
-          <line x1="10" y1="50" x2="330" y2="50" />
-          <line x1="10" y1="120" x2="330" y2="120" />
-          <line x1="80" y1="10" x2="80" y2="170" />
-          <line x1="200" y1="10" x2="200" y2="170" />
+      <svg viewBox="0 0 340 160" fill="none" className="w-full h-auto select-none">
+        {/* Connecting Flow Arrow */}
+        <path d="M 90 80 L 140 80 M 200 80 L 250 80" stroke="#2C7FB8" strokeWidth="2" strokeDasharray="4 4" />
+
+        {/* Step 1: Raw Audit */}
+        <g transform="translate(15, 45)">
+          <rect width="75" height="70" rx="8" fill="#0A1E33" stroke="#2C7FB8" strokeWidth="1.5" />
+          <circle cx="37" cy="24" r="12" fill="#2C7FB8" opacity="0.2" />
+          <text x="37" y="28" fill="#67E8F9" fontSize="10" fontWeight="bold" textAnchor="middle">01</text>
+          <text x="37" y="48" fill="#F8FAFC" fontSize="8" fontWeight="bold" textAnchor="middle">Site Audit</text>
+          <text x="37" y="58" fill="#94A3B8" fontSize="6.5" textAnchor="middle">Hydraulic Data</text>
         </g>
 
-        {/* 1. CHILLER BLOCK (Primary Logo Color #2C7FB8 with Deep Teal solid border) */}
-        <rect x="20" y="55" width="75" height="65" fill="#0A1628" stroke="#0E4A4F" strokeWidth="2" />
-        <line x1="20" y1="73" x2="95" y2="73" stroke="#0E4A4F" strokeWidth="1" />
-        <text x="57" y="68" fill="#2C7FB8" textAnchor="middle" fontSize="7.5" fontWeight="bold">CHILLER</text>
-        <text x="57" y="90" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">COP 6.42</text>
-        <text x="57" y="108" fill="#94A3B8" textAnchor="middle" fontSize="7" className="sublabel">VPF STAGING</text>
-
-        {/* Chilled Water Supply Line (Primary Logo Color #2C7FB8) */}
-        <motion.path
-          d="M 95 75 L 210 75"
-          stroke="#2C7FB8"
-          strokeWidth="1.5"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.1)}
-        />
-        <polygon points="208,72 215,75 208,78" fill="#2C7FB8" />
-        <text x="150" y="68" fill="#2C7FB8" fontSize="6.5" textAnchor="middle" fontWeight="bold" className="sublabel">CHW 6.5°C</text>
-
-        {/* 2. AHU / PROCESS LOAD BLOCK */}
-        <rect x="215" y="55" width="80" height="65" fill="#0A1628" stroke="#0E4A4F" strokeWidth="2" />
-        <line x1="215" y1="73" x2="295" y2="73" stroke="#0E4A4F" strokeWidth="1" />
-        <text x="255" y="68" fill="#94A3B8" textAnchor="middle" fontSize="7.5">AHU / LOAD</text>
-        <text x="255" y="90" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">ΔT: +8.2°C</text>
-        <text x="255" y="108" fill="#2C7FB8" textAnchor="middle" fontSize="7" className="sublabel">1,850 kW_th</text>
-
-        {/* Chilled Water Return Line */}
-        <motion.path
-          d="M 255 120 L 255 150 L 165 150 L 135 150 L 57 150 L 57 120"
-          stroke="#2C7FB8"
-          strokeWidth="1.5"
-          strokeDasharray="4 2"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.3)}
-        />
-        <polygon points="54,124 57,118 60,124" fill="#2C7FB8" />
-        <text x="195" y="145" fill="#94A3B8" fontSize="6.5" textAnchor="middle" className="sublabel">RETURN 14.7°C</text>
-
-        {/* Variable Primary Pump symbol in return loop */}
-        <g transform="translate(150, 150)">
-          <circle cx="0" cy="0" r="10" fill="#0A1628" stroke="#2C7FB8" strokeWidth="1.5" />
-          <polygon points="-4,-5 6,0 -4,5" fill="#2C7FB8" />
-          <text x="0" y="-14" fill="#2C7FB8" fontSize="6.5" textAnchor="middle" className="sublabel">VPF PUMP</text>
+        {/* Step 2: 3D Exergy Model */}
+        <g transform="translate(132, 38)">
+          <rect width="80" height="84" rx="8" fill="#062822" stroke="#10B981" strokeWidth="2" />
+          <circle cx="40" cy="24" r="12" fill="#10B981" opacity="0.25" />
+          <text x="40" y="28" fill="#6EE7B7" fontSize="10" fontWeight="bold" textAnchor="middle">02</text>
+          <text x="40" y="48" fill="#FFFFFF" fontSize="8" fontWeight="bold" textAnchor="middle">Digital Twin</text>
+          <text x="40" y="58" fill="#A7F3D0" fontSize="6.5" textAnchor="middle">Exergy & CFD</text>
+          <text x="40" y="70" fill="#34D399" fontSize="6.5" fontWeight="bold" textAnchor="middle">-35% Head Loss</text>
         </g>
 
-        {/* 3. COOLING TOWER HEAT DUMP / REJECT LOOP (Accent Logo Color #F0A431) */}
-        <motion.path
-          d="M 57 55 L 57 25 L 255 25 L 255 45"
-          stroke="#F0A431"
-          strokeWidth="1.5"
-          strokeDasharray="3 3"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.5)}
-        />
-        <g transform="translate(155, 25)">
-          <rect x="-42" y="-11" width="84" height="20" fill="#0A1628" stroke="#F0A431" strokeWidth="1" />
-          <text x="0" y="2" fill="#F0A431" fontSize="6.5" textAnchor="middle" fontWeight="bold">TOWER CONDENSER</text>
-          <text x="0" y="16" fill="#94A3B8" fontSize="6" textAnchor="middle" className="sublabel">APPROACH: 2.8°C</text>
+        {/* Step 3: Turnkey Commissioning */}
+        <g transform="translate(250, 45)">
+          <rect width="75" height="70" rx="8" fill="#0A1E33" stroke="#2C7FB8" strokeWidth="1.5" />
+          <circle cx="37" cy="24" r="12" fill="#2C7FB8" opacity="0.2" />
+          <text x="37" y="28" fill="#67E8F9" fontSize="10" fontWeight="bold" textAnchor="middle">03</text>
+          <text x="37" y="48" fill="#F8FAFC" fontSize="8" fontWeight="bold" textAnchor="middle">Commission</text>
+          <text x="37" y="58" fill="#94A3B8" fontSize="6.5" textAnchor="middle">Guaranteed SEC</text>
         </g>
       </svg>
 
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#2C7FB8] font-bold">EXERGY SAVED: 28.4%</span>
-        <span>LOW DELTA-T MITIGATED</span>
+      <div className="flex items-center justify-between pt-2 border-t border-slate-700/50 text-[11px] text-slate-300">
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Slashes Initial Capex by 12–18%</span>
+        <span className="font-semibold text-emerald-400">ROI: &lt; 14 Months</span>
       </div>
     </div>
   );
 }
 
-// ════════════════════════════════════════════════════════════════════════════════════
-// 2. HEATING & STEAM SCHEMATIC: Boiler, Exchanger, Condensate Return, Economizer
-// ════════════════════════════════════════════════════════════════════════════════════
-export function HeatingSchematic({ className = "" }: SchematicProps) {
+// ═════════════════════════════════════════════════════════════════════════
+// 2. WATER TREATMENT SYSTEMS DESIGN, INSTALLATION & MAINTENANCE SCHEMATIC
+// ═════════════════════════════════════════════════════════════════════════
+export function WaterTreatmentSchematic({ className = "" }: SchematicProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className={`w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono ${className}`}>
-      {/* Corner crosshairs */}
-      <span className="absolute top-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute top-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-
-      <div className="flex items-center justify-between text-[9px] text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#2C7FB8] font-semibold tracking-wider">SCHEMATIC: STEAM & CONDENSATE RECOVERY</span>
-        <span>FIG 02.B // REV 2.1</span>
+    <div className={`w-full bg-slate-900/90 border border-slate-700/60 p-4 sm:p-5 rounded-xl shadow-lg relative overflow-hidden text-slate-100 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-700/60 pb-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-[#10B981]" />
+          <span className="text-xs font-bold tracking-wide text-white">Modular Skid Filtration Train</span>
+        </div>
+        <span className="text-[10px] font-semibold text-emerald-300 bg-emerald-950/60 border border-emerald-700/50 px-2 py-0.5 rounded-full">
+          Turnkey Execution
+        </span>
       </div>
 
-      <svg viewBox="0 0 340 190" fill="none" className="w-full h-auto text-slate-300">
-        <style>{`
-          @media (max-width: 767px) {
-            .sublabel { display: none !important; }
-          }
-        `}</style>
-        <g stroke="rgba(255,255,255,0.03)" strokeWidth="1" strokeDasharray="2 3">
-          <line x1="10" y1="50" x2="330" y2="50" />
-          <line x1="10" y1="120" x2="330" y2="120" />
+      <svg viewBox="0 0 340 160" fill="none" className="w-full h-auto select-none">
+        {/* Animated Fluid Stream */}
+        <path d="M 20 80 L 320 80" stroke="#0E4A4F" strokeWidth="8" strokeLinecap="round" />
+        <motion.path
+          d="M 20 80 L 320 80"
+          stroke="#06B6D4"
+          strokeWidth="3"
+          strokeDasharray="6 6"
+          animate={shouldReduceMotion ? {} : { strokeDashoffset: -60 }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Stage 1: Coagulation & Media */}
+        <g transform="translate(30, 45)">
+          <rect width="65" height="70" rx="6" fill="#0E2838" stroke="#06B6D4" strokeWidth="1.5" />
+          <text x="32" y="25" fill="#67E8F9" fontSize="8" fontWeight="bold" textAnchor="middle">STAGE 1</text>
+          <text x="32" y="45" fill="#FFFFFF" fontSize="8.5" fontWeight="bold" textAnchor="middle">Media Filter</text>
+          <text x="32" y="58" fill="#94A3B8" fontSize="6.5" textAnchor="middle">TSS Removal</text>
         </g>
 
-        {/* 1. STEAM BOILER (Accent Logo Color #F0A431) */}
-        <rect x="20" y="55" width="75" height="65" fill="#0A1628" stroke="#F0A431" strokeWidth="1.5" />
-        <line x1="20" y1="73" x2="95" y2="73" stroke="rgba(240,164,49,0.25)" strokeWidth="1" />
-        <text x="57" y="68" fill="#F0A431" textAnchor="middle" fontSize="7.5" fontWeight="bold">BOILER</text>
-        <text x="57" y="90" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">8.5 BAR</text>
-        <text x="57" y="108" fill="#94A3B8" textAnchor="middle" fontSize="7" className="sublabel">175°C SAT</text>
-
-        {/* High-Pressure Steam Line (Accent Logo Color #F0A431) */}
-        <motion.path
-          d="M 95 75 L 210 75"
-          stroke="#F0A431"
-          strokeWidth="1.5"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.1)}
-        />
-        <polygon points="208,72 215,75 208,78" fill="#F0A431" />
-        <text x="150" y="68" fill="#F0A431" fontSize="6.5" textAnchor="middle" fontWeight="bold" className="sublabel">STEAM 4.2 T/H</text>
-
-        {/* 2. PROCESS HEAT EXCHANGER / USER */}
-        <rect x="215" y="55" width="80" height="65" fill="#0A1628" stroke="#0E4A4F" strokeWidth="2" />
-        <line x1="215" y1="73" x2="295" y2="73" stroke="#0E4A4F" strokeWidth="1" />
-        <text x="255" y="68" fill="#94A3B8" textAnchor="middle" fontSize="7.5">PROCESS USER</text>
-        <text x="255" y="90" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">HEX COIL</text>
-        <text x="255" y="108" fill="#2C7FB8" textAnchor="middle" fontSize="7" className="sublabel">η_th: 92.6%</text>
-
-        {/* Condensate Recovery Loop (Primary Logo Color #2C7FB8) */}
-        <motion.path
-          d="M 255 120 L 255 150 L 175 150 L 140 150 L 57 150 L 57 120"
-          stroke="#2C7FB8"
-          strokeWidth="1.5"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.3)}
-        />
-        <polygon points="54,124 57,118 60,124" fill="#2C7FB8" />
-        <text x="195" y="145" fill="#2C7FB8" fontSize="6.5" textAnchor="middle" fontWeight="bold" className="sublabel">CONDENSATE &gt;88%</text>
-
-        {/* Steam Trap icon in return line */}
-        <g transform="translate(150, 150)" className="sublabel">
-          <rect x="-8" y="-8" width="16" height="16" fill="#0A1628" stroke="#0E4A4F" strokeWidth="1.5" />
-          <path d="M -8 -8 L 8 8" stroke="#2C7FB8" strokeWidth="1" />
-          <text x="0" y="-12" fill="#2C7FB8" fontSize="6" textAnchor="middle">TRAP AUDIT</text>
+        {/* Stage 2: Ultrafiltration (UF) Skid */}
+        <g transform="translate(135, 40)">
+          <rect width="70" height="80" rx="6" fill="#082A22" stroke="#10B981" strokeWidth="2" />
+          <text x="35" y="25" fill="#A7F3D0" fontSize="8" fontWeight="bold" textAnchor="middle">STAGE 2</text>
+          <text x="35" y="45" fill="#FFFFFF" fontSize="8.5" fontWeight="bold" textAnchor="middle">UF Membrane</text>
+          <text x="35" y="58" fill="#86EFAC" fontSize="6.5" textAnchor="middle">0.02μm Pore</text>
+          <text x="35" y="70" fill="#34D399" fontSize="6.5" fontWeight="bold" textAnchor="middle">99.9% Flux</text>
         </g>
 
-        {/* Economizer heat recovery from flue gas (Primary Logo Color #2C7FB8) */}
-        <motion.path
-          d="M 57 55 L 57 25 L 200 25"
-          stroke="#2C7FB8"
-          strokeWidth="1.5"
-          strokeDasharray="4 2"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.5)}
-        />
-        <g transform="translate(140, 25)">
-          <rect x="-35" y="-10" width="70" height="20" fill="#0A1628" stroke="#0E4A4F" strokeWidth="1.5" />
-          <text x="0" y="2" fill="#2C7FB8" fontSize="6.5" textAnchor="middle" fontWeight="bold">FLUE ECONOMIZER</text>
-          <text x="0" y="15" fill="#94A3B8" fontSize="6" textAnchor="middle" className="sublabel">PREHEAT 82°C</text>
+        {/* Stage 3: Polishing & Clean Permeate */}
+        <g transform="translate(245, 45)">
+          <rect width="65" height="70" rx="6" fill="#0E2838" stroke="#06B6D4" strokeWidth="1.5" />
+          <text x="32" y="25" fill="#67E8F9" fontSize="8" fontWeight="bold" textAnchor="middle">STAGE 3</text>
+          <text x="32" y="45" fill="#FFFFFF" fontSize="8.5" fontWeight="bold" textAnchor="middle">Permeate</text>
+          <text x="32" y="58" fill="#94A3B8" fontSize="6.5" textAnchor="middle">Zero Fouling</text>
         </g>
       </svg>
 
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#F0A431] font-bold">FUEL SAVING: 22.8%</span>
-        <span>BLOWDOWN FLASH RECLAIMED</span>
+      <div className="flex items-center justify-between pt-2 border-t border-slate-700/50 text-[11px] text-slate-300">
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Automated Clean-in-Place (CIP)</span>
+        <span className="font-semibold text-cyan-300">Up to 30% Lower kWh/m³</span>
       </div>
     </div>
   );
 }
 
-// ════════════════════════════════════════════════════════════════════════════════════
-// 3. WATER QUALITY SCHEMATIC: Intake, Filtration, RO, Process, Closed Reuse
-// ════════════════════════════════════════════════════════════════════════════════════
-export function WaterSchematic({ className = "" }: SchematicProps) {
-  const shouldReduceMotion = useReducedMotion();
-
+// ═════════════════════════════════════════════════════════════════════════
+// 3. WATER QUALITY IMPROVEMENT & TREATMENT SERVICES SCHEMATIC
+// ═════════════════════════════════════════════════════════════════════════
+export function WaterQualitySchematic({ className = "" }: SchematicProps) {
   return (
-    <div className={`w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono ${className}`}>
-      {/* Corner crosshairs */}
-      <span className="absolute top-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute top-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-
-      <div className="flex items-center justify-between text-[9px] text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#2C7FB8] font-semibold tracking-wider">SCHEMATIC: HIGH-RECOVERY RO & ZLD LOOP</span>
-        <span>FIG 02.C // REV 2.1</span>
+    <div className={`w-full bg-slate-900/90 border border-slate-700/60 p-4 sm:p-5 rounded-xl shadow-lg relative overflow-hidden text-slate-100 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-700/60 pb-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-cyan-400" />
+          <span className="text-xs font-bold tracking-wide text-white">Water Quality Conditioning & Polishing</span>
+        </div>
+        <span className="text-[10px] font-semibold text-cyan-300 bg-cyan-950/60 border border-cyan-700/50 px-2 py-0.5 rounded-full">
+          Zero Scaling & Corrosion
+        </span>
       </div>
 
-      <svg viewBox="0 0 340 190" fill="none" className="w-full h-auto text-slate-300">
-        <style>{`
-          @media (max-width: 767px) {
-            .sublabel { display: none !important; }
-          }
-        `}</style>
-        <g stroke="rgba(255,255,255,0.03)" strokeWidth="1" strokeDasharray="2 3">
-          <line x1="10" y1="50" x2="330" y2="50" />
-          <line x1="10" y1="120" x2="330" y2="120" />
-        </g>
+      <div className="grid grid-cols-2 gap-3 py-2">
+        {/* Before: Raw Untreated */}
+        <div className="p-3 rounded-lg bg-red-950/20 border border-red-800/40">
+          <div className="text-[10px] uppercase font-bold text-red-400 mb-1">Untreated Baseline</div>
+          <div className="text-xs font-medium text-slate-300 space-y-1">
+            <div className="flex justify-between"><span>TDS / Minerals:</span> <span className="font-mono text-red-300">High (&gt;2000 ppm)</span></div>
+            <div className="flex justify-between"><span>Scaling Index:</span> <span className="font-mono text-red-300">Severe (+2.1 LSI)</span></div>
+            <div className="flex justify-between"><span>Exchanger Loss:</span> <span className="font-mono text-red-300">-15% Heat Loss</span></div>
+          </div>
+        </div>
 
-        {/* 1. RAW WATER INTAKE */}
-        <g transform="translate(15, 60)">
-          <rect x="0" y="0" width="60" height="55" fill="#0A1628" stroke="#0E4A4F" strokeWidth="2" />
-          <text x="30" y="16" fill="#94A3B8" textAnchor="middle" fontSize="7">INTAKE</text>
-          <text x="30" y="34" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">RAW FEED</text>
-          <text x="30" y="48" fill="#94A3B8" textAnchor="middle" fontSize="6.5" className="sublabel">TDS 2,400 ppm</text>
-        </g>
+        {/* After: Exergy Treated */}
+        <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-700/50">
+          <div className="text-[10px] uppercase font-bold text-emerald-400 mb-1">Conditioned & Polished</div>
+          <div className="text-xs font-medium text-slate-300 space-y-1">
+            <div className="flex justify-between"><span>TDS / Minerals:</span> <span className="font-mono text-emerald-300">Optimized (&lt;50 ppm)</span></div>
+            <div className="flex justify-between"><span>Scaling Index:</span> <span className="font-mono text-emerald-300">Balanced (0.0 LSI)</span></div>
+            <div className="flex justify-between"><span>Heat Efficiency:</span> <span className="font-mono text-emerald-300">98%+ Restored</span></div>
+          </div>
+        </div>
+      </div>
 
-        {/* Feed Line to RO */}
-        <motion.path
-          d="M 75 87 L 115 87"
-          stroke="#94A3B8"
-          strokeWidth="1.5"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.1)}
-        />
-        <polygon points="113,84 120,87 113,90" fill="#94A3B8" />
-
-        {/* 2. REVERSE OSMOSIS MEMBRANE BLOCK (Primary Logo Color #2C7FB8) */}
-        <g transform="translate(120, 50)">
-          <rect x="0" y="0" width="85" height="75" fill="#0A1628" stroke="#2C7FB8" strokeWidth="1.5" />
-          <line x1="0" y1="18" x2="85" y2="18" stroke="rgba(44,127,184,0.25)" strokeWidth="1" />
-          <text x="42" y="14" fill="#2C7FB8" textAnchor="middle" fontSize="7.5" fontWeight="bold">RO SYSTEM</text>
-          <text x="42" y="38" fill="#F1F5F9" textAnchor="middle" fontSize="11" fontWeight="bold">88.5%</text>
-          <text x="42" y="52" fill="#2C7FB8" textAnchor="middle" fontSize="7">RECOVERY RATE</text>
-          <text x="42" y="66" fill="#94A3B8" textAnchor="middle" fontSize="6.5" className="sublabel">HIGH-FLUX MEMBRANE</text>
-        </g>
-
-        {/* Permeate Line to Process (Primary Logo Color #2C7FB8) */}
-        <motion.path
-          d="M 205 87 L 245 87"
-          stroke="#2C7FB8"
-          strokeWidth="1.5"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.3)}
-        />
-        <polygon points="243,84 250,87 243,90" fill="#2C7FB8" />
-        <text x="225" y="80" fill="#2C7FB8" fontSize="6" textAnchor="middle" fontWeight="bold" className="sublabel">PERMEATE</text>
-
-        {/* 3. PROCESS TOWER REUSE */}
-        <g transform="translate(250, 60)">
-          <rect x="0" y="0" width="75" height="55" fill="#0A1628" stroke="#0E4A4F" strokeWidth="2" />
-          <text x="37" y="16" fill="#94A3B8" textAnchor="middle" fontSize="7">USE LOOP</text>
-          <text x="37" y="34" fill="#F1F5F9" textAnchor="middle" fontSize="9" fontWeight="bold">PLANT USE</text>
-          <text x="37" y="48" fill="#2C7FB8" textAnchor="middle" fontSize="6.5" className="sublabel">CoC: 7.2 CYCLES</text>
-        </g>
-
-        {/* Reject Recovery & ZLD Loop (Accent Logo Color #F0A431) */}
-        <motion.path
-          d="M 162 125 L 162 155 L 285 155 L 285 115"
-          stroke="#F0A431"
-          strokeWidth="1.5"
-          strokeDasharray="4 2"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.5)}
-        />
-        <polygon points="282,119 285,113 288,119" fill="#F0A431" />
-        <text x="225" y="150" fill="#F0A431" fontSize="6.5" textAnchor="middle" fontWeight="bold" className="sublabel">ZLD RECYCLE: ZERO EFFLUENT</text>
-      </svg>
-
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#2C7FB8] font-bold">FRESHWATER CUT: 45%</span>
-        <span>SCALING & FOULING ELIMINATED</span>
+      <div className="flex items-center justify-between pt-2 border-t border-slate-700/50 text-[11px] text-slate-300">
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Advanced UV & Chemical Polishing</span>
+        <span className="font-semibold text-emerald-400">100% Dubai Municipality Standard</span>
       </div>
     </div>
   );
 }
 
-// ════════════════════════════════════════════════════════════════════════════════════
-// 4. PROCESS INTEGRATION SCHEMATIC: Pinch Composite Curves & Exergy Destruction Area
-// ════════════════════════════════════════════════════════════════════════════════════
-export function ProcessIntegrationSchematic({ className = "" }: SchematicProps) {
+// ═════════════════════════════════════════════════════════════════════════
+// 4. SEAWATER & BRACKISH WATER DESALINATION SCHEMATIC
+// ═════════════════════════════════════════════════════════════════════════
+export function DesalinationSchematic({ className = "" }: SchematicProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className={`w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono ${className}`}>
-      {/* Corner crosshairs */}
-      <span className="absolute top-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute top-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 left-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-      <span className="absolute bottom-1.5 right-1.5 text-[8px] text-[#2C7FB8] select-none font-bold">+</span>
-
-      <div className="flex items-center justify-between text-[9px] text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#2C7FB8] font-semibold tracking-wider">SCHEMATIC: PINCH ANALYSIS COMPOSITE CURVES</span>
-        <span>FIG 02.D // REV 2.1</span>
+    <div className={`w-full bg-slate-900/90 border border-slate-700/60 p-4 sm:p-5 rounded-xl shadow-lg relative overflow-hidden text-slate-100 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-700/60 pb-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Waves className="w-4 h-4 text-[#2C7FB8]" />
+          <span className="text-xs font-bold tracking-wide text-white">SWRO & Isobaric Pressure Exchanger (PX)</span>
+        </div>
+        <span className="text-[10px] font-semibold text-emerald-300 bg-emerald-950/60 border border-emerald-700/50 px-2 py-0.5 rounded-full">
+          60% Energy Recycled
+        </span>
       </div>
 
-      <svg viewBox="0 0 340 190" fill="none" className="w-full h-auto text-slate-300">
-        <style>{`
-          @media (max-width: 767px) {
-            .sublabel { display: none !important; }
-          }
-        `}</style>
-        {/* T-H Axis coordinates */}
-        <line x1="35" y1="20" x2="35" y2="160" stroke="#94A3B8" strokeWidth="1.5" />
-        <line x1="35" y1="160" x2="320" y2="160" stroke="#94A3B8" strokeWidth="1.5" />
-        <text x="30" y="25" fill="#94A3B8" fontSize="7" textAnchor="end">T [°C]</text>
-        <text x="315" y="172" fill="#94A3B8" fontSize="7" textAnchor="end">ENTHALPY H [kW]</text>
+      <svg viewBox="0 0 340 160" fill="none" className="w-full h-auto select-none">
+        {/* Seawater Inflow */}
+        <path d="M 20 55 L 110 55" stroke="#2C7FB8" strokeWidth="4" />
+        <text x="50" y="45" fill="#93C5FD" fontSize="7.5" fontWeight="bold">Seawater 65 bar</text>
 
-        {/* Shaded Area between curves (Exergy Destruction) */}
-        <motion.path
-          d="M 60 40 L 175 95 L 300 135 L 270 145 L 175 105 L 45 60 Z"
-          fill="rgba(44,127,184,0.12)"
-          stroke="none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.4 }}
-        />
-
-        {/* Hot Composite Curve (Accent Logo Color #F0A431) */}
-        <motion.path
-          d="M 60 40 L 175 95 L 300 135"
-          stroke="#F0A431"
-          strokeWidth="1.8"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.1)}
-        />
-        <text x="75" y="35" fill="#F0A431" fontSize="7" fontWeight="bold">HOT COMPOSITE</text>
-
-        {/* Cold Composite Curve (Primary Logo Color #2C7FB8) */}
-        <motion.path
-          d="M 45 60 L 175 105 L 270 145"
-          stroke="#2C7FB8"
-          strokeWidth="1.8"
-          initial={{ pathLength: shouldReduceMotion ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={drawTransition(0.2)}
-        />
-        <text x="275" y="150" fill="#2C7FB8" fontSize="7" fontWeight="bold">COLD COMPOSITE</text>
-
-        {/* Vertical Pinch Point Line */}
-        <line x1="175" y1="25" x2="175" y2="155" stroke="#F0A431" strokeWidth="1" strokeDasharray="3 3" />
-        <circle cx="175" cy="95" r="3" fill="#F0A431" />
-        <circle cx="175" cy="105" r="3" fill="#2C7FB8" />
-        <g transform="translate(175, 18)">
-          <rect x="-35" y="-8" width="70" height="16" fill="#0A1628" stroke="#0E4A4F" strokeWidth="1.5" />
-          <text x="0" y="3" fill="#F0A431" fontSize="6.5" textAnchor="middle" fontWeight="bold">PINCH ΔT_min 10K</text>
+        {/* High Pressure Pump Block */}
+        <g transform="translate(110, 35)">
+          <rect width="60" height="40" rx="6" fill="#0A2238" stroke="#2C7FB8" strokeWidth="1.5" />
+          <text x="30" y="20" fill="#93C5FD" fontSize="8" fontWeight="bold" textAnchor="middle">HP Pump</text>
+          <text x="30" y="32" fill="#E2E8F0" fontSize="7" textAnchor="middle">IE4 Drive</text>
         </g>
 
-        {/* Minimum Utility Targets Callouts */}
-        {/* Hot Utility QH,min (Left - Accent #F0A431) */}
-        <line x1="35" y1="40" x2="60" y2="40" stroke="#F0A431" strokeWidth="1.5" />
-        <text x="50" y="55" fill="#F0A431" fontSize="6.5" textAnchor="middle" className="sublabel">Q_H,min</text>
+        {/* RO Membrane Bank */}
+        <g transform="translate(200, 30)">
+          <rect width="115" height="50" rx="8" fill="#062822" stroke="#10B981" strokeWidth="2" />
+          <text x="57" y="22" fill="#6EE7B7" fontSize="8.5" fontWeight="bold" textAnchor="middle">SWRO Membrane</text>
+          <text x="57" y="34" fill="#F0FDF4" fontSize="7" textAnchor="middle">Permeate Fresh Water</text>
+          <text x="57" y="44" fill="#34D399" fontSize="6.5" fontWeight="bold" textAnchor="middle">&lt; 2.8 kWh/m³</text>
+        </g>
 
-        {/* Cold Utility QC,min (Right - Primary #2C7FB8) */}
-        <line x1="270" y1="145" x2="300" y2="135" stroke="#2C7FB8" strokeWidth="1.5" />
-        <text x="285" y="130" fill="#2C7FB8" fontSize="6.5" textAnchor="middle" className="sublabel">Q_C,min</text>
+        {/* Reject Brine Loop to Isobaric Exchanger */}
+        <path d="M 260 80 L 260 120 L 170 120" stroke="#F0A431" strokeWidth="2.5" strokeDasharray="4 3" />
+        <g transform="translate(100, 102)">
+          <rect width="70" height="36" rx="6" fill="#241B08" stroke="#F0A431" strokeWidth="1.5" />
+          <text x="35" y="18" fill="#FDE68A" fontSize="7.5" fontWeight="bold" textAnchor="middle">Isobaric PX</text>
+          <text x="35" y="28" fill="#F59E0B" fontSize="6.5" textAnchor="middle">98% Recovery</text>
+        </g>
 
-        {/* Label in the exergy destruction shaded region */}
-        <text x="120" y="80" fill="#2C7FB8" fontSize="6.5" textAnchor="middle" letterSpacing="0.06em" className="sublabel">
-          INTERNAL RECOVERY
-        </text>
+        {/* PX energy returns to HP loop */}
+        <path d="M 100 120 L 50 120 L 50 55" stroke="#10B981" strokeWidth="2" strokeDasharray="4 3" />
       </svg>
 
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#2C7FB8] font-bold">CROSS-PINCH LOSS: 0.0 kW</span>
-        <span>HEN SYNTHESIS OPTIMIZED</span>
+      <div className="flex items-center justify-between pt-2 border-t border-slate-700/50 text-[11px] text-slate-300">
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Isobaric Energy Recovery Integration</span>
+        <span className="font-semibold text-emerald-400">Lowest GCC Specific Energy</span>
       </div>
     </div>
   );
 }
+
+// ═════════════════════════════════════════════════════════════════════════
+// 5. WASTE MANAGEMENT & RESOURCE VALORISATION SCHEMATIC
+// ═════════════════════════════════════════════════════════════════════════
+export function WasteValorisationSchematic({ className = "" }: SchematicProps) {
+  return (
+    <div className={`w-full bg-slate-900/90 border border-slate-700/60 p-4 sm:p-5 rounded-xl shadow-lg relative overflow-hidden text-slate-100 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-700/60 pb-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Recycle className="w-4 h-4 text-[#F0A431]" />
+          <span className="text-xs font-bold tracking-wide text-white">Closed-Loop Waste Valorisation & ZLD</span>
+        </div>
+        <span className="text-[10px] font-semibold text-amber-300 bg-amber-950/60 border border-amber-700/50 px-2 py-0.5 rounded-full">
+          Zero Liquid Discharge
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2.5 py-2 text-center">
+        <div className="bg-slate-800/80 border border-slate-700 p-2.5 rounded-lg">
+          <div className="text-[10px] font-bold text-amber-400">EFFLUENT IN</div>
+          <div className="text-xs font-bold text-white mt-1">High COD Waste</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">Sludge & Concentrates</div>
+        </div>
+
+        <div className="bg-emerald-950/40 border border-emerald-700/60 p-2.5 rounded-lg">
+          <div className="text-[10px] font-bold text-emerald-400">VALORISATION</div>
+          <div className="text-xs font-bold text-white mt-1">Biogas & Minerals</div>
+          <div className="text-[10px] text-emerald-300 mt-0.5">+350 kWh / ton COD</div>
+        </div>
+
+        <div className="bg-cyan-950/40 border border-cyan-700/60 p-2.5 rounded-lg">
+          <div className="text-[10px] font-bold text-cyan-400">ZLD OUTPUT</div>
+          <div className="text-xs font-bold text-white mt-1">98% Distillate</div>
+          <div className="text-[10px] text-cyan-300 mt-0.5">Recycled Process Water</div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between pt-2 border-t border-slate-700/50 text-[11px] text-slate-300">
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Turns Operational Waste into Revenue</span>
+        <span className="font-semibold text-amber-400">Payback: 16–26 Months</span>
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════
+// 6. MUNICIPAL WASTEWATER TREATMENT & REUSE SCHEMATIC
+// ═════════════════════════════════════════════════════════════════════════
+export function MunicipalWastewaterSchematic({ className = "" }: SchematicProps) {
+  return (
+    <div className={`w-full bg-slate-900/90 border border-slate-700/60 p-4 sm:p-5 rounded-xl shadow-lg relative overflow-hidden text-slate-100 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-700/60 pb-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-[#10B981]" />
+          <span className="text-xs font-bold tracking-wide text-white">Municipal STP & TSE Resource Recovery</span>
+        </div>
+        <span className="text-[10px] font-semibold text-emerald-300 bg-emerald-950/60 border border-emerald-700/50 px-2 py-0.5 rounded-full">
+          Circular Urban Water
+        </span>
+      </div>
+
+      <div className="space-y-2 py-1">
+        <div className="flex items-center justify-between p-2 rounded-lg bg-slate-800/60 border border-slate-700/50 text-xs">
+          <span className="font-medium text-slate-200">1. Raw Municipal Sewage</span>
+          <span className="text-slate-400 text-[11px]">Primary Screening</span>
+        </div>
+        <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-950/30 border border-emerald-800/40 text-xs">
+          <span className="font-medium text-emerald-200">2. MBR & Biological Nutrient Removal (BNR)</span>
+          <span className="text-emerald-400 text-[11px] font-semibold">-40% Aeration Energy</span>
+        </div>
+        <div className="flex items-center justify-between p-2 rounded-lg bg-cyan-950/30 border border-cyan-800/40 text-xs">
+          <span className="font-medium text-cyan-200">3. TSE Tertiary Polishing & Re-Use</span>
+          <span className="text-cyan-400 text-[11px] font-semibold">District Cooling & Irrigation</span>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between pt-2 border-t border-slate-700/50 text-[11px] text-slate-300">
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Ultrafiltration Submerged Cassettes</span>
+        <span className="font-semibold text-emerald-400">&lt; 0.22 kWh/m³ Aeration</span>
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════
+// BACKWARDS-COMPATIBLE ALIASES FOR LEGACY IMPORTS
+// ═════════════════════════════════════════════════════════════════════════
+export const CoolingSchematic = EngineeringDesignSchematic;
+export const HeatingSchematic = WasteValorisationSchematic;
+export const WaterSchematic = WaterTreatmentSchematic;
+export const ProcessIntegrationSchematic = DesalinationSchematic;

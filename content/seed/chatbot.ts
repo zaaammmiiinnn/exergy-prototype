@@ -63,7 +63,7 @@ export const chatQABankSeed: QABankItem[] = [
   {
     id: "qa-005",
     question: "What services do you offer?",
-    answer: "We provide nine core engineering solutions: Cooling optimization, Heating & steam, Drying processes, Water quality, Waste-heat recovery, Process integration, Water & Desalination Consultancy, Water Treatment Systems Design & Installation, and Municipal Wastewater Treatment & Reuse.",
+    answer: "We deliver 6 core turnkey water and exergy solutions: 1) Engineering Design & Consultancy for Water, Wastewater and Desalination, 2) Water Treatment Systems Design, Installation and Maintenance, 3) Water Quality Improvement & Treatment, 4) Seawater & Brackish Water Desalination, 5) Waste Management, Resource Recovery and Waste Valorisation, and 6) Municipal Wastewater Treatment, Reuse and Resource Recovery.",
     keywords: ["services", "offer", "solutions", "scope", "offerings"],
     synonyms: ["what do you do", "list services", "what can you help with"],
     category: "services",

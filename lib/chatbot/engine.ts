@@ -51,8 +51,8 @@ export const CHAT_MENU_TREE: Record<string, ChatMenuItemNode> = {
     parent: "main",
     position: 1,
     label: "Services",
-    text: "We optimize 6 core industrial energy and water streams:\n\n• Cooling optimization (Chilled water & refrigeration)\n• Heating & steam (Boilers & heat recovery)\n• Drying processes (Thermal & mechanical dewatering)\n• Water quality (Desalination & effluent reuse)\n• Waste-heat recovery (ORC & cascading)\n• Process integration (Plant-wide pinch analysis)\n\n1. Request Facility Assessment\n2. Speak to an Engineer (Lead Capture)\n0. Main Menu",
-    keywords: ["service", "services", "cooling", "heating", "steam", "drying", "water", "waste-heat", "process"],
+    text: "Exergy Optimized Solutions & Water Solutions — Our 6 core engineering disciplines:\n\n1. Engineering Design & Consultancy (Water, Wastewater & Desalination)\n2. Water Treatment Systems (Design, Installation & Maintenance)\n3. Water Quality Improvement & Treatment Services\n4. Seawater & Brackish Water Desalination Systems\n5. Waste Management, Resource Recovery & Waste Valorisation\n6. Municipal Wastewater Treatment, Reuse & Resource Recovery\n\n1. Request Facility Assessment\n2. Speak to an Engineer (Lead Capture)\n0. Main Menu",
+    keywords: ["service", "services", "water", "wastewater", "desalination", "treatment", "valorisation", "municipal", "cooling", "heating"],
     url: "/services",
   },
   industries: {

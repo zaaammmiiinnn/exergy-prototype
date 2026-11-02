@@ -26,9 +26,9 @@ export function Hero() {
               transition={{ duration: 0.4 }}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-white/15 bg-white/5 rounded-full text-white/90 text-xs font-medium backdrop-blur-xs"
             >
-              <span className="text-[#30a66a]">🍃</span>
+              <span className="text-[#30a66a]">💧</span>
               <span className="uppercase tracking-wider text-[11px] font-semibold text-white/90">
-                EXERGY-INTEGRATED CONSULTING
+                EXERGY OPTIMIZED SOLUTIONS & WATER SOLUTIONS
               </span>
             </motion.div>
 

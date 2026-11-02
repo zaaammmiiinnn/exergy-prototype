@@ -17,7 +17,7 @@ describe("Deterministic Chatbot Engine", () => {
     // 1 -> Services
     const r1 = handleChatMessage(state, "1");
     assert.strictEqual(r1.nextState.currentNode, "services");
-    assert.ok(r1.reply.includes("Cooling optimization"));
+    assert.ok(r1.reply.includes("Engineering Design") || r1.reply.includes("Water"));
 
     // 2 -> Industries
     const r2 = handleChatMessage(state, "2");
@@ -216,7 +216,7 @@ describe("Deterministic Chatbot Engine", () => {
     // 2. Visitor chooses: '1' (Services)
     const step2 = handleChatMessage(step1.nextState, "1");
     assert.strictEqual(step2.nextState.currentNode, "services");
-    assert.ok(step2.reply.includes("Cooling optimization"));
+    assert.ok(step2.reply.includes("Engineering Design") || step2.reply.includes("Water"));
     assert.ok(step2.reply.includes("Speak to an Engineer (Lead Capture)"));
     assert.ok(step2.quickReplies.some((qr) => qr.action === "handoff"));
 

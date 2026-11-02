@@ -3,7 +3,26 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { ArrowRight, ChevronDown, Check } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  Check,
+  Compass,
+  Filter,
+  Sparkles,
+  Waves,
+  Recycle,
+  Building2,
+} from "lucide-react";
+
+import {
+  EngineeringDesignSchematic,
+  WaterTreatmentSchematic,
+  WaterQualitySchematic,
+  DesalinationSchematic,
+  WasteValorisationSchematic,
+  MunicipalWastewaterSchematic,
+} from "./service-schematics";
 
 interface ServiceItem {
   id: string;
@@ -14,150 +33,105 @@ interface ServiceItem {
   paramKey: string;
   badge: string;
   diagram: React.ReactNode;
-  icon: (props: { className?: string }) => React.JSX.Element;
+  icon: React.ComponentType<{ className?: string }>;
 }
-
-// 1.5px stroke line-art icons (32px, no fill)
-function SnowflakeIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14" />
-      <path d="m9 4 3 3 3-3M9 20l3-3 3 3M4 9l3 3-3 3M20 9l-3 3 3 3" />
-    </svg>
-  );
-}
-
-function FlameIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
-    </svg>
-  );
-}
-
-function WaterIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-      <path d="M6 16.5c1.5 1 3.5 1 5 0 1.5-1 3.5-1 5 0" />
-    </svg>
-  );
-}
-
-function NetworkIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="2" y="3" width="6" height="6" rx="0" />
-      <rect x="16" y="3" width="6" height="6" rx="0" />
-      <rect x="9" y="15" width="6" height="6" rx="0" />
-      <path d="M5 9v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M12 13v2" />
-    </svg>
-  );
-}
-
-import {
-  CoolingSchematic,
-  HeatingSchematic,
-  WaterSchematic,
-  ProcessIntegrationSchematic,
-} from "./service-schematics";
 
 const SERVICES_DATA: ServiceItem[] = [
   {
-    id: "cooling",
+    id: "engineering-design-consultancy",
     code: "01",
-    title: "Cooling Optimization",
+    title: "Engineering Design & Consultancy for Water, Wastewater & Desalination",
     shortDesc:
-      "Chilled water, refrigeration and HVAC networks re-engineered for minimum exergy loss and lower peak demand.",
+      "Front-End Engineering Design (FEED), thermodynamic process modeling, hydraulic transient analysis, and commissioning advisory for turnkey water infrastructure.",
     bullets: [
-      "Chilled water plants, cooling towers & industrial refrigeration delta-T expansion",
-      "Sub-ambient temperature lift reduction & compressor power minimization",
-      "District cooling plant network balancing with guaranteed peak kW/TR cuts",
+      "Front-End Engineering Design (FEED) & detailed 3D process flow integration",
+      "Hydraulic network simulation, surge protection & exergy optimization",
+      "Pre-construction optimization slashing capital expenditure by 12–18%",
     ],
-    paramKey: "cooling",
-    badge: "TARGET: CHILLED WATER & INDUSTRIAL REFRIGERATION",
-    diagram: <CoolingSchematic />,
-    icon: SnowflakeIcon,
+    paramKey: "engineering-design-consultancy",
+    badge: "FEED & HYDRAULIC MODELING",
+    diagram: <EngineeringDesignSchematic />,
+    icon: Compass,
   },
   {
-    id: "heating",
+    id: "water-treatment-systems-design-installation",
     code: "02",
-    title: "Heating & Steam",
+    title: "Water Treatment Systems Design, Installation & Maintenance",
     shortDesc:
-      "Boiler, steam and hot-water systems integrated with heat recovery to reclaim energy otherwise sent to atmosphere.",
+      "Turnkey skid design, precision site installation, and preventative maintenance for industrial process water, ultrafiltration, and high-purity treatment trains.",
     bullets: [
-      "High-pressure steam distribution, thermodynamic traps & condensate reclamation",
-      "Flue gas condensing economizers capturing latent and sensible enthalpy",
-      "Boiler blowdown heat exchange cascading thermal energy into makeup streams",
+      "Modular stainless-steel 316L and duplex UF / NF treatment skids",
+      "Precision mechanical, electrical, and SCADA automation installation",
+      "Automated Clean-in-Place (CIP) routines reducing energy use by up to 30%",
     ],
-    paramKey: "heating",
-    badge: "TARGET: STEAM BOILERS & THERMAL DISTRIBUTION",
-    diagram: <HeatingSchematic />,
-    icon: FlameIcon,
+    paramKey: "water-treatment-systems-design-installation",
+    badge: "TURNKEY TREATMENT SKIDS",
+    diagram: <WaterTreatmentSchematic />,
+    icon: Filter,
   },
   {
-    id: "water",
+    id: "water-quality-improvement-treatment",
     code: "03",
-    title: "Water Quality & Conservation",
+    title: "Water Quality Improvement & Treatment Services",
     shortDesc:
-      "Surface water bodies, effluent treatment and desalination improved through low-energy, regenerative treatment trains.",
+      "Specialized water quality remediation, chemical conditioning, disinfection, scaling & corrosion mitigation, and environmental compliance.",
     bullets: [
-      "Reverse osmosis (RO) desalination optimization with isobaric energy recovery (PX)",
-      "Industrial effluent treatment (ETP) retrofits & zero-liquid-discharge (ZLD) integration",
-      "Closed-loop process water recycling reducing freshwater extraction by up to 60%",
+      "Advanced oxidation processes (AOP) & multi-barrier UV disinfection",
+      "Boiler feedwater & cooling tower conditioning to prevent scale and corrosion",
+      "100% compliance with Dubai Municipality and UAE federal effluent guidelines",
     ],
-    paramKey: "water",
-    badge: "TARGET: RO DESALINATION & INDUSTRIAL EFFLUENT",
-    diagram: <WaterSchematic />,
-    icon: WaterIcon,
+    paramKey: "water-quality-improvement-treatment",
+    badge: "QUALITY POLISHING & COMPLIANCE",
+    diagram: <WaterQualitySchematic />,
+    icon: Sparkles,
   },
   {
-    id: "process",
+    id: "seawater-brackish-water-desalination",
     code: "04",
-    title: "Process Integration",
+    title: "Seawater & Brackish Water Desalination Systems",
     shortDesc:
-      "Pinch analysis and whole-facility thermodynamic mass-and-energy balancing to eliminate cross-pinch heat transfer.",
+      "High-recovery SWRO and BWRO desalination systems equipped with isobaric energy recovery devices for the lowest specific energy consumption in the GCC.",
     bullets: [
-      "Second-law pinch analysis & grand composite curves across entire industrial complexes",
-      "Thermal cascading between disparate units so one stream's waste fuels another",
-      "Guaranteed overall plant heat rate, fuel consumption, and opex reduction",
+      "Isobaric pressure exchanger (PX) energy recovery recycling 60%+ pumping energy",
+      "Gulf seawater pre-treatment with DAF and ultrafiltration membranes",
+      "Specific energy consumption cut to < 2.8 kWh/m³ with guaranteed membrane life",
     ],
-    paramKey: "process",
-    badge: "TARGET: WHOLE-FACILITY PINCH INTEGRATION",
-    diagram: <ProcessIntegrationSchematic />,
-    icon: NetworkIcon,
+    paramKey: "seawater-brackish-water-desalination",
+    badge: "SWRO & BWRO DESALINATION",
+    diagram: <DesalinationSchematic />,
+    icon: Waves,
+  },
+  {
+    id: "waste-management-resource-recovery-valorisation",
+    code: "05",
+    title: "Waste Management, Resource Recovery & Waste Valorisation Services",
+    shortDesc:
+      "Circular industrial waste valorisation, biological sludge conversion, high-grade mineral recovery, and waste thermal energy cascading.",
+    bullets: [
+      "Effluent valorisation & Zero Liquid Discharge (ZLD) crystallization",
+      "Anaerobic digestion generating renewable biogas energy from high-COD waste",
+      "Nutrient and mineral reclamation converting operational waste into revenue",
+    ],
+    paramKey: "waste-management-resource-recovery-valorisation",
+    badge: "CIRCULAR ECONOMY & ZLD",
+    diagram: <WasteValorisationSchematic />,
+    icon: Recycle,
+  },
+  {
+    id: "municipal-wastewater-treatment-reuse",
+    code: "06",
+    title: "Municipal Wastewater Treatment, Reuse & Resource Recovery Systems",
+    shortDesc:
+      "Advanced municipal sewage treatment plants (STP), Membrane Bioreactors (MBR), and treated sewage effluent (TSE) polishing for district cooling and greening.",
+    bullets: [
+      "Membrane Bioreactor (MBR) and MBBR municipal sewage treatment systems",
+      "Treated Sewage Effluent (TSE) ultrafiltration polishing for district cooling plants",
+      "Aeration energy optimization reducing STP electrical consumption by up to 40%",
+    ],
+    paramKey: "municipal-wastewater-treatment-reuse",
+    badge: "MUNICIPAL STP & TSE REUSE",
+    diagram: <MunicipalWastewaterSchematic />,
+    icon: Building2,
   },
 ];
 
@@ -170,15 +144,7 @@ export function ServicesAccordion() {
   };
 
   return (
-    <section id="services" className="relative w-full bg-[hsl(190,30%,98%)] border-b border-slate-200/80 py-24 sm:py-32">
-      {/* Corner annotation marks */}
-      <div className="absolute top-4 left-4 text-slate-400 font-mono text-[9px] pointer-events-none hidden sm:block">
-        + DISCIPLINE.MATRIX // SEC.01
-      </div>
-      <div className="absolute top-4 right-4 text-slate-400 font-mono text-[9px] pointer-events-none hidden sm:block">
-        + SPEC: EN-12831-DUBAI
-      </div>
-
+    <section id="services" className="relative w-full bg-[hsl(190,30%,98%)] border-b border-slate-200/80 py-20 sm:py-28">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
           
@@ -187,18 +153,18 @@ export function ServicesAccordion() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/60 mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-[#0c758d]" />
               <span className="font-mono text-xs uppercase tracking-[0.14em] text-[#0c758d] font-semibold">
-                01 / SERVICES
+                OUR SERVICES
               </span>
             </div>
 
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-[#12232b] leading-[1.08] mb-6">
-              Four disciplines.
+              Six disciplines.
               <br />
-              <span className="text-[#0c758d]">One system.</span>
+              <span className="text-[#0c758d]">One integrated system.</span>
             </h2>
 
             <p className="text-base text-slate-600 leading-relaxed mb-8 max-w-md font-sans">
-              From a single utility to a fully integrated plant — we optimize both the capital you spend and the energy and water you consume.
+              From engineering consultancy to turnkey water treatment, SWRO desalination, and waste valorisation — we optimize both capital expenditure and operational performance.
             </p>
 
             <div className="pt-2">
@@ -206,7 +172,7 @@ export function ServicesAccordion() {
                 href="/services"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-teal-200 bg-white text-[#0c758d] font-medium text-xs uppercase tracking-wider hover:bg-teal-50 hover:border-teal-300 transition-all shadow-xs group"
               >
-                <span>View all services</span>
+                <span>Explore all 6 services</span>
                 <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -220,7 +186,7 @@ export function ServicesAccordion() {
                 100% Turnkey EPC & Guaranteed M&V
               </div>
               <div className="text-xs text-slate-500 mt-1 font-sans">
-                Savings contractually bound against ASHRAE Level III audit baseline.
+                Energy and water recovery backed by performance guarantees and calibrated instrumentation.
               </div>
             </div>
           </div>
@@ -258,96 +224,98 @@ export function ServicesAccordion() {
                       {/* Icon container */}
                       <div className={`w-12 h-12 rounded-xl border flex items-center justify-center shrink-0 transition-colors ${
                         isOpen 
-                          ? "bg-teal-50 border-teal-200 text-[#0c758d]" 
-                          : "bg-slate-50 border-slate-200/60 text-slate-600 group-hover:text-[#0c758d] group-hover:border-teal-200 group-hover:bg-teal-50/50"
+                          ? "bg-[#0c758d] border-[#0c758d] text-white" 
+                          : "bg-teal-50/50 border-teal-100 text-[#0c758d] group-hover:bg-teal-50"
                       }`}>
                         <Icon className="w-6 h-6" />
                       </div>
 
-                      {/* Title & Short Description */}
-                      <div className="pr-2">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-mono text-xs font-bold text-[#0c758d]">
+                      <div>
+                        {/* Target badge */}
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="font-mono text-[10px] font-bold text-slate-400">
                             {item.code}
                           </span>
-                          <h3 className="font-heading text-lg sm:text-xl font-semibold text-[#12232b] tracking-[-0.02em] group-hover:text-[#0c758d] transition-colors">
-                            {item.title}
-                          </h3>
+                          <span className="font-mono text-[10px] font-semibold text-[#0c758d] uppercase tracking-wider bg-teal-50 px-2 py-0.5 rounded-md">
+                            {item.badge}
+                          </span>
                         </div>
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2 sm:line-clamp-none font-sans">
-                          {item.shortDesc}
-                        </p>
+
+                        {/* Title */}
+                        <h3 className="font-heading text-lg sm:text-xl font-bold text-[#12232b] group-hover:text-[#0c758d] transition-colors">
+                          {item.title}
+                        </h3>
+
+                        {/* Short preview on mobile when closed */}
+                        {!isOpen && (
+                          <p className="text-sm text-slate-500 mt-1 line-clamp-2 sm:hidden font-sans">
+                            {item.shortDesc}
+                          </p>
+                        )}
                       </div>
                     </div>
 
-                    {/* Toggle Arrow */}
-                    <div className="shrink-0 mt-2">
-                      <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
-                        isOpen 
-                          ? "bg-teal-50 border-teal-200 text-[#0c758d]" 
-                          : "bg-slate-50 border-slate-200 text-slate-400 group-hover:text-slate-600"
-                      }`}>
-                        <ChevronDown
-                          className={`w-4 h-4 transition-transform duration-300 ${
-                            isOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      </div>
+                    {/* Chevron toggle button */}
+                    <div className={`w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                      isOpen ? "rotate-180 bg-slate-50 border-slate-300" : "group-hover:border-slate-300"
+                    }`}>
+                      <ChevronDown className="w-4 h-4 text-slate-600" />
                     </div>
                   </button>
 
-                  {/* Expandable Content Panel */}
+                  {/* Expanded Body Content */}
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
-                        initial={shouldReduceMotion ? { opacity: 1 } : { height: 0, opacity: 0 }}
-                        animate={shouldReduceMotion ? { opacity: 1 } : { height: "auto", opacity: 1 }}
-                        exit={shouldReduceMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}
-                        className="overflow-hidden"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{
+                          duration: shouldReduceMotion ? 0 : 0.3,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
                       >
-                        <div className="px-6 pb-7 pt-2 sm:px-7 sm:pb-8 border-t border-slate-100">
-                          {/* Target Scope Badge */}
-                          <div className="mb-4">
-                            <span className="inline-block font-mono text-[11px] text-[#0c758d] uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-200/60 font-semibold">
-                              {item.badge}
-                            </span>
-                          </div>
+                        <div className="px-6 pb-6 sm:px-7 sm:pb-7 pt-2 border-t border-slate-100 flex flex-col gap-6">
+                          
+                          {/* Short Description */}
+                          <p className="text-base text-slate-700 leading-relaxed font-sans">
+                            {item.shortDesc}
+                          </p>
 
-                          {/* 3 Technical Bullet Points */}
-                          <div className="grid grid-cols-1 gap-2.5 mb-6">
+                          {/* Technical Highlights / Bullets */}
+                          <div className="grid grid-cols-1 gap-2.5 bg-slate-50 p-4 rounded-xl border border-slate-200/60">
                             {item.bullets.map((bullet, bIdx) => (
-                              <div key={bIdx} className="flex items-start gap-3">
-                                <div className="w-5 h-5 rounded-full bg-teal-100/80 text-[#0c758d] flex items-center justify-center shrink-0 mt-0.5">
+                              <div key={bIdx} className="flex items-start gap-2.5">
+                                <div className="w-5 h-5 rounded-full bg-teal-100/70 text-[#0c758d] flex items-center justify-center shrink-0 mt-0.5">
                                   <Check className="w-3 h-3 stroke-[2.5]" />
                                 </div>
-                                <span className="text-xs sm:text-sm text-slate-700 font-sans leading-relaxed">
+                                <span className="text-sm text-slate-700 font-sans font-medium">
                                   {bullet}
                                 </span>
                               </div>
                             ))}
                           </div>
 
-                          {/* Mini Technical Diagram wrapped in dark petrol card for schematic clarity */}
-                          <div className="mb-6 p-3 rounded-2xl bg-gradient-to-br from-[#061821] to-[#0f323c] border border-slate-800 shadow-md">
+                          {/* Interactive User-Friendly Schematic Diagram */}
+                          <div className="w-full">
                             {item.diagram}
                           </div>
 
-                          {/* CTA Buttons */}
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
+                          {/* Action Links */}
+                          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2 border-t border-slate-100">
+                            <Link
+                              href={`/services/${item.id}`}
+                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0c758d] hover:text-[#0a5c6e] uppercase tracking-wider font-sans group"
+                            >
+                              <span>Full engineering specifications</span>
+                              <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
+                            </Link>
+
                             <Link
                               href={`/assessment?service=${item.paramKey}`}
-                              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0c758d] text-white font-sans text-xs uppercase tracking-wider font-semibold rounded-full hover:bg-[#095f73] transition-all shadow-xs"
+                              className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[#12232b] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#0c758d] transition-colors shadow-xs"
                             >
-                              <span>Request assessment</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </Link>
-                            <Link
-                              href={`/services/${item.paramKey}`}
-                              className="font-sans text-xs font-medium text-slate-600 hover:text-[#0c758d] transition-colors flex items-center gap-1.5"
-                            >
-                              <span>View technical documentation</span>
-                              <span className="text-[#0c758d]">→</span>
+                              Request facility assessment
                             </Link>
                           </div>
 

@@ -15,17 +15,17 @@ import { getWebPageSchema, getFAQPageSchema } from "@/lib/seo/schema";
 import { homeFAQs } from "@/content/seed/faqs";
 
 export const metadata: Metadata = constructMetadata({
-  title: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
+  title: "Exergy Solutions | Exergy Optimized Solutions & Water Solutions Dubai",
   description:
-    "We map where energy and water quality are truly lost. Utilizing advanced second-law exergy analysis to expose inefficiencies and drive sustainability.",
+    "Exergy Optimized Solutions & Water Solutions. We combine second-law thermodynamics with advanced water, wastewater, and desalination engineering across UAE.",
   path: "/",
 });
 
 export default function HomePage() {
   const pageSchema = getWebPageSchema({
-    title: "Exergy Solutions | Advanced Energy & Water Efficiency Analysis",
+    title: "Exergy Solutions | Exergy Optimized Solutions & Water Solutions Dubai",
     description:
-      "We map where energy and water quality are truly lost. Utilizing advanced second-law exergy analysis to expose inefficiencies and drive sustainability.",
+      "Exergy Optimized Solutions & Water Solutions. We combine second-law thermodynamics with advanced water, wastewater, and desalination engineering across UAE.",
     url: "/",
     type: "WebPage",
   });

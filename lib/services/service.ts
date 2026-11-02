@@ -109,5 +109,21 @@ export async function getLiveServices(): Promise<ServiceItem[]> {
  */
 export async function getLiveServiceBySlug(slug: string): Promise<ServiceItem | null> {
   const all = await getLiveServices();
-  return all.find((s) => s.slug === slug) || null;
+  const direct = all.find((s) => s.slug === slug);
+  if (direct) return direct;
+
+  // Graceful fallback for legacy URLs
+  const legacyAliases: Record<string, string> = {
+    cooling: "engineering-design-consultancy",
+    heating: "waste-management-resource-recovery-valorisation",
+    drying: "waste-management-resource-recovery-valorisation",
+    water: "water-treatment-systems-design-installation",
+    "waste-heat": "waste-management-resource-recovery-valorisation",
+    process: "engineering-design-consultancy",
+  };
+  const targetSlug = legacyAliases[slug];
+  if (targetSlug) {
+    return all.find((s) => s.slug === targetSlug) || null;
+  }
+  return null;
 }

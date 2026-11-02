@@ -19,6 +19,12 @@ import {
   ShieldCheck,
   Box,
   Activity,
+  Compass,
+  Waves,
+  Building2,
+  Sparkles,
+  Filter,
+  Wrench,
 } from "lucide-react";
 import { MotionDiv } from "./motion";
 
@@ -38,6 +44,12 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   ShieldCheck,
   Box,
   Activity,
+  Compass,
+  Waves,
+  Building2,
+  Sparkles,
+  Filter,
+  Wrench,
 };
 
 export function ServiceCard({

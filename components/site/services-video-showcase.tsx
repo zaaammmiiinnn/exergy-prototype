@@ -17,18 +17,25 @@ import {
   ShieldCheck,
   CheckCircle2,
   Layers,
+  Compass,
+  Filter,
+  Waves,
+  Building2,
 } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ReactNode> = {
-  cooling: <Snowflake className="w-4 h-4" />,
-  heating: <Flame className="w-4 h-4" />,
-  drying: <Wind className="w-4 h-4" />,
-  water: <Droplets className="w-4 h-4" />,
+  "engineering-design-consultancy": <Compass className="w-4 h-4" />,
+  "water-treatment-systems-design-installation": <Filter className="w-4 h-4" />,
+  "water-quality-improvement-treatment": <Sparkles className="w-4 h-4" />,
+  "seawater-brackish-water-desalination": <Waves className="w-4 h-4" />,
+  "waste-management-resource-recovery-valorisation": <Recycle className="w-4 h-4" />,
+  "municipal-wastewater-treatment-reuse": <Building2 className="w-4 h-4" />,
+  cooling: <Compass className="w-4 h-4" />,
+  heating: <Recycle className="w-4 h-4" />,
+  drying: <Recycle className="w-4 h-4" />,
+  water: <Filter className="w-4 h-4" />,
   "waste-heat": <Recycle className="w-4 h-4" />,
-  process: <Network className="w-4 h-4" />,
-  "water-wastewater-desalination-consultancy": <Layers className="w-4 h-4" />,
-  "water-treatment-systems-design-installation": <Droplets className="w-4 h-4" />,
-  "municipal-wastewater-treatment-reuse": <Recycle className="w-4 h-4" />,
+  process: <Compass className="w-4 h-4" />,
 };
 
 export function ServicesVideoShowcase() {

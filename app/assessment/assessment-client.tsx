@@ -46,7 +46,9 @@ function AssessmentContent() {
     sector: searchParams.get("sector") || "paper",
     country: "United Arab Emirates",
     facilityType: "",
-    services: searchParams.get("service") ? [searchParams.get("service")!] : ["cooling"],
+    services: searchParams.get("service")
+      ? [searchParams.get("service")!]
+      : ["engineering-design-consultancy"],
     mainChallenge: "",
     timeline: "this_quarter",
     consent: false,
