@@ -214,7 +214,7 @@ Generated from `content/crawl/exergy_crawl.json` extracted on 2026-10-16.
 | H1 / H2 | "Contact Exergy Solutions" / "Ready to see what your plant is really losing?" | Crawl |
 | Address | `334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE` | Crawl |
 | Primary Contact Email | `sarfraz@exergy-solutions.com` | Crawl |
-| System Admin Email | `neuralwaves.official@gmail.com` | Client Direct Mandate |
+| System Admin Email | `sarfraz@exergy-solutions.com` | Client Direct Mandate |
 | Social Links | LinkedIn: `https://www.linkedin.com/company/135328489/` | Crawl |
 | Form Fields | Name, Email, Phone, Company, Message, Turnstile | Implementation Plan |
 
@@ -257,4 +257,4 @@ Generated from `content/crawl/exergy_crawl.json` extracted on 2026-10-16.
 4. **Address & Founder Contacts**:
    - Physical address: `334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE`
    - Primary contact: `sarfraz@exergy-solutions.com`
-   - System administrator / founder / notification recipient: `neuralwaves.official@gmail.com`
+   - System administrator / founder / notification recipient: `sarfraz@exergy-solutions.com`

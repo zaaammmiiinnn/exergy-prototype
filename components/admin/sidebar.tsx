@@ -356,14 +356,14 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
                 : "AD"}
             </div>
             <div className="flex-1 min-w-0">
-              {/* User Email with Role Badge e.g. neuralwaves.official@gmail.com [Founder] */}
+              {/* User Email with Role Badge e.g. sarfraz@exergy-solutions.com [Founder] */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-1">
                   <p
                     className="text-xs font-medium text-white truncate leading-snug group-hover:text-teal-300 transition-colors"
                     title={adminUser?.email || "Administrator"}
                   >
-                    {adminUser?.email || "admin@exergy.solutions"}
+                    {adminUser?.email || "admin@exergy-solutions.com"}
                   </p>
                   <UserCog className="w-3.5 h-3.5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0" />
                 </div>

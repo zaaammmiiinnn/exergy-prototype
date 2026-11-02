@@ -38,7 +38,7 @@ Deployed natively to **Cloudflare Workers** via `@opennextjs/cloudflare`.
 ### 2. Thermodynamic Assessment & Automated Lead Scoring
 - **Multi-Step Wizard** (`/assessment`): Captures utility bills, operating hours, baseline electrical/thermal demands, and facility equipment profiles.
 - **Dynamic Lead Scoring Algorithm** (`lib/leads/scoring.ts`): Evaluates thermal load, cooling tonnage, boiler operating efficiency, and urgency to assign a quantitative exergy score (0–100) and qualification tier (`hot`, `warm`, `cold`).
-- **Real-Time Notification Pipeline** (`lib/email/resend.ts`): Instantly alerts engineering leads (`neuralwaves.official@gmail.com` and `support@neuralwaves.in`) via Resend while dispatching branded client assessment confirmations.
+- **Real-Time Notification Pipeline** (`lib/email/resend.ts`): Instantly alerts engineering leads (`sarfraz@exergy-solutions.com` and `aon.naqvi@exergy-solutions.com`) via Resend while dispatching branded client assessment confirmations.
 
 ### 3. Pure Deterministic Chatbot Engine
 - **No External LLM Dependencies**: Pure decision-tree and keyword matching engine (`lib/chatbot/engine.ts`). Guaranteed zero hallucinations, 100% auditable thermodynamic answers, and sub-millisecond response latency.
@@ -168,7 +168,7 @@ SUPABASE_SERVICE_ROLE_KEY="<your-service-role-key>"
 # Resend Email Integration
 RESEND_API_KEY="re_<your-resend-key>"
 RESEND_FROM_EMAIL="contact@exergy-solutions.com"
-ADMIN_NOTIFY_EMAILS="neuralwaves.official@gmail.com,support@neuralwaves.in"
+ADMIN_NOTIFY_EMAILS="sarfraz@exergy-solutions.com,aon.naqvi@exergy-solutions.com,info@support.exergy-solutions.com"
 
 # Site URL
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
@@ -233,4 +233,4 @@ npm run cf-deploy
 ## 📄 License & Attribution
 
 Designed and developed for **Exergy Solutions** (Dubai, UAE).  
-Engineering architecture by **NeuralWaves** (`neuralwaves.official@gmail.com`).
+Engineering architecture by **Exergy Solutions Technical Operations** (`sarfraz@exergy-solutions.com`).

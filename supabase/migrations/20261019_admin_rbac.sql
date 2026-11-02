@@ -22,7 +22,7 @@ create or replace view public.admins as
 -- 4. Seed / update standard RBAC accounts
 insert into public.admin_users (email, full_name, role, is_active)
 values
-  ('neuralwaves.official@gmail.com', 'NeuralWaves Founder', 'founder', true),
+  ('sarfraz@exergy-solutions.com', 'NeuralWaves Founder', 'founder', true),
   ('admin@exergy.solutions', 'System Admin', 'admin', true),
   ('employee@exergy.com', 'Staff Engineer', 'employee', true)
 on conflict (email) do update set

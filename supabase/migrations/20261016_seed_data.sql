@@ -1,17 +1,17 @@
 -- =============================================================================
 -- EXERGY SOLUTIONS SEED DATA
--- Default Founder: neuralwaves.official@gmail.com
+-- Default Founder: sarfraz@exergy-solutions.com
 -- =============================================================================
 
 -- 1. Site Settings
 insert into public.site_settings (key, value)
 values
-  ('notify_emails', '["neuralwaves.official@gmail.com", "support@neuralwaves.in"]'::jsonb),
+  ('notify_emails', '["sarfraz@exergy-solutions.com", "info@exergy-solutions.com"]'::jsonb),
   ('contact', '{
     "company_name": "Exergy Solutions",
     "address": "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
-    "email": "support@neuralwaves.in",
-    "admin_contact": "neuralwaves.official@gmail.com",
+    "email": "info@exergy-solutions.com",
+    "admin_contact": "sarfraz@exergy-solutions.com",
     "linkedin_url": "https://www.linkedin.com/company/135328489/"
   }'::jsonb),
   ('lead_routing', '{
@@ -176,7 +176,7 @@ values
    array['where', 'location', 'address', 'dubai', 'office'], array['headquarters', 'map'], 'contact', 'Contact'),
 
   ('What is your email or phone?',
-   'You can reach our engineering team directly at neuralwaves.official@gmail.com or support@neuralwaves.in, or book an assessment online.',
+   'You can reach our engineering team directly at sarfraz@exergy-solutions.com or info@exergy-solutions.com, or book an assessment online.',
    array['email', 'phone', 'contact', 'call', 'reach'], array['inquiry'], 'contact', 'Contact'),
 
   ('How do I request an assessment?',

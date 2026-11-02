@@ -283,6 +283,15 @@
   - Built with `@opennextjs/cloudflare` and deployed to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `d3105dcd-67dd-46ad-835f-7a62fc900caa`).
   - Committed and pushed to `origin/main`.
 
+- **Phase 25 (Complete Removal of neuralwaves.official@gmail.com & Replacement with Company Emails)**:
+  - Deleted `neuralwaves.official@gmail.com` user and role record completely from Supabase database `admin_users` table.
+  - Sanitized `site_settings.notify_emails` in Supabase to strictly contain company addresses (`sarfraz@exergy-solutions.com`, `aon.naqvi@exergy-solutions.com`, `info@support.exergy-solutions.com`).
+  - Updated [`components/admin/sidebar.tsx`](file:///Volumes/Zamin/exergy-prototype/components/admin/sidebar.tsx) to default to `admin@exergy-solutions.com` and removed all references from comments and templates.
+  - Replaced all occurrences in [`content/content-map.md`](file:///Volumes/Zamin/exergy-prototype/content/content-map.md), [`README.md`](file:///Volumes/Zamin/exergy-prototype/README.md), and Supabase SQL migrations with company emails (`sarfraz@exergy-solutions.com` / `info@exergy-solutions.com`).
+  - Validated type safety with `npx tsc --noEmit` and verified test suite passing (36/36 tests).
+  - Built with `@opennextjs/cloudflare` and deployed live to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `d21027da-b23d-4848-854a-5a7243473031`).
+  - Committed and pushed to `origin/main`.
+
 ---
 
 ## What Is Next

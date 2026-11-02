@@ -24,9 +24,9 @@ create policy "service_role_admin_users" on public.admin_users
 -- Seed initial admin accounts
 insert into public.admin_users (email, full_name, role, is_active)
 values
-  ('neuralwaves.official@gmail.com', 'Admin User', 'admin', true),
+  ('sarfraz@exergy-solutions.com', 'Admin User', 'admin', true),
   ('admin@exergy.solutions', 'System Admin', 'admin', true),
-  ('support@neuralwaves.in', 'Operations Admin', 'admin', true)
+  ('info@exergy-solutions.com', 'Operations Admin', 'admin', true)
 on conflict (email) do update set
   full_name = excluded.full_name,
   role = 'admin',

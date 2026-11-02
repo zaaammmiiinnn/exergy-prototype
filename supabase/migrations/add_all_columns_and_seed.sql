@@ -26,12 +26,12 @@ create table if not exists public.site_settings (
 -- Seed site_settings
 insert into public.site_settings (key, value)
 values
-  ('notify_emails', '["neuralwaves.official@gmail.com", "support@neuralwaves.in"]'::jsonb),
+  ('notify_emails', '["sarfraz@exergy-solutions.com", "info@exergy-solutions.com"]'::jsonb),
   ('contact', '{
     "company_name": "Exergy Solutions",
     "address": "334/6D Al Wasl Street DM199 Al Satwa, Dubai UAE",
-    "email": "support@neuralwaves.in",
-    "admin_contact": "neuralwaves.official@gmail.com",
+    "email": "info@exergy-solutions.com",
+    "admin_contact": "sarfraz@exergy-solutions.com",
     "linkedin_url": "https://www.linkedin.com/company/135328489/"
   }'::jsonb)
 on conflict (key) do update set value = excluded.value;
