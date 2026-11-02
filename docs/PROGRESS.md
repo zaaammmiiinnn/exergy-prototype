@@ -263,6 +263,17 @@
   - Built with `@opennextjs/cloudflare` and deployed to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `e9dbb603-f36d-4f68-bb2c-a7454013e4fd`).
   - Committed and pushed to `origin/main`.
 
+- **Phase 23 (Hero Layout Separation, Image Brightness Boost & Stage Card Overlap Fix)**:
+  - Boosted background image brightness and contrast (`brightness-115 contrast-105 saturate-110`) and cleared center overlay shading (`via-28% to-transparent`) so the fiery/watery energy vortex shines at maximum luminescence.
+  - Expanded hero grid container to `max-w-[1720px] 2xl:max-w-[1800px]` with `lg:col-span-6 xl:col-span-5` for the left copy and `lg:col-span-6 xl:col-span-7` with `lg:justify-end` for the schematic card:
+    - Left text ("Turn wasted energy and water into profit") hugs the dark black machinery zone on the left edge.
+    - Right schematic card hugs the dark black control/solar zone on the right edge.
+    - Central vortex is completely unobstructed between them.
+  - Eliminated text collision in `HeroSchematic` dynamic stage explanation card (`flex-wrap items-center justify-between` and `ml-auto` on the metric pill) so "3. Ultra-Pure Output (High-Value Yield)" and "[98% Purity & Efficiency]" never overlap on any viewport or card width.
+  - Validated type safety with `npx tsc --noEmit` and verified test suite passing (36/36 tests).
+  - Built with `@opennextjs/cloudflare` and deployed to Cloudflare Workers (`https://exergy-solutions.com`, Version ID: `f5b3bfd9-c9fe-4beb-b291-8b9496bdde72`).
+  - Committed and pushed to `origin/main`.
+
 ---
 
 ## What Is Next

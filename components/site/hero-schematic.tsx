@@ -51,7 +51,7 @@ export function HeroSchematic() {
   ];
 
   return (
-    <div className="relative w-full max-w-[580px] mx-auto bg-gradient-to-b from-[#091522]/95 via-[#0A1A2F]/95 to-[#07111E]/95 border border-white/15 rounded-2xl p-5 sm:p-6 shadow-2xl backdrop-blur-md overflow-hidden text-white">
+    <div className="relative w-full max-w-[580px] mx-auto lg:mr-0 lg:ml-auto bg-gradient-to-b from-[#091522]/95 via-[#0A1A2F]/95 to-[#07111E]/95 border border-white/15 rounded-2xl p-5 sm:p-6 shadow-2xl backdrop-blur-md overflow-hidden text-white">
       {/* Soft Ambient Background Glows */}
       <div className="absolute -top-16 -left-16 w-52 h-52 bg-[#2C7FB8]/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-16 -right-16 w-52 h-52 bg-[#10B981]/20 rounded-full blur-3xl pointer-events-none" />
@@ -538,14 +538,16 @@ export function HeroSchematic() {
 
       {/* Dynamic Stage Explanation Card (No Overlap, Responsive Flow) */}
       <div className="mt-4 bg-slate-900/85 border border-white/15 rounded-xl p-4 sm:p-5 backdrop-blur-md shadow-lg transition-all duration-300">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-white/[0.08]">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-white/[0.08]">
           <div className="flex items-center gap-2.5 min-w-0">
             <span
               className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
               style={{ backgroundColor: stages[activeStage].color }}
             />
-            <div className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-              <span className="whitespace-nowrap">{stages[activeStage].title}</span>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-sm sm:text-base font-bold text-white whitespace-nowrap">
+                {stages[activeStage].title}
+              </span>
               <span className="text-[11px] sm:text-xs font-medium text-white/60 whitespace-nowrap">
                 ({stages[activeStage].badge})
               </span>
@@ -553,7 +555,7 @@ export function HeroSchematic() {
           </div>
 
           <span
-            className="text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full shrink-0 self-start sm:self-auto shadow-xs whitespace-nowrap"
+            className="text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full shrink-0 shadow-xs whitespace-nowrap ml-auto"
             style={{
               backgroundColor: `${stages[activeStage].color}25`,
               color: stages[activeStage].color,
