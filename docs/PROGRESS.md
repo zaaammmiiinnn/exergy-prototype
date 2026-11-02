@@ -1,9 +1,25 @@
 # Project Progress & Status Tracker
 
 **Current Phase:** Live Custom Domain Active & Production Deployed (`https://exergy-solutions.com`)  
-**Last Updated:** 2026-11-01
+**Last Updated:** 2026-11-02
 
 ---
+
+- **Phase 19 (Hero Interactive Schematic & Glowing Globe Aesthetic Restoration)**:
+  - **Issue Resolved**: The schematic visual in the hero section had heavy rectangular border shields enclosing the node labels, shrinking the central core and cramping the stage description card (`2. Exergy & Water Core...`).
+  - **Aesthetic Restoration**: Restored the original glowing 3D thermodynamic globe with latitude/meridian arcs and exergy star icon (`r=44`). Removed rectangular box frames from around node labels.
+  - **Readability & Scaling**: Expanded container (`max-w-[550px]`) and SVG canvas (`460 × 250`). Placed node labels (`RAW FEED / WATER & ENERGY`, `EXERGY CORE / OPTIMIZED PROCESS`, `PURE OUTPUT / POTABLE & WORK`) cleanly below the circles in bold uppercase with drop-shadow filters.
+  - **Breathable Card Spacing**: Separated the dynamic stage card with generous vertical margins (`mt-4`), ample padding (`p-4 sm:p-4.5`), and comfortable line-height, eliminating all crowdedness.
+  - **Deployment**: Passed 36/36 unit & integration tests, compiled clean, and deployed to Cloudflare Workers (Version ID: `9d5467c6-c581-40bd-8d0e-13bdb31d705a`).
+
+- **Phase 18 (Lead Notification Recipients & Aon Naqvi Integration)**:
+  - **Lead Notification Expansion**: Added `aon.naqvi@exergy-solutions.com` (`Director (Engineering)`) directly under `sarfraz@exergy-solutions.com` across the admin settings view (`app/admin/settings/page.tsx`), Cloudflare Worker bindings (`wrangler.jsonc`), seed files, and live Supabase database setting `site_settings.notify_emails`.
+  - **Recipient Pipeline**: Verified that all inbound requests across the site (`/assessment`, homepage audit CTA, `/contact`, and chatbot lead handoff) notify all 3 recipients: `sarfraz@exergy-solutions.com`, `aon.naqvi@exergy-solutions.com`, and `info@support.exergy-solutions.com`.
+  - **Contact Form Connection**: Upgraded `/contact` form submission from local timeout mock to live `/api/assessment` pipeline inserting directly into Supabase `leads` table and dispatching notification emails.
+
+- **Phase 17 (WhatsApp Vector Icon Fix)**:
+  - **Distortion Removed**: Replaced distorted auto-traced multi-ring path with official SimpleIcons WhatsApp vector mark (`M17.472 14.382c...`) rendered in solid white with subtle drop-shadow inside the `#25D366` circular floating launcher.
+
 
 - **Phase 16 (Client Portal Mock Lead Elimination & Zero-Request Empty State)**:
   - **Issue Resolved**: When users signed into the client portal (`/portal`) without having submitted an assessment request, the portal previously generated and displayed a fake intake receipt (`EX-2026-6253`) for a "Continuous Processing & Chilling Plant" with active pipeline tracking ("Intake Verified").
