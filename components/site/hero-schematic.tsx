@@ -8,7 +8,7 @@ import { Droplets, Zap, RefreshCw } from "lucide-react";
  * EXERGY & WATER OPTIMIZATION SCHEMATIC
  * - True CIRCULAR chain animation (perfect circle track, not an oval)
  * - Continuous falling water drop dripping animation in the RAW FEED node
- * - Clean high-contrast typography below nodes
+ * - Clean high-contrast typography below nodes with protective backdrops to eliminate all line overlap
  * - Generous breathing room in stage explanation card with no text overlap
  */
 export function HeroSchematic() {
@@ -72,7 +72,7 @@ export function HeroSchematic() {
       {/* Interactive Diagram SVG Canvas */}
       <div className="relative w-full aspect-[16/10] sm:aspect-[16/9.8] rounded-xl bg-slate-950/70 border border-white/10 p-2 sm:p-3 overflow-hidden flex items-center justify-center">
         <svg
-          viewBox="0 0 460 275"
+          viewBox="0 0 460 280"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full select-none"
@@ -102,7 +102,7 @@ export function HeroSchematic() {
             </filter>
             {/* Clip path inside Raw Feed Node for continuous dripping water droplet */}
             <clipPath id="rawFeedClip">
-              <circle cx="115" cy="130" r="30" />
+              <circle cx="105" cy="115" r="28" />
             </clipPath>
           </defs>
 
@@ -110,8 +110,8 @@ export function HeroSchematic() {
           {/* Static background circular fluid track */}
           <circle
             cx="230"
-            cy="130"
-            r="115"
+            cy="115"
+            r="110"
             stroke="rgba(255,255,255,0.08)"
             strokeWidth="16"
             fill="none"
@@ -120,20 +120,20 @@ export function HeroSchematic() {
           {/* Animated circular dashed fluid chain */}
           <motion.circle
             cx="230"
-            cy="130"
-            r="115"
+            cy="115"
+            r="110"
             stroke="url(#waterFlow)"
             strokeWidth="3.5"
             fill="none"
             strokeDasharray="14 10"
             initial={{ strokeDashoffset: 0 }}
-            animate={shouldReduceMotion ? {} : { strokeDashoffset: -722.56 }}
+            animate={shouldReduceMotion ? {} : { strokeDashoffset: -691.15 }}
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           />
 
           {/* Secondary Closed-Loop Recovery Arc (along bottom circle curve) */}
           <path
-            d="M 345 130 A 115 115 0 0 1 115 130"
+            d="M 340 115 A 110 110 0 0 1 120 115"
             stroke="url(#circularLoop)"
             strokeWidth="2.5"
             strokeDasharray="5 5"
@@ -147,9 +147,9 @@ export function HeroSchematic() {
           >
             {/* Outer Node Circle */}
             <circle
-              cx="115"
-              cy="130"
-              r="32"
+              cx="105"
+              cy="115"
+              r="28"
               fill="#0A1C30"
               stroke={activeStage === 0 ? "#38BDF8" : "rgba(44,127,184,0.6)"}
               strokeWidth={activeStage === 0 ? "3.5" : "2"}
@@ -160,20 +160,20 @@ export function HeroSchematic() {
             <g clipPath="url(#rawFeedClip)">
               {/* Water reservoir pool at bottom of circle */}
               <path
-                d="M 95 145 C 105 152, 125 152, 135 145 C 130 156, 100 156, 95 145 Z"
+                d="M 85 130 C 95 137, 115 137, 125 130 C 120 141, 90 141, 85 130 Z"
                 fill="#0369A1"
                 opacity="0.6"
               />
 
               {/* Water Droplet 1: Falling continuously with natural acceleration */}
               <motion.path
-                d="M 115 106 C 111 113, 108 117, 108 123 A 7 7 0 0 0 122 123 C 122 117, 119 113, 115 106 Z"
+                d="M 105 93 C 101 100, 98 104, 98 110 A 7 7 0 0 0 112 110 C 112 104, 109 100, 105 93 Z"
                 fill="#38BDF8"
                 animate={
                   shouldReduceMotion
                     ? {}
                     : {
-                        y: [0, 26, 30],
+                        y: [0, 24, 28],
                         scaleY: [0.85, 1.25, 0.3],
                         scaleX: [1, 0.8, 1.4],
                         opacity: [0, 1, 0],
@@ -188,8 +188,8 @@ export function HeroSchematic() {
 
               {/* Impact Ripple on the pool surface */}
               <motion.ellipse
-                cx="115"
-                cy="148"
+                cx="105"
+                cy="133"
                 rx="3"
                 ry="1.5"
                 fill="none"
@@ -199,7 +199,7 @@ export function HeroSchematic() {
                   shouldReduceMotion
                     ? {}
                     : {
-                        rx: [3, 16],
+                        rx: [3, 15],
                         ry: [1.5, 5],
                         opacity: [0.95, 0],
                       }
@@ -214,13 +214,13 @@ export function HeroSchematic() {
 
               {/* Water Droplet 2 (interleaved continuous stream) */}
               <motion.path
-                d="M 115 106 C 112 112, 109 115, 109 120 A 6 6 0 0 0 121 120 C 121 115, 118 112, 115 106 Z"
+                d="M 105 93 C 102 99, 99 102, 99 107 A 6 6 0 0 0 111 107 C 111 102, 108 99, 105 93 Z"
                 fill="#7DD3FC"
                 animate={
                   shouldReduceMotion
                     ? {}
                     : {
-                        y: [-4, 26, 30],
+                        y: [-4, 24, 28],
                         scaleY: [0.85, 1.2, 0.3],
                         scaleX: [1, 0.85, 1.3],
                         opacity: [0, 0.95, 0],
@@ -236,8 +236,8 @@ export function HeroSchematic() {
 
               {/* Second Ripple */}
               <motion.ellipse
-                cx="115"
-                cy="148"
+                cx="105"
+                cy="133"
                 rx="3"
                 ry="1.5"
                 fill="none"
@@ -247,7 +247,7 @@ export function HeroSchematic() {
                   shouldReduceMotion
                     ? {}
                     : {
-                        rx: [3, 14],
+                        rx: [3, 13],
                         ry: [1.5, 4.5],
                         opacity: [0.9, 0],
                       }
@@ -261,10 +261,21 @@ export function HeroSchematic() {
               />
             </g>
 
+            {/* Protective Backdrop to guarantee zero line overlap */}
+            <rect
+              x="45"
+              y="148"
+              width="120"
+              height="32"
+              rx="6"
+              fill="#07111E"
+              opacity="0.9"
+            />
+
             {/* Labels Cleanly Below Circle */}
             <text
-              x="115"
-              y="178"
+              x="105"
+              y="161"
               fill="#FFFFFF"
               fontSize="11.5"
               fontWeight="900"
@@ -275,8 +286,8 @@ export function HeroSchematic() {
               RAW FEED
             </text>
             <text
-              x="115"
-              y="192"
+              x="105"
+              y="174"
               fill="#38BDF8"
               fontSize="9.5"
               fontWeight="800"
@@ -296,8 +307,8 @@ export function HeroSchematic() {
             {/* Outer Globe Sphere */}
             <circle
               cx="230"
-              cy="130"
-              r="40"
+              cy="105"
+              r="36"
               fill="url(#coreGlowGradient)"
               stroke={activeStage === 1 ? "#10B981" : "rgba(16,185,129,0.6)"}
               strokeWidth={activeStage === 1 ? "4" : "2.2"}
@@ -306,9 +317,9 @@ export function HeroSchematic() {
             {/* 3D Globe Latitude & Longitude / Meridian Arcs */}
             <ellipse
               cx="230"
-              cy="130"
-              rx="20"
-              ry="38"
+              cy="105"
+              rx="18"
+              ry="34"
               fill="none"
               stroke="#10B981"
               strokeWidth="1.2"
@@ -317,9 +328,9 @@ export function HeroSchematic() {
             />
             <ellipse
               cx="230"
-              cy="130"
-              rx="38"
-              ry="15"
+              cy="105"
+              rx="34"
+              ry="14"
               fill="none"
               stroke="#10B981"
               strokeWidth="1.2"
@@ -327,18 +338,29 @@ export function HeroSchematic() {
               opacity="0.45"
             />
             {/* Center Core Hub & Star Symbol */}
-            <circle cx="230" cy="130" r="14" fill="#0E332E" stroke="#10B981" strokeWidth="1.5" />
+            <circle cx="230" cy="105" r="13" fill="#0E332E" stroke="#10B981" strokeWidth="1.5" />
             <path
-              d="M 230 122 L 232.5 127.5 L 238.5 128.5 L 234 132.5 L 235.5 138.5 L 230 135.5 L 224.5 138.5 L 226 132.5 L 221.5 128.5 L 227.5 127.5 Z"
+              d="M 230 98 L 232 102.5 L 237 103.5 L 233.5 107 L 234.5 112 L 230 109.5 L 225.5 112 L 226.5 107 L 223 103.5 L 228 102.5 Z"
               fill="#10B981"
             />
 
-            {/* Labels Cleanly Below Center Globe */}
+            {/* Protective Backdrop to guarantee zero line overlap */}
+            <rect
+              x="145"
+              y="146"
+              width="170"
+              height="35"
+              rx="6"
+              fill="#07111E"
+              opacity="0.9"
+            />
+
+            {/* Labels Cleanly Below Center Globe with Generous Clearance */}
             <text
               x="230"
-              y="184"
+              y="160"
               fill="#FFFFFF"
-              fontSize="13"
+              fontSize="12.5"
               fontWeight="900"
               textAnchor="middle"
               letterSpacing="0.9"
@@ -348,7 +370,7 @@ export function HeroSchematic() {
             </text>
             <text
               x="230"
-              y="199"
+              y="174"
               fill="#34D399"
               fontSize="10"
               fontWeight="800"
@@ -366,28 +388,39 @@ export function HeroSchematic() {
             onClick={() => setActiveStage(2)}
           >
             <circle
-              cx="345"
-              cy="130"
-              r="32"
+              cx="355"
+              cy="115"
+              r="28"
               fill="#08202E"
               stroke={activeStage === 2 ? "#22D3EE" : "rgba(6,182,212,0.6)"}
               strokeWidth={activeStage === 2 ? "3.5" : "2"}
               filter={activeStage === 2 ? "url(#glow)" : undefined}
             />
             {/* Pure Output Checkmark / Sparkle Icon */}
-            <circle cx="345" cy="130" r="12" fill="#06B6D4" />
+            <circle cx="355" cy="115" r="11" fill="#06B6D4" />
             <path
-              d="M 339 130 L 343 134 L 351 125"
+              d="M 350 115 L 353 118 L 360 111"
               stroke="#FFFFFF"
-              strokeWidth="2.5"
+              strokeWidth="2.4"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
 
+            {/* Protective Backdrop to guarantee zero line overlap */}
+            <rect
+              x="295"
+              y="148"
+              width="120"
+              height="32"
+              rx="6"
+              fill="#07111E"
+              opacity="0.9"
+            />
+
             {/* Labels Cleanly Below Circle */}
             <text
-              x="345"
-              y="178"
+              x="355"
+              y="161"
               fill="#FFFFFF"
               fontSize="11.5"
               fontWeight="900"
@@ -398,8 +431,8 @@ export function HeroSchematic() {
               PURE OUTPUT
             </text>
             <text
-              x="345"
-              y="192"
+              x="355"
+              y="174"
               fill="#22D3EE"
               fontSize="9.5"
               fontWeight="800"
@@ -418,7 +451,7 @@ export function HeroSchematic() {
           >
             <rect
               x="145"
-              y="228"
+              y="212"
               width="170"
               height="34"
               rx="17"
@@ -427,9 +460,9 @@ export function HeroSchematic() {
               strokeWidth={activeStage === 3 ? "2.5" : "1.8"}
               filter="url(#textShadow)"
             />
-            <circle cx="168" cy="245" r="8.5" fill="#F59E0B" />
+            <circle cx="168" cy="229" r="8.5" fill="#F59E0B" />
             <path
-              d="M 165 245 A 3.5 3.5 0 1 1 171 245"
+              d="M 165 229 A 3.5 3.5 0 1 1 171 229"
               stroke="#000000"
               strokeWidth="1.8"
               fill="none"
@@ -437,7 +470,7 @@ export function HeroSchematic() {
             />
             <text
               x="240"
-              y="249"
+              y="233"
               fill="#FDE68A"
               fontSize="10.5"
               fontWeight="900"
@@ -452,14 +485,14 @@ export function HeroSchematic() {
           <g className="select-none pointer-events-none">
             <rect
               x="165"
-              y="6"
+              y="4"
               width="130"
               height="24"
               rx="12"
               fill="rgba(16,185,129,0.22)"
               stroke="rgba(16,185,129,0.5)"
             />
-            <text x="230" y="21" fill="#D1FAE5" fontSize="9.5" fontWeight="bold" textAnchor="middle">
+            <text x="230" y="19" fill="#D1FAE5" fontSize="9.5" fontWeight="bold" textAnchor="middle">
               ⚡ 25–30% Resource Cut
             </text>
           </g>
