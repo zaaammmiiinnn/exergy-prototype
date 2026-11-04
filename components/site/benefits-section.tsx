@@ -11,15 +11,15 @@ function ProfitabilitySchematic() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#00B4D8] font-semibold tracking-wider">FIG 03.A // CAPEX VS OPEX OPTIMIZATION</span>
+    <div className="w-full bg-[#081520] border border-slate-800 rounded-xl p-3 sm:p-4 relative font-mono text-[10px] shadow-sm">
+      <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5 mb-2">
+        <span className="text-[#38bdf8] font-semibold tracking-wider">FIG 03.A // CAPEX VS OPEX OPTIMIZATION</span>
         <span>REV 2.0</span>
       </div>
       <svg viewBox="0 0 320 160" fill="none" className="w-full h-auto text-slate-300">
         {/* Coordinate axes */}
-        <line x1="30" y1="15" x2="30" y2="135" stroke="#94A3B8" strokeWidth="1.2" />
-        <line x1="30" y1="135" x2="305" y2="135" stroke="#94A3B8" strokeWidth="1.2" />
+        <line x1="30" y1="15" x2="30" y2="135" stroke="#64748b" strokeWidth="1.2" />
+        <line x1="30" y1="135" x2="305" y2="135" stroke="#64748b" strokeWidth="1.2" />
         <text x="25" y="20" fill="#94A3B8" fontSize="6.5" textAnchor="end">COST [AED]</text>
         <text x="300" y="145" fill="#94A3B8" fontSize="6.5" textAnchor="end">EFFICIENCY [%]</text>
 
@@ -60,15 +60,15 @@ function ProfitabilitySchematic() {
         <line x1="165" y1="15" x2="165" y2="135" stroke="#00B4D8" strokeWidth="1" strokeDasharray="3 3" />
         <circle cx="165" cy="105" r="4" fill="#00B4D8" />
         <g transform="translate(165, 12)">
-          <rect x="-48" y="-7" width="96" height="15" fill="#0A1628" stroke="#00B4D8" strokeWidth="1" />
+          <rect x="-48" y="-7" width="96" height="15" fill="#0A1628" stroke="#00B4D8" strokeWidth="1" rx="2" />
           <text x="0" y="3" fill="#00B4D8" fontSize="6.5" textAnchor="middle" fontWeight="bold">
             RIGHT-SIZED TCO_MIN
           </text>
         </g>
         <text x="165" y="125" fill="#00B4D8" fontSize="6" textAnchor="middle">η_opt: 84.2%</text>
       </svg>
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#00B4D8] font-bold">OPEX CUT: 25–30%</span>
+      <div className="flex justify-between items-center text-[8px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1">
+        <span className="text-[#38bdf8] font-bold">OPEX CUT: 25–30%</span>
         <span>AVOIDS OVER-SIZED EQUIPMENT CAPEX</span>
       </div>
     </div>
@@ -82,16 +82,16 @@ function GrowthSchematic() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#00B4D8] font-semibold tracking-wider">FIG 03.B // UNLOCKED UTILITY HEADROOM</span>
+    <div className="w-full bg-[#081520] border border-slate-800 rounded-xl p-3 sm:p-4 relative font-mono text-[10px] shadow-sm">
+      <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5 mb-2">
+        <span className="text-[#38bdf8] font-semibold tracking-wider">FIG 03.B // UNLOCKED UTILITY HEADROOM</span>
         <span>REV 2.0</span>
       </div>
       <svg viewBox="0 0 320 160" fill="none" className="w-full h-auto text-slate-300">
         {/* Baseline Capacity Bar (100% Saturated) */}
         <text x="20" y="32" fill="#94A3B8" fontSize="7" fontWeight="bold">BASELINE PLANT UTILITY (BOTTLENECKED)</text>
-        <rect x="20" y="38" width="280" height="24" fill="#0A1628" stroke="#94A3B8" strokeWidth="1.2" />
-        <rect x="20" y="38" width="270" height="24" fill="rgba(245,158,11,0.2)" />
+        <rect x="20" y="38" width="280" height="24" fill="#0A1628" stroke="#94A3B8" strokeWidth="1.2" rx="2" />
+        <rect x="20" y="38" width="270" height="24" fill="rgba(245,158,11,0.2)" rx="2" />
         <text x="155" y="53" fill="#F59E0B" fontSize="7.5" textAnchor="middle" fontWeight="bold">
           96% UTILITY UTILIZATION (ZERO GROWTH HEADROOM)
         </text>
@@ -103,9 +103,9 @@ function GrowthSchematic() {
 
         {/* Post-Optimization Capacity Bar */}
         <text x="20" y="98" fill="#F1F5F9" fontSize="7" fontWeight="bold">AFTER EXERGY SOLUTIONS RETROFIT</text>
-        <rect x="20" y="104" width="280" height="24" fill="#0A1628" stroke="#00B4D8" strokeWidth="1.2" />
+        <rect x="20" y="104" width="280" height="24" fill="#0A1628" stroke="#00B4D8" strokeWidth="1.2" rx="2" />
         {/* Active load */}
-        <rect x="20" y="104" width="185" height="24" fill="rgba(0,180,216,0.15)" />
+        <rect x="20" y="104" width="185" height="24" fill="rgba(0,180,216,0.15)" rx="2" />
         <text x="110" y="119" fill="#00B4D8" fontSize="7.5" textAnchor="middle" fontWeight="bold">
           ACTIVE LOAD: 66%
         </text>
@@ -119,6 +119,7 @@ function GrowthSchematic() {
           fill="rgba(0,180,216,0.3)"
           stroke="#00B4D8"
           strokeWidth="1.5"
+          rx="2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
@@ -127,8 +128,8 @@ function GrowthSchematic() {
           +34% HEADROOM
         </text>
       </svg>
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#00B4D8] font-bold">GROWTH WITHOUT EXTRA FUEL</span>
+      <div className="flex justify-between items-center text-[8px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1">
+        <span className="text-[#38bdf8] font-bold">GROWTH WITHOUT EXTRA FUEL</span>
         <span>AVOIDS GRID UPGRADE CAPEX</span>
       </div>
     </div>
@@ -142,15 +143,15 @@ function ExcellenceSchematic() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#00B4D8] font-semibold tracking-wider">FIG 03.C // SECOND-LAW BENCHMARK VS MEDIAN</span>
+    <div className="w-full bg-[#081520] border border-slate-800 rounded-xl p-3 sm:p-4 relative font-mono text-[10px] shadow-sm">
+      <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5 mb-2">
+        <span className="text-[#38bdf8] font-semibold tracking-wider">FIG 03.C // SECOND-LAW BENCHMARK VS MEDIAN</span>
         <span>REV 2.0</span>
       </div>
       <svg viewBox="0 0 320 160" fill="none" className="w-full h-auto text-slate-300">
         {/* Industry Median vs Exergy Solutions */}
         <g transform="translate(40, 20)">
-          <rect x="0" y="0" width="105" height="105" fill="#0A1628" stroke="#94A3B8" strokeWidth="1.2" />
+          <rect x="0" y="0" width="105" height="105" fill="#0A1628" stroke="#94A3B8" strokeWidth="1.2" rx="3" />
           <text x="52" y="20" fill="#94A3B8" fontSize="7" textAnchor="middle">INDUSTRY MEDIAN</text>
           <text x="52" y="55" fill="#F59E0B" fontSize="18" fontWeight="bold" textAnchor="middle">41.2%</text>
           <text x="52" y="75" fill="#94A3B8" fontSize="6.5" textAnchor="middle">SECOND-LAW η_II</text>
@@ -162,7 +163,7 @@ function ExcellenceSchematic() {
         <polygon points="172,67 178,70 172,73" fill="#00B4D8" />
 
         <g transform="translate(185, 20)">
-          <rect x="0" y="0" width="105" height="105" fill="#0A1628" stroke="#00B4D8" strokeWidth="1.5" />
+          <rect x="0" y="0" width="105" height="105" fill="#0A1628" stroke="#00B4D8" strokeWidth="1.5" rx="3" />
           <line x1="0" y1="26" x2="105" y2="26" stroke="rgba(0,180,216,0.2)" strokeWidth="1" />
           <text x="52" y="18" fill="#00B4D8" fontSize="7" fontWeight="bold" textAnchor="middle">EXERGY BENCHMARK</text>
           <motion.text
@@ -182,8 +183,8 @@ function ExcellenceSchematic() {
           <text x="52" y="92" fill="#00B4D8" fontSize="6" textAnchor="middle">IPMVP OPTION C AUDITED</text>
         </g>
       </svg>
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#00B4D8] font-bold">ESG & RESILIENCE LEADERSHIP</span>
+      <div className="flex justify-between items-center text-[8px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1">
+        <span className="text-[#38bdf8] font-bold">ESG & RESILIENCE LEADERSHIP</span>
         <span>CONTRACTUALLY GUARANTEED M&V</span>
       </div>
     </div>
@@ -197,9 +198,9 @@ function SustainabilitySchematic() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="w-full bg-[#071120] border border-white/[0.08] p-3 sm:p-4 rounded-[2px] relative font-mono text-[10px]">
-      <div className="flex items-center justify-between text-[#94A3B8] border-b border-white/[0.06] pb-1.5 mb-2">
-        <span className="text-[#00B4D8] font-semibold tracking-wider">FIG 03.D // REGENERATIVE CASCADING CYCLES</span>
+    <div className="w-full bg-[#081520] border border-slate-800 rounded-xl p-3 sm:p-4 relative font-mono text-[10px] shadow-sm">
+      <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5 mb-2">
+        <span className="text-[#38bdf8] font-semibold tracking-wider">FIG 03.D // REGENERATIVE CASCADING CYCLES</span>
         <span>REV 2.0</span>
       </div>
       <svg viewBox="0 0 320 160" fill="none" className="w-full h-auto text-slate-300">
@@ -239,8 +240,8 @@ function SustainabilitySchematic() {
         <text x="160" y="73" fill="#F1F5F9" fontSize="8" fontWeight="bold" textAnchor="middle">ZERO WASTE</text>
         <text x="160" y="84" fill="#00B4D8" fontSize="6" textAnchor="middle">CIRCULAR LOOP</text>
       </svg>
-      <div className="flex justify-between items-center text-[8px] text-[#94A3B8] border-t border-white/[0.06] pt-1.5 mt-1">
-        <span className="text-[#00B4D8] font-bold">FRESHWATER EXTRACTION: -45%</span>
+      <div className="flex justify-between items-center text-[8px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1">
+        <span className="text-[#38bdf8] font-bold">FRESHWATER EXTRACTION: -45%</span>
         <span>CARBON EMISSIONS: -32%</span>
       </div>
     </div>
@@ -333,9 +334,9 @@ export function BenefitsSection() {
   ];
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       {/* Tab Navigation Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 border border-white/[0.08] bg-[#071120] p-1.5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 border border-slate-200/90 bg-slate-100/90 rounded-2xl p-1.5 shadow-2xs">
         {PILLARS.map((pillar, idx) => {
           const Icon = pillar.icon;
           const isActive = activeTab === idx;
@@ -345,32 +346,32 @@ export function BenefitsSection() {
               key={pillar.id}
               type="button"
               onClick={() => setActiveTab(idx)}
-              className={`flex items-center gap-3 p-3 sm:p-4 text-left transition-all relative ${
+              className={`flex items-center gap-3 p-3 sm:p-4 text-left transition-all rounded-xl relative ${
                 isActive
-                  ? "bg-[#0A1628] border border-[#00B4D8]/40 shadow-sm"
-                  : "bg-transparent border border-transparent hover:bg-white/[0.02]"
+                  ? "bg-white text-slate-900 border border-slate-200/90 shadow-xs"
+                  : "bg-transparent border border-transparent text-slate-600 hover:text-slate-900 hover:bg-white/60"
               }`}
             >
-              {/* Active top line */}
+              {/* Active top line indicator */}
               {isActive && (
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#00B4D8]" />
+                <div className="absolute top-0 left-3 right-3 h-[2px] bg-[#0c758d] rounded-full" />
               )}
 
               <div
-                className={`w-8 h-8 rounded-[2px] border flex items-center justify-center shrink-0 ${
+                className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 transition-colors ${
                   isActive
-                    ? "bg-[#00B4D8]/10 border-[#00B4D8] text-[#00B4D8]"
-                    : "border-white/[0.1] text-[#94A3B8]"
+                    ? "bg-teal-50 border-teal-200 text-[#0c758d]"
+                    : "border-slate-200 bg-white text-slate-500"
                 }`}
               >
                 <Icon className="w-4 h-4" />
               </div>
 
               <div>
-                <span className="font-mono text-[9px] text-[#94A3B8] block">
+                <span className="font-mono text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">
                   PILLAR {pillar.code}
                 </span>
-                <span className="font-heading text-sm font-semibold text-[#F1F5F9]">
+                <span className="font-heading text-sm font-bold text-slate-900">
                   {pillar.title}
                 </span>
               </div>
@@ -384,37 +385,31 @@ export function BenefitsSection() {
         const current = PILLARS[activeTab];
 
         return (
-          <div className="border border-white/[0.08] bg-[#0A1628] p-6 sm:p-10 relative">
-            {/* Corner crosshairs */}
-            <span className="absolute top-2 left-2 font-mono text-[9px] text-[#00B4D8] select-none">+</span>
-            <span className="absolute top-2 right-2 font-mono text-[9px] text-[#00B4D8] select-none">+</span>
-            <span className="absolute bottom-2 left-2 font-mono text-[9px] text-[#00B4D8] select-none">+</span>
-            <span className="absolute bottom-2 right-2 font-mono text-[9px] text-[#00B4D8] select-none">+</span>
-
+          <div className="border border-slate-200/90 bg-white rounded-2xl p-6 sm:p-10 shadow-sm relative">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
               
               {/* LEFT COLUMN: Engineering Specs & Breakdown (7 Cols) */}
               <div className="lg:col-span-7 space-y-6">
-                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 border border-[#00B4D8]/30 bg-[#00B4D8]/10 font-mono text-[10px] text-[#00B4D8] uppercase tracking-wider">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal-200/80 bg-teal-50 font-mono text-xs text-[#0c758d] uppercase tracking-wider font-semibold">
                   <span>VALUE DISCIPLINE {current.code} // {current.title}</span>
                 </div>
 
-                <h3 className="font-heading text-2xl sm:text-3xl font-semibold text-[#F1F5F9] tracking-tight leading-tight">
+                <h3 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                   {current.headline}
                 </h3>
 
-                <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed">
+                <p className="text-base text-slate-600 leading-relaxed font-sans">
                   {current.desc}
                 </p>
 
                 {/* 3 Metric Badges */}
                 <div className="grid grid-cols-3 gap-3 pt-2">
                   {current.metrics.map((m, mIdx) => (
-                    <div key={mIdx} className="p-3 border border-white/[0.08] bg-[#071120]">
-                      <div className="font-mono text-base sm:text-lg font-bold text-[#00B4D8]">
+                    <div key={mIdx} className="p-3.5 border border-slate-200 rounded-xl bg-slate-50/70">
+                      <div className="font-heading text-lg sm:text-xl font-bold text-[#0c758d]">
                         {m.value}
                       </div>
-                      <div className="font-mono text-[8px] sm:text-[9px] text-[#94A3B8] uppercase tracking-wider mt-0.5">
+                      <div className="font-mono text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">
                         {m.label}
                       </div>
                     </div>
@@ -422,13 +417,13 @@ export function BenefitsSection() {
                 </div>
 
                 {/* Bullet Points */}
-                <div className="space-y-2.5 pt-2">
+                <div className="space-y-3 pt-2">
                   {current.bullets.map((bullet, bIdx) => (
-                    <div key={bIdx} className="flex items-start gap-2.5">
-                      <div className="w-4 h-4 rounded-[2px] bg-[#00B4D8]/10 border border-[#00B4D8]/30 flex items-center justify-center shrink-0 mt-0.5">
-                        <Check className="w-3 h-3 text-[#00B4D8]" />
+                    <div key={bIdx} className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-teal-50 border border-teal-200 flex items-center justify-center shrink-0 mt-0.5 text-[#0c758d]">
+                        <Check className="w-3.5 h-3.5" />
                       </div>
-                      <span className="font-mono text-xs sm:text-sm text-[#F1F5F9]/90 leading-relaxed">
+                      <span className="text-sm sm:text-base text-slate-700 leading-relaxed font-sans">
                         {bullet}
                       </span>
                     </div>
@@ -438,16 +433,16 @@ export function BenefitsSection() {
 
               {/* RIGHT COLUMN: Interactive Blueprint Schematic (5 Cols) */}
               <div className="lg:col-span-5 space-y-4">
-                <div className="font-mono text-[10px] text-[#94A3B8] flex items-center justify-between pb-1 border-b border-white/[0.06]">
-                  <span className="text-[#00B4D8] uppercase tracking-wider font-semibold">ENGINEERING PROOF</span>
+                <div className="font-mono text-xs text-slate-500 flex items-center justify-between pb-2 border-b border-slate-200">
+                  <span className="text-[#0c758d] uppercase tracking-wider font-semibold">ENGINEERING PROOF</span>
                   <span>IPMVP VERIFIED</span>
                 </div>
 
                 {current.schematic}
 
-                <div className="p-3 border border-white/[0.06] bg-[#071120]/60 font-mono text-[10px] text-[#94A3B8] space-y-1">
-                  <div className="text-[#F1F5F9] font-medium">CONTRACTUAL ASSURANCE</div>
-                  <div className="text-[9px] text-[#94A3B8] leading-normal">
+                <div className="p-4 border border-slate-200 bg-slate-50/80 rounded-xl font-sans text-xs text-slate-600 space-y-1">
+                  <div className="text-slate-900 font-semibold font-mono text-[11px] uppercase tracking-wider">CONTRACTUAL ASSURANCE</div>
+                  <div className="text-xs text-slate-600 leading-normal font-sans">
                     Results are verified against baseline data via continuous sub-metering. Performance risk is contractually absorbed by Exergy Solutions.
                   </div>
                 </div>
