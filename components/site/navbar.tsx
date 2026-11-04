@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
-  { label: "Services", href: "/#services" },
-  { label: "Methodology", href: "/#methodology" },
-  { label: "Impact", href: "/#impact" },
-  { label: "Case Study", href: "/#case-study" },
+  { label: "Services", href: "/services" },
+  { label: "Methodology", href: "/approach" },
+  { label: "Impact", href: "/benefits" },
+  { label: "Case Study", href: "/applications" },
   { label: "Assessment", href: "/assessment" },
 ];
 
@@ -20,6 +20,8 @@ export function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentHash, setCurrentHash] = useState("");
+  const [scrollSection, setScrollSection] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +30,87 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const updateHash = () => {
+      if (typeof window !== "undefined") {
+        setCurrentHash(window.location.hash || "");
+      }
+    };
+    updateHash();
+    window.addEventListener("hashchange", updateHash);
+    return () => window.removeEventListener("hashchange", updateHash);
+  }, [pathname]);
+
+  // Scroll-spy dynamically when on the homepage ('/')
+  useEffect(() => {
+    if (pathname !== "/") {
+      setScrollSection("");
+      return;
+    }
+
+    const sectionIds = ["case-study", "impact", "methodology", "services"];
+    const handleScrollSpy = () => {
+      if (window.scrollY < 200) {
+        setScrollSection("");
+        return;
+      }
+
+      const scrollPosition = window.scrollY + 250;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setScrollSection(id);
+            return;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollSpy, { passive: true });
+    handleScrollSpy();
+    return () => window.removeEventListener("scroll", handleScrollSpy);
+  }, [pathname]);
+
+  const getActiveItem = () => {
+    if (
+      pathname === "/approach" ||
+      (pathname === "/" && (currentHash === "#methodology" || scrollSection === "methodology"))
+    ) {
+      return "Methodology";
+    }
+    if (
+      pathname.startsWith("/services") ||
+      (pathname === "/" && (currentHash === "#services" || scrollSection === "services"))
+    ) {
+      return "Services";
+    }
+    if (
+      pathname === "/benefits" ||
+      (pathname === "/" && (currentHash === "#impact" || scrollSection === "impact"))
+    ) {
+      return "Impact";
+    }
+    if (
+      pathname === "/applications" ||
+      pathname === "/about" ||
+      (pathname === "/" && (currentHash === "#case-study" || scrollSection === "case-study"))
+    ) {
+      return "Case Study";
+    }
+    if (pathname?.startsWith("/assessment")) {
+      return "Assessment";
+    }
+    if (pathname === "/") {
+      return "Home";
+    }
+    return "";
+  };
+
+  const activeItem = getActiveItem();
 
   return (
     <header
@@ -68,7 +151,7 @@ export function Navbar() {
         {/* Floating Centered Pill Navigation (Matching Target Site) */}
         <nav className="hidden lg:flex items-center bg-slate-100/90 border border-slate-200/80 rounded-full p-1 shadow-2xs">
           {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = activeItem === item.label;
             return (
               <Link
                 key={item.href}
@@ -124,21 +207,24 @@ export function Navbar() {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-1.5">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className={cn(
-                "block px-3.5 py-2 rounded-xl text-sm font-medium transition-colors",
-                pathname === item.href
-                  ? "bg-slate-100 text-[#0c758d] font-semibold"
-                  : "text-slate-700 hover:bg-slate-50"
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const isActive = activeItem === item.label;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "block px-3.5 py-2 rounded-xl text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-slate-100 text-[#0c758d] font-semibold"
+                    : "text-slate-700 hover:bg-slate-50"
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
           <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
             <Link
               href="/portal"

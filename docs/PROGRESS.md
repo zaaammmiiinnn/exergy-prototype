@@ -1,9 +1,28 @@
 # Project Progress & Status Tracker
 
 **Current Phase:** Live Custom Domain Active & Production Deployed (`https://exergy-solutions.com`)  
-**Last Updated:** 2026-11-02
+**Last Updated:** 2026-11-04
 
 ---
+
+- **Phase 28 (Navbar Multi-Page Routing & Dynamic Section/Page Active State)**:
+  - **Issue Resolved**: The top floating navigation bar used in-page anchor hash links (`/#services`, `/#methodology`, `/#impact`, `/#case-study`), which caused clicking menu items to merely scroll ("swipe") down on the single homepage instead of navigating to the dedicated pages (`/approach`, `/services`, `/benefits`, `/applications`, `/assessment`). Furthermore, `pathname === "/"` was permanently true on the homepage regardless of which section was viewed, leaving "Home" permanently lit up with the white active pill even when viewing the methodology section.
+  - **Multi-Page Navigation Routes**: Updated `NAV_ITEMS` in `components/site/navbar.tsx` to link to dedicated pages:
+    - `Home` -> `/`
+    - `Services` -> `/services`
+    - `Methodology` -> `/approach`
+    - `Impact` -> `/benefits`
+    - `Case Study` -> `/applications`
+    - `Assessment` -> `/assessment`
+  - **Dynamic Active State & Scroll-Spy**:
+    - When navigating to `/approach`, "Methodology" is actively highlighted.
+    - When on `/services` or `/services/*`, "Services" is actively highlighted.
+    - When on `/benefits`, "Impact" is actively highlighted.
+    - When on `/applications` or `/about`, "Case Study" is actively highlighted.
+    - When on `/assessment`, "Assessment" is actively highlighted.
+    - When on the homepage (`/`), an intelligent lightweight scroll-spy automatically detects the visible section (`services`, `methodology`, `impact`, `case-study`) and dynamically shifts the active pill highlight accordingly, returning to "Home" when scrolled back to the top.
+    - Updated both desktop navigation and mobile drawer navigation to use `activeItem`.
+  - **Verification & Deployment**: Passed all 36/36 unit and integration tests, compiled clean with `npx opennextjs-cloudflare build`, deployed to Cloudflare Workers (Version ID: `cfbe9529-d6d5-466f-85f7-c9f271352b6a`), and pushed to GitHub `origin/main`.
 
 - **Phase 21 (Hero Schematic Line Collision Elimination & Protective Text Shields)**:
   - **Issue Resolved**: The circular dashed flow line and recovery path intersected across the bottom of the node labels (`OPTIMIZED PROCESS`, `WATER & ENERGY`, `POTABLE & WORK`), reducing readability.
